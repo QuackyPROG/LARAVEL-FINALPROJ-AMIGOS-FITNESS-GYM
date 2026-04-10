@@ -7,16 +7,16 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 antialiased">
 
 <flux:sidebar sticky stashable>
     <flux:sidebar.toggle icon="x-mark" />
 
-    <div>
-        <a href="{{ route('admin.dashboard') }}">
+    <div class="px-4 py-4 border-b border-gray-200">
+        <a href="{{ route('admin.dashboard') }}" class="font-semibold text-gray-900 text-sm">
             <span>Amigos Admin</span>
         </a>
-        <p>Management Panel</p>
+        <p class="text-xs text-gray-400 mt-0.5">Management Panel</p>
     </div>
 
     <flux:navlist>
@@ -45,11 +45,11 @@
         </flux:navlist.group>
     </flux:navlist>
 
-    <div>
-        <p>{{ auth()->user()->name }}</p>
+    <div class="px-4 py-4 border-t border-gray-200 mt-auto">
+        <p class="text-sm font-medium text-gray-700 mb-1">{{ auth()->user()->name }}</p>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit">Sign out</button>
+            <button type="submit" class="text-sm text-gray-400 underline">Sign out</button>
         </form>
     </div>
 </flux:sidebar>
@@ -57,10 +57,10 @@
 <flux:main>
     <flux:header>
         <flux:sidebar.toggle icon="bars-3" />
-        <span>{{ auth()->user()->name }}</span>
+        <span class="text-sm text-gray-500 ml-auto">{{ auth()->user()->name }}</span>
     </flux:header>
 
-    <div>
+    <div class="p-6">
         @yield('content')
     </div>
 </flux:main>

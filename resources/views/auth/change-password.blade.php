@@ -7,49 +7,55 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 antialiased">
 
-<div>
-    <div>
-        <h1>AmigosFitnessGym</h1>
-    </div>
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-sm">
 
-    <div>
-        <h2>Set your password</h2>
-        <p>You must set a new password before continuing.</p>
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold text-gray-900">AmigosFitnessGym</h1>
+        </div>
 
-        @if ($errors->any())
-            <div>
-                {{ $errors->first() }}
-            </div>
-        @endif
+        <div class="bg-white border border-gray-200 rounded-md p-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Set your password</h2>
+            <p class="text-sm text-gray-500 mb-6">You must set a new password before continuing.</p>
 
-        <form method="POST" action="{{ route('password.change.update') }}">
-            @csrf
+            @if ($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-md mb-4">
+                    {{ $errors->first() }}
+                </div>
+            @endif
 
-            <div>
-                <label>New password</label>
-                <input
-                    type="password"
-                    name="password"
-                    required
-                    minlength="8"
-                    placeholder="At least 8 characters"
-                >
-            </div>
+            <form method="POST" action="{{ route('password.change.update') }}">
+                @csrf
 
-            <div>
-                <label>Confirm password</label>
-                <input
-                    type="password"
-                    name="password_confirmation"
-                    required
-                    placeholder="Repeat password"
-                >
-            </div>
+                <div class="flex flex-col gap-1 mb-4">
+                    <label class="text-sm font-medium text-gray-700">New password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        minlength="8"
+                        placeholder="At least 8 characters"
+                        class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
+                    >
+                </div>
 
-            <button type="submit">Set Password &amp; Continue</button>
-        </form>
+                <div class="flex flex-col gap-1 mb-6">
+                    <label class="text-sm font-medium text-gray-700">Confirm password</label>
+                    <input
+                        type="password"
+                        name="password_confirmation"
+                        required
+                        placeholder="Repeat password"
+                        class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
+                    >
+                </div>
+
+                <button type="submit" class="w-full bg-gray-900 text-white text-sm px-4 py-2 rounded-md">Set Password &amp; Continue</button>
+            </form>
+        </div>
+
     </div>
 </div>
 

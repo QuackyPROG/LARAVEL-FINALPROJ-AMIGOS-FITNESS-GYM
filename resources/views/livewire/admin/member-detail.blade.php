@@ -1,64 +1,77 @@
 <div>
-    <div>
-        <a href="{{ route('admin.members.index') }}">← Back</a>
+    <div class="flex items-center gap-4 mb-6">
+        <a href="{{ route('admin.members.index') }}" class="text-sm text-gray-500 underline">← Back</a>
         <div>
-            <h1>{{ $member->name }}</h1>
-            <p>Member #{{ $member->id }}</p>
+            <h1 class="text-xl font-semibold text-gray-900">{{ $member->name }}</h1>
+            <p class="text-sm text-gray-400">Member #{{ $member->id }}</p>
         </div>
     </div>
 
     @if(session('success'))
-        <div>{{ session('success') }}</div>
+        <div class="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-md mb-4">{{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div>{{ session('error') }}</div>
+        <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-md mb-4">{{ session('error') }}</div>
     @endif
 
-    <div>
-        {{-- Profile Info --}}
-        <div>
-            <div>
-                <h2>Profile</h2>
-                <div>
-                    <div><span>Email</span><p>{{ $member->email }}</p></div>
-                    <div><span>Status</span><p>{{ ucfirst($member->status) }}</p></div>
-                    <div><span>Role</span><p>{{ ucfirst($member->role) }}</p></div>
-                    <div><span>Joined</span><p>{{ $member->created_at->format('M j, Y') }}</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="col-span-2 space-y-4">
+
+            {{-- Profile Info --}}
+            <div class="bg-white border border-gray-200 rounded-md p-5">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Profile</h2>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">Email</span>
+                        <p class="text-sm font-medium text-gray-900">{{ $member->email }}</p>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">Status</span>
+                        <p class="text-sm font-medium text-gray-900">{{ ucfirst($member->status) }}</p>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">Role</span>
+                        <p class="text-sm font-medium text-gray-900">{{ ucfirst($member->role) }}</p>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">Joined</span>
+                        <p class="text-sm font-medium text-gray-900">{{ $member->created_at->format('M j, Y') }}</p>
+                    </div>
                 </div>
             </div>
 
             {{-- Membership History --}}
-            <div>
-                <div>
-                    <h2>Membership History</h2>
+            <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100">
+                    <h2 class="text-sm font-semibold text-gray-700">Membership History</h2>
                 </div>
-                <table>
-                    <thead>
+                <table class="w-full text-sm">
+                    <thead class="border-b border-gray-100 bg-gray-50">
                         <tr>
-                            <th>Plan</th>
-                            <th>Status</th>
-                            <th>Starts</th>
-                            <th>Expires</th>
+                            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Plan</th>
+                            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Status</th>
+                            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Starts</th>
+                            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Expires</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($memberships as $ms)
-                            <tr>
-                                <td>{{ $ms->plan?->name ?? '—' }}</td>
-                                <td>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-3 px-4 font-medium text-gray-900">{{ $ms->plan?->name ?? '—' }}</td>
+                                <td class="py-3 px-4">
                                     @if($ms->status === 'active')
-                                        <span>Active</span>
+                                        <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700 border border-green-200">Active</span>
                                     @elseif($ms->status === 'expired')
-                                        <span>Expired</span>
+                                        <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200">Expired</span>
                                     @else
-                                        <span>{{ ucfirst($ms->status) }}</span>
+                                        <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">{{ ucfirst($ms->status) }}</span>
                                     @endif
                                 </td>
-                                <td>{{ $ms->starts_at?->format('M j, Y') }}</td>
-                                <td>{{ $ms->expires_at?->format('M j, Y') }}</td>
+                                <td class="py-3 px-4 text-gray-500">{{ $ms->starts_at?->format('M j, Y') }}</td>
+                                <td class="py-3 px-4 text-gray-500">{{ $ms->expires_at?->format('M j, Y') }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4">No membership history.</td></tr>
+                            <tr><td colspan="4" class="py-6 text-center text-gray-400 text-sm">No membership history.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -66,71 +79,74 @@
 
             {{-- Extend Expiry Form --}}
             @if($showExtendForm)
-                <div>
-                    <h3>Extend Membership Expiry</h3>
-                    <div>
-                        <input type="number" wire:model="extendDays" min="1" max="365">
-                        <span>days</span>
+                <div class="bg-white border border-gray-200 rounded-md p-5">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Extend Membership Expiry</h3>
+                    <div class="flex items-center gap-3">
+                        <input type="number" wire:model="extendDays" min="1" max="365"
+                            class="border border-gray-300 rounded-md px-3 py-2 text-sm w-20">
+                        <span class="text-sm text-gray-500">days</span>
                         <button wire:click="extendExpiry"
                             wire:loading.attr="disabled"
-                            wire:loading.class="opacity-75 cursor-wait">
+                            wire:loading.class="opacity-75 cursor-wait"
+                            class="bg-gray-900 text-white text-sm px-4 py-2 rounded-md">
                             <span wire:loading.remove wire:target="extendExpiry">Extend</span>
                             <span wire:loading wire:target="extendExpiry">Saving...</span>
                         </button>
-                        <button wire:click="$set('showExtendForm', false)">Cancel</button>
+                        <button wire:click="$set('showExtendForm', false)" class="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">Cancel</button>
                     </div>
-                    @error('extendDays')<p>{{ $message }}</p>@enderror
+                    @error('extendDays')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                 </div>
             @endif
 
             {{-- Walk-in Cash Payment Form --}}
             @if($showWalkInForm)
-                <div>
-                    <h3>Record Cash Payment</h3>
-                    <div>
-                        <select wire:model="walkInPlanId">
+                <div class="bg-white border border-gray-200 rounded-md p-5">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Record Cash Payment</h3>
+                    <div class="flex flex-col gap-1 mb-3">
+                        <select wire:model="walkInPlanId" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full">
                             <option value="">Select plan…</option>
                             @foreach($plans as $plan)
                                 <option value="{{ $plan->id }}">{{ $plan->name }} — ₱{{ number_format($plan->price, 0) }}</option>
                             @endforeach
                         </select>
                     </div>
-                    @error('walkInPlanId')<p>{{ $message }}</p>@enderror
+                    @error('walkInPlanId')<p class="text-xs text-red-500 mb-2">{{ $message }}</p>@enderror
 
-                    <label>
-                        <input type="checkbox" wire:model.live="witnessedConsent">
+                    <label class="flex items-start gap-2 text-sm text-gray-700 mb-3">
+                        <input type="checkbox" wire:model.live="witnessedConsent" class="mt-0.5">
                         <span>I confirm this member has physically read and signed the Membership Contract and Liability Waiver in person.</span>
                     </label>
-                    @error('witnessedConsent')<p>{{ $message }}</p>@enderror
+                    @error('witnessedConsent')<p class="text-xs text-red-500 mb-2">{{ $message }}</p>@enderror
 
-                    <div>
+                    <div class="flex gap-3">
                         <button wire:click="recordCashPayment"
                             wire:loading.attr="disabled"
-                            wire:loading.class="opacity-75 cursor-wait">
+                            wire:loading.class="opacity-75 cursor-wait"
+                            class="bg-gray-900 text-white text-sm px-4 py-2 rounded-md">
                             <span wire:loading.remove wire:target="recordCashPayment">Record Payment</span>
                             <span wire:loading wire:target="recordCashPayment">Recording...</span>
                         </button>
-                        <button wire:click="$set('showWalkInForm', false)">Cancel</button>
+                        <button wire:click="$set('showWalkInForm', false)" class="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">Cancel</button>
                     </div>
                 </div>
             @endif
 
             {{-- Legal Agreements / Consent History --}}
-            <div>
-                <div>
-                    <h2>Legal Agreements</h2>
+            <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100">
+                    <h2 class="text-sm font-semibold text-gray-700">Legal Agreements</h2>
                 </div>
                 @if($consents->isEmpty())
-                    <div>No consent records found.</div>
+                    <div class="p-5 text-sm text-gray-400">No consent records found.</div>
                 @else
-                    <table>
-                        <thead>
+                    <table class="w-full text-sm">
+                        <thead class="border-b border-gray-100 bg-gray-50">
                             <tr>
-                                <th>Document</th>
-                                <th>Version</th>
-                                <th>Method</th>
-                                <th>Accepted At</th>
-                                <th>Action</th>
+                                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Document</th>
+                                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Version</th>
+                                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Method</th>
+                                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Accepted At</th>
+                                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wide py-3 px-4">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,26 +160,26 @@
                                         default                      => $consent->document_key,
                                     };
                                 @endphp
-                                <tr>
-                                    <td>{{ $docTitle }}</td>
-                                    <td>
-                                        <span>v{{ $consent->version }}</span>
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 px-4 font-medium text-gray-900">{{ $docTitle }}</td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700 border border-green-200">v{{ $consent->version }}</span>
                                     </td>
-                                    <td>
+                                    <td class="py-3 px-4">
                                         @if($consent->method === 'staff_witnessed')
-                                            <span>Staff Witnessed</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">Staff Witnessed</span>
                                         @else
-                                            <span>Online</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">Online</span>
                                         @endif
                                     </td>
-                                    <td>{{ $consent->accepted_at->format('M j, Y g:i A') }}</td>
-                                    <td>
+                                    <td class="py-3 px-4 text-gray-500">{{ $consent->accepted_at->format('M j, Y g:i A') }}</td>
+                                    <td class="py-3 px-4">
                                         @if($consent->snapshot)
                                             <flux:modal.trigger :name="'snapshot-'.$consent->id">
-                                                <button>View Signed</button>
+                                                <button class="text-sm text-gray-700 underline">View Signed</button>
                                             </flux:modal.trigger>
                                         @else
-                                            <span>No snapshot</span>
+                                            <span class="text-gray-300">No snapshot</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -175,8 +191,8 @@
                     @foreach($consents as $consent)
                         @if($consent->snapshot)
                             <flux:modal :name="'snapshot-'.$consent->id">
-                                <div>
-                                    <h3>
+                                <div class="p-2">
+                                    <h3 class="text-base font-semibold text-gray-900 mb-1">
                                         {{ match($consent->document_key) {
                                             'legal.terms_and_conditions' => 'Terms & Conditions',
                                             'legal.membership_contract'  => 'Membership Contract',
@@ -185,16 +201,16 @@
                                             default                      => $consent->document_key,
                                         } }}
                                     </h3>
-                                    <p>
+                                    <p class="text-xs text-gray-400 mb-4">
                                         Accepted v{{ $consent->version }} on {{ $consent->accepted_at->format('F j, Y \a\t g:i A') }}
                                         ({{ $consent->ip_address }}) — {{ $consent->method === 'staff_witnessed' ? 'Staff Witnessed' : 'Online' }}
                                     </p>
-                                    <div>
+                                    <div class="text-sm text-gray-700 max-h-96 overflow-y-auto border border-gray-100 rounded p-3">
                                         {!! $consent->snapshot->body !!}
                                     </div>
-                                    <div>
+                                    <div class="mt-4 flex justify-end">
                                         <flux:modal.close>
-                                            <button>Close</button>
+                                            <button class="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">Close</button>
                                         </flux:modal.close>
                                     </div>
                                 </div>
@@ -206,17 +222,19 @@
         </div>
 
         {{-- Action Buttons --}}
-        <div>
-            <div>
-                <h2>Actions</h2>
-                <button wire:click="$set('showWalkInForm', true)">Record Cash Payment</button>
-                <button wire:click="$set('showExtendForm', true)">Extend Expiry</button>
-                <button wire:click="deactivate" wire:confirm="Deactivate this member?">Deactivate Member</button>
-                @if($govIdUrl)
-                <a href="{{ $govIdUrl }}" target="_blank">
-                    View Government ID <span>(link valid 30 min)</span>
-                </a>
-                @endif
+        <div class="col-span-1">
+            <div class="bg-white border border-gray-200 rounded-md p-5">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Actions</h2>
+                <div class="flex flex-col gap-2">
+                    <button wire:click="$set('showWalkInForm', true)" class="w-full text-left border border-gray-300 text-gray-700 text-sm px-3 py-2 rounded-md">Record Cash Payment</button>
+                    <button wire:click="$set('showExtendForm', true)" class="w-full text-left border border-gray-300 text-gray-700 text-sm px-3 py-2 rounded-md">Extend Expiry</button>
+                    <button wire:click="deactivate" wire:confirm="Deactivate this member?" class="w-full text-left border border-red-200 text-red-600 text-sm px-3 py-2 rounded-md">Deactivate Member</button>
+                    @if($govIdUrl)
+                    <a href="{{ $govIdUrl }}" target="_blank" class="text-sm text-gray-600 underline">
+                        View Government ID <span class="text-xs text-gray-400">(link valid 30 min)</span>
+                    </a>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
