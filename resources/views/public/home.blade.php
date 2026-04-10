@@ -32,7 +32,7 @@
     </section>
 
     {{-- ===== PLANS ===== --}}
-    <section id="plans" class="py-16 border-b border-gray-100">
+    <section id="plans" class="py-16 border-b border-gray-100 bg-gray-50">
         <div class="max-w-5xl mx-auto px-6">
             <div class="mb-8">
                 <p class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-1">Membership</p>
