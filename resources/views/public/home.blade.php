@@ -5,7 +5,7 @@
 @section('content')
 
     {{-- ===== HERO ===== --}}
-    <section class="border-b border-gray-100 py-16">
+    <section class="relative overflow-hidden border-b border-gray-100 py-16">
         @if($content['hero_image'])
             <div
                 style="background-image: url('{{ asset('storage/' . $content['hero_image']) }}');"
