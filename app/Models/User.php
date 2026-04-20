@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -38,6 +39,11 @@ class User extends Authenticatable
             'dob' => 'date',
             'must_change_password' => 'boolean',
         ];
+    }
+
+    public function setPasswordAttribute($value): void
+    {
+        $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::make($value);
     }
 
     public function isAdmin(): bool

@@ -1,7 +1,207 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
+/* Custom Dark Theme */
+.bg-dark-page {
+    background-color: #000000;
+}
+
+.bg-dark-card {
+    background-color: #0f0f0f;
+}
+
+.text-dark {
+    color: white;
+}
+
+/* Make all heading titles gold to match the interface style */
+h1, h2, h3, h4, h5, h6 {
+    color: #fbbf24 !important;
+}
+
+/* ===== STAT CARD COMPONENT STYLES ===== */
+
+.stat-card {
+    @apply relative rounded-2xl p-5 border-2 backdrop-blur-sm transition-all duration-300 cursor-default flex items-stretch justify-between gap-6;
+    background-color: #0b0b0b;
+    box-shadow: 0 0 12px currentColor;
+    opacity: 0.9;
+}
+
+.stat-card:hover {
+    @apply scale-105;
+    opacity: 1;
+    filter: brightness(1.1);
+    box-shadow: 0 0 16px currentColor;
+}
+
+.stat-card-title {
+    @apply text-xs font-medium tracking-wide uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-value {
+    @apply text-3xl md:text-4xl font-black tracking-tight;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.stat-card-right {
+    @apply flex flex-col items-center justify-center gap-1.5;
+    min-width: 60px;
+}
+
+.stat-card-icon {
+    @apply w-8 h-8 md:w-9 md:h-9;
+    stroke-width: 2;
+}
+
+.stat-card-percentage {
+    @apply text-xs font-semibold tracking-tight;
+}
+
+/* ===== END STAT CARD STYLES ===== */
+
+/* Custom hover styles for Flux navlist - Modern Dashboard UI */
+
+/* Base nav item styling - modern rounded */
+[data-flux-navlist-item] {
+    position: relative !important;
+    border-radius: 0 !important;
+    padding: 0.375rem 1rem !important;
+    transition: all 250ms ease-in-out !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    color: #d1d5db !important;
+}
+
+/* Icons styling - improved visibility */
+[data-flux-navlist-item] svg {
+    flex-shrink: 0 !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    color: currentColor !important;
+    stroke-width: 1.5 !important;
+}
+
+/* Hover state: subtle background highlight */
+[data-flux-navlist-item]:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+
+/* Active/current state: subtle gold background with gold text */
+[data-flux-navlist-item][data-current],
+[data-flux-navlist-item].is-active {
+    background-color: rgba(251, 191, 36, 0.1) !important;
+    color: #fbbf24 !important;
+}
+
+/* Left gold bar for active state */
+[data-flux-navlist-item][data-current]::before,
+[data-flux-navlist-item].is-active::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+    width: 3px !important;
+    height: 100% !important;
+    background-color: #fbbf24 !important;
+    border-radius: 0 2px 2px 0 !important;
+    box-shadow: none !important;
+}
+
+/* Ensure text remains white in all child elements */
+[data-flux-navlist-item],
+[data-flux-navlist-item] *,
+[data-flux-navlist-item] span,
+[data-flux-navlist-item] a {
+    color: inherit !important;
+}
+
+/* Active state text color gold */
+[data-flux-navlist-item][data-current],
+[data-flux-navlist-item].is-active,
+[data-flux-navlist-item][data-current] *,
+[data-flux-navlist-item].is-active *,
+[data-flux-navlist-item][data-current] span,
+[data-flux-navlist-item].is-active span,
+[data-flux-navlist-item][data-current] a,
+[data-flux-navlist-item].is-active a {
+    color: #fbbf24 !important;
+}
+
+/* SVG fill styling */
+[data-flux-navlist-item][data-current] svg,
+[data-flux-navlist-item]:hover svg,
+[data-flux-navlist-item].is-active svg {
+    fill: currentColor !important;
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+
+/* Navlist container spacing */
+[data-flux-navlist] {
+    padding: 0.25rem 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.125rem !important;
+}
+
+/* Remove all borders from admin section - global override */
+body.antialiased [class*="border"] {
+    border-color: transparent !important;
+}
+
+/* Specific border removal for Tailwind border utilities */
+.border,
+.border-b,
+.border-t,
+.border-r,
+.border-l,
+.border-x,
+.border-y {
+    border-color: transparent !important;
+}
+
+/* Sidebar border - RESTORE with subtle gray */
+flux-sidebar,
+[data-flux-sidebar],
+.flux-sidebar {
+    border-right-color: #111111 !important;
+    border-right-style: solid !important;
+    border-right-width: 1px !important;
+}
+
+/* Remove borders from dividers */
+.divide-y > * + *,
+.divide-x > * + * {
+    border-color: transparent !important;
+}
+
+/* Remove borders from cards and containers */
+.bg-dark-card,
+[class*="border-gray"],
+[class*="border-red"],
+[class*="border-green"],
+[class*="border-yellow"],
+[class*="border-blue"],
+[class*="border-amber"] {
+    border-color: transparent !important;
+}
+
+/* Ensure all HTML borders are removed */
+*[class*="border-"] {
+    border-color: transparent !important;
+}
+
+/* Override sidebar border to show */
+.border-r.border-gray-900 {
+    border-right-color: #111111 !important;
+}

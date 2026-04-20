@@ -103,12 +103,6 @@ it('deactivate action creates audit log entry', function (): void {
     $admin = adminUser();
     [$plan, $member] = planAndMember();
 
-    $this->actingAs($admin)->post('/admin/members', [
-        'name' => $member->name,
-        'email' => 'dup@test.com',
-        'plan_id' => $plan->id,
-    ]);
-
     // Deactivate via Livewire component
     Livewire::actingAs($admin)
         ->test(MemberIndex::class)

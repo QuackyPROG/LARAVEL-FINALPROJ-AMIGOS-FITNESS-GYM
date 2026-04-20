@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('ip', 45)->nullable();
             $table->timestamps();
 
+            $table->index('action');
             $table->index(['model_type', 'model_id']);
             $table->index('created_at');
         });
