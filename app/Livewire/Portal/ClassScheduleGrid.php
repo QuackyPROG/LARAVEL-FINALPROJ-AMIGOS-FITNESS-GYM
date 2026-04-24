@@ -10,8 +10,18 @@ class ClassScheduleGrid extends Component
 {
     public function render(): View
     {
-        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $days = [
+            1 => 'Monday',
+            2 => 'Tuesday',
+            3 => 'Wednesday',
+            4 => 'Thursday',
+            5 => 'Friday',
+            6 => 'Saturday',
+            0 => 'Sunday',
+        ];
+
         $schedules = ClassSchedule::with('coach')
+            ->orderBy('day_of_week')
             ->orderBy('time')
             ->get()
             ->groupBy('day_of_week');

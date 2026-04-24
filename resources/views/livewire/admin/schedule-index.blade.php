@@ -28,8 +28,8 @@
             <div class="flex flex-col gap-1">
                 <label class="text-sm font-medium text-gray-300">Day</label>
                 <select wire:model="dayOfWeek" class="border border-gray-600 rounded-md px-3 py-2 text-sm w-full bg-dark-page text-white">
-                    @foreach(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] as $day)
-                        <option class="bg-dark-page text-white">{{ $day }}</option>
+                    @foreach($this->dayOptions() as $dayValue => $dayLabel)
+                        <option value="{{ $dayValue }}" class="bg-dark-page text-white">{{ $dayLabel }}</option>
                     @endforeach
                 </select>
             </div>
@@ -69,7 +69,7 @@
                 @forelse($schedules as $s)
                 <tr class="border-b border-gray-600 hover:bg-gray-700 transition-colors">
                     <td class="py-3 px-4 font-medium text-white">{{ $s->name }}</td>
-                    <td class="py-3 px-4 text-gray-300">{{ $s->day_of_week }}</td>
+                    <td class="py-3 px-4 text-gray-300">{{ $this->dayLabel((int) $s->day_of_week) }}</td>
                     <td class="py-3 px-4 text-gray-300">{{ $s->time }}</td>
                     <td class="py-3 px-4 text-gray-400">{{ $s->coach?->name ?? '—' }}</td>
                     <td class="py-3 px-4 text-gray-400">{{ $s->capacity }}</td>
