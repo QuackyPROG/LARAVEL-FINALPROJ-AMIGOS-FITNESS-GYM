@@ -96,3 +96,89 @@
         @endif
     </div>
 </div>
+
+@script
+<script>
+    (() => {
+        if (!window.Echo) {
+            return;
+        }
+
+        const componentId = @js($this->getId());
+        const activeConversationId = @js($activeConversationId);
+        const stateByComponent = window.__chatRealtimeAdmin ?? new Map();
+        window.__chatRealtimeAdmin = stateByComponent;
+
+        const fullCleanup = (id) => {
+            const state = stateByComponent.get(id);
+
+            if (!state) {
+                return;
+            }
+
+            if (state.activeConversationChannelName) {
+                window.Echo.leave(state.activeConversationChannelName);
+            }
+
+            window.Echo.leave(state.adminChannelName);
+            stateByComponent.delete(id);
+        };
+
+        let state = stateByComponent.get(componentId);
+
+        if (!state) {
+            const adminChannelName = 'support.admin';
+
+            window.Echo.private(adminChannelName)
+                .listen('.chat.message.created', () => {
+                    $wire.$refresh();
+                });
+
+            state = {
+                adminChannelName,
+                activeConversationChannelName: null,
+            };
+
+            stateByComponent.set(componentId, state);
+        }
+
+        const nextActiveChannelName = activeConversationId
+            ? `support.conversation.${activeConversationId}`
+            : null;
+
+        if (state.activeConversationChannelName && state.activeConversationChannelName !== nextActiveChannelName) {
+            window.Echo.leave(state.activeConversationChannelName);
+            state.activeConversationChannelName = null;
+        }
+
+        if (nextActiveChannelName && state.activeConversationChannelName !== nextActiveChannelName) {
+            window.Echo.private(nextActiveChannelName)
+                .listen('.chat.message.created', (event) => {
+                    if (Number(event.conversation_id) !== Number(activeConversationId)) {
+                        return;
+                    }
+
+                    $wire.$refresh();
+                });
+
+            state.activeConversationChannelName = nextActiveChannelName;
+        }
+
+        if (!window.__chatRealtimeAdminCleanupBound) {
+            window.__chatRealtimeAdminCleanupBound = true;
+
+            document.addEventListener('livewire:navigating', () => {
+                for (const id of stateByComponent.keys()) {
+                    fullCleanup(id);
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                for (const id of stateByComponent.keys()) {
+                    fullCleanup(id);
+                }
+            });
+        }
+    })();
+</script>
+@endscript

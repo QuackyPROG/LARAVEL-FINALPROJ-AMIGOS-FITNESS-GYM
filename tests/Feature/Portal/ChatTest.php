@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ChatMessageCreated;
 use App\Livewire\Admin\ChatInbox;
 use App\Livewire\Portal\ChatWidget;
 use App\Models\ChatMessage;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Services\ChatbotService;
 use App\ValueObjects\ChatBotResult;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -26,6 +28,8 @@ function chatMember(): User
 it('chat widget sends message and gets bot response', function (): void {
     $member = chatMember();
 
+    Event::fake([ChatMessageCreated::class]);
+
     $this->mock(ChatbotService::class, function ($mock): void {
         $mock->shouldReceive('respond')
             ->once()
@@ -40,6 +44,8 @@ it('chat widget sends message and gets bot response', function (): void {
 
     expect(ChatMessage::where('sender_type', 'member')->where('body', 'What are your gym hours?')->exists())->toBeTrue();
     expect(ChatMessage::where('sender_type', 'bot')->exists())->toBeTrue();
+    Event::assertDispatched(ChatMessageCreated::class, fn (ChatMessageCreated $event): bool => $event->chatMessage->sender_type === 'member');
+    Event::assertDispatched(ChatMessageCreated::class, fn (ChatMessageCreated $event): bool => $event->chatMessage->sender_type === 'bot');
 });
 
 it('chatbot escalates when Claude returns escalate signal', function (): void {
@@ -91,6 +97,8 @@ it('admin can close conversation and system message is sent', function (): void 
     $member = chatMember();
     $conv = Conversation::create(['member_id' => $member->id, 'status' => 'escalated']);
 
+    Event::fake([ChatMessageCreated::class]);
+
     Livewire::actingAs($admin)
         ->test(ChatInbox::class)
         ->call('closeConversation', $conv->id);
@@ -98,4 +106,21 @@ it('admin can close conversation and system message is sent', function (): void 
     $conv->refresh();
     expect($conv->status)->toBe('closed');
     expect(ChatMessage::where('conversation_id', $conv->id)->where('sender_type', 'system')->exists())->toBeTrue();
+    Event::assertDispatched(ChatMessageCreated::class, fn (ChatMessageCreated $event): bool => $event->chatMessage->sender_type === 'system');
+});
+
+it('admin reply dispatches chat broadcast event', function (): void {
+    $admin = User::factory()->admin()->create(['must_change_password' => false]);
+    $member = chatMember();
+    $conv = Conversation::create(['member_id' => $member->id, 'status' => 'escalated']);
+
+    Event::fake([ChatMessageCreated::class]);
+
+    Livewire::actingAs($admin)
+        ->test(ChatInbox::class)
+        ->call('selectConversation', $conv->id)
+        ->set('reply', 'A staff member is now assisting you.')
+        ->call('sendReply');
+
+    Event::assertDispatched(ChatMessageCreated::class, fn (ChatMessageCreated $event): bool => $event->chatMessage->sender_type === 'admin');
 });
