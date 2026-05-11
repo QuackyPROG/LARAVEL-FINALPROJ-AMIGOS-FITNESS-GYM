@@ -6,6 +6,79 @@
     <title>{{ config('app.name') }} Admin — @yield('title', 'Dashboard')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <style>
+        /* Premium Glassmorphism for Table Cards */
+        div:has(> table) {
+            position: relative;
+            background: rgba(10, 10, 10, 0.4) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(234, 179, 8, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            z-index: 1;
+        }
+
+        /* Subtle Animated Gradient Border via Pseudo-element */
+        div:has(> table)::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 1rem;
+            padding: 1px;
+            background: linear-gradient(45deg, rgba(234, 179, 8, 0.4), rgba(255, 255, 255, 0.05), rgba(234, 179, 8, 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            pointer-events: none;
+            background-size: 200% 200%;
+            animation: gradientShimmer 8s ease infinite;
+        }
+
+        @keyframes gradientShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        div:has(> table) table thead,
+        div:has(> table) table tbody {
+            background: transparent !important;
+        }
+        
+        div:has(> table) table thead {
+            background: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        div:has(> table) table thead tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        div:has(> table) table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.3s ease !important;
+            position: relative;
+        }
+        
+        div:has(> table) table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Row Selection / Active State */
+        div:has(> table) table tbody tr.selected,
+        div:has(> table) table tbody tr:active {
+            background: linear-gradient(90deg, rgba(20, 20, 20, 0.9), rgba(234, 179, 8, 0.15)) !important;
+            transform: scale(1.005) translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), inset 2px 0 0 rgba(234, 179, 8, 0.8) !important;
+            border-color: transparent !important;
+            z-index: 10;
+        }
+
+        div:has(> table) table tbody tr:last-child {
+            border-bottom: none !important;
+        }
+    </style>
 </head>
 <body class="bg-dark-page text-dark antialiased">
 

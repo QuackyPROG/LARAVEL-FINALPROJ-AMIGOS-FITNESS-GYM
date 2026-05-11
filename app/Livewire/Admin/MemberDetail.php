@@ -17,9 +17,7 @@ class MemberDetail extends Component
 {
     public User $member;
 
-    public bool $showExtendForm = false;
-
-    public bool $showWalkInForm = false;
+    public ?string $activeAction = null;
 
     public bool $witnessedConsent = false;
 
@@ -32,6 +30,11 @@ class MemberDetail extends Component
     public function mount(User $member): void
     {
         $this->member = $member;
+    }
+
+    public function toggleAction(string $action): void
+    {
+        $this->activeAction = $this->activeAction === $action ? null : $action;
     }
 
     public function extendExpiry(): void
@@ -56,7 +59,7 @@ class MemberDetail extends Component
             'days' => $this->extendDays,
         ]);
 
-        $this->showExtendForm = false;
+        $this->activeAction = null;
         session()->flash('success', "Expiry extended by {$this->extendDays} days.");
         $this->member->refresh();
     }
@@ -107,7 +110,7 @@ class MemberDetail extends Component
         }
 
         $this->witnessedConsent = false;
-        $this->showWalkInForm = false;
+        $this->activeAction = null;
         session()->flash('success', "Cash membership recorded for {$plan->name}.");
         $this->member->refresh();
     }
