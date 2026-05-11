@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\MembershipPlan;
 use App\Models\Membership;
+use App\Models\MemberConsent;
+use App\Models\SiteContent;
 use App\Services\AuditLogger;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +26,7 @@ class MemberIndex extends Component
     public bool $showDeactivateModal = false;
     public bool $showDeleteModal = false;
     public bool $showExtendModal = false;
+    public bool $showPaymentModal = false;
 
     public ?int $selectedMemberId = null;
     public ?User $selectedMember = null;
@@ -34,6 +37,9 @@ class MemberIndex extends Component
     public ?string $tempPasswordResult = null;
 
     public ?int $extendPlanId = null;
+
+    public ?int $walkInPlanId = null;
+    public bool $witnessedConsent = false;
 
     public function updatingSearch(): void
     {
@@ -215,6 +221,66 @@ class MemberIndex extends Component
 
         app(AuditLogger::class)->log('member.password_reset', $user, []);
         session()->flash('success', "Password reset flag set for {$user->name}.");
+    }
+
+    public function recordCashPayment(): void
+    {
+        $data = $this->validate([
+            'walkInPlanId' => 'required|exists:membership_plans,id',
+            'witnessedConsent' => 'required|accepted',
+        ]);
+
+        if (!$this->selectedMemberId) {
+            session()->flash('error', 'No member selected.');
+            return;
+        }
+
+        $user = User::findOrFail($this->selectedMemberId);
+        $plan = MembershipPlan::findOrFail($data['walkInPlanId']);
+
+        $membership = Membership::create([
+            'user_id' => $user->id,
+            'plan_id' => $plan->id,
+            'starts_at' => now()->toDateString(),
+            'expires_at' => now()->addDays($plan->duration_days)->toDateString(),
+            'status' => 'active',
+            'payment_ref' => 'cash-'.now()->format('YmdHis'),
+        ]);
+
+        // Ensure user is marked as active if they were inactive
+        if ($user->status !== 'active') {
+            $user->status = 'active';
+            $user->save();
+        }
+
+        app(AuditLogger::class)->log('membership.cash_payment', $membership, [
+            'plan' => $plan->name,
+            'expires_at' => $membership->expires_at->toDateString(),
+            'witnessed_by' => auth()->id(),
+        ]);
+
+        // Record legal agreement consent
+        $documentKeys = [
+            'legal.terms_and_conditions',
+            'legal.membership_contract',
+            'legal.liability_waiver',
+            'legal.privacy_policy',
+        ];
+
+        foreach ($documentKeys as $key) {
+            MemberConsent::create([
+                'user_id' => $user->id,
+                'document_key' => $key,
+                'version' => (int) SiteContent::get($key.'_version', '1'),
+                'ip_address' => 'staff-recorded',
+                'method' => 'staff_witnessed',
+                'accepted_at' => now(),
+            ]);
+        }
+
+        session()->flash('success', "Cash payment recorded for {$plan->name}.");
+        $this->showPaymentModal = false;
+        $this->reset(['walkInPlanId', 'witnessedConsent']);
     }
 
     public function render(): View

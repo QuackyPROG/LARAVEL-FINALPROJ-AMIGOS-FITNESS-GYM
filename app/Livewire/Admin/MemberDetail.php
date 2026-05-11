@@ -121,7 +121,9 @@ class MemberDetail extends Component
         $this->member->save();
 
         app(AuditLogger::class)->log('member.deactivated', $this->member, ['status' => 'inactive']);
+        $this->activeAction = null;
         session()->flash('success', 'Member deactivated.');
+        $this->member->refresh();
     }
 
     public function render(): View

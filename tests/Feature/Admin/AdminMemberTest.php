@@ -106,7 +106,8 @@ it('deactivate action creates audit log entry', function (): void {
     // Deactivate via Livewire component
     Livewire::actingAs($admin)
         ->test(MemberIndex::class)
-        ->call('deactivate', $member->id);
+        ->call('confirmDeactivate', $member->id)
+        ->call('executeDeactivate');
 
     $member->refresh();
     expect($member->status)->toBe('inactive');

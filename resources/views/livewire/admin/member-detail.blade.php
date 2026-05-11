@@ -175,7 +175,9 @@
                 <div class="flex flex-col gap-2">
                     <button wire:click="toggleAction('payment')" class="w-full text-left border {{ $activeAction === 'payment' ? 'border-amber-500 text-amber-500 bg-amber-900/10' : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors text-sm px-3 py-2 rounded-md">Record Cash Payment</button>
                     <button wire:click="toggleAction('extend')" class="w-full text-left border {{ $activeAction === 'extend' ? 'border-amber-500 text-amber-500 bg-amber-900/10' : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' }} transition-colors text-sm px-3 py-2 rounded-md">Extend Expiry</button>
-                    <button wire:click="deactivate" wire:confirm="Deactivate this member?" class="w-full text-left border border-red-700 text-red-400 hover:bg-red-900/20 transition-colors text-sm px-3 py-2 rounded-md">Deactivate Member</button>
+                    <button wire:click="deactivate" wire:confirm="Deactivate this member?" class="w-full text-left border border-amber-600/50 text-amber-400 hover:bg-amber-900/20 hover:border-amber-500 transition-colors text-sm px-3 py-2 rounded-md">
+                        Deactivate Member
+                    </button>                    
                     @if($govIdUrl)
                     <a href="{{ $govIdUrl }}" target="_blank" class="text-sm text-gray-300 hover:text-white transition-colors underline mt-2 block">
                         View Government ID <span class="text-xs text-gray-400">(link valid 30 min)</span>
