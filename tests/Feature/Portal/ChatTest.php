@@ -1,4 +1,4 @@
-<?php
+5<?php
 
 use App\Livewire\Admin\ChatInbox;
 use App\Livewire\Portal\ChatWidget;

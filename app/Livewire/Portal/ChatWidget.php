@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Portal;
 
+use App\Events\ChatMessageCreated;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
 use App\Services\ChatbotService;
@@ -55,12 +56,13 @@ class ChatWidget extends Component
                 ->firstOrFail();
         }
 
-        ChatMessage::create([
+        $memberMessage = ChatMessage::create([
             'conversation_id' => $conversation->id,
             'sender_id' => auth()->id(),
             'sender_type' => 'member',
             'body' => $this->message,
         ]);
+        event(new ChatMessageCreated($memberMessage));
 
         $userMessage = $this->message;
         $this->message = '';
@@ -69,24 +71,26 @@ class ChatWidget extends Component
             try {
                 $result = app(ChatbotService::class)->respond($userMessage, auth()->user()->name);
 
-                ChatMessage::create([
+                $botMessage = ChatMessage::create([
                     'conversation_id' => $conversation->id,
                     'sender_id' => null,
                     'sender_type' => 'bot',
                     'body' => $result->reply,
                 ]);
+                event(new ChatMessageCreated($botMessage));
 
                 if ($result->shouldEscalate) {
                     $conversation->status = 'escalated';
                     $conversation->save();
                 }
             } catch (\Throwable) {
-                ChatMessage::create([
+                $botFallbackMessage = ChatMessage::create([
                     'conversation_id' => $conversation->id,
                     'sender_id' => null,
                     'sender_type' => 'bot',
                     'body' => 'Sorry, I\'m having trouble responding right now. A staff member will follow up with you shortly.',
                 ]);
+                event(new ChatMessageCreated($botFallbackMessage));
 
                 $conversation->status = 'escalated';
                 $conversation->save();

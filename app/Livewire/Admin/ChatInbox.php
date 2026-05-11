@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Events\ChatMessageCreated;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
 use Illuminate\Contracts\View\View;
@@ -28,12 +29,13 @@ class ChatInbox extends Component
     {
         $this->validate(['reply' => 'required|string|max:2000']);
 
-        ChatMessage::create([
+        $message = ChatMessage::create([
             'conversation_id' => $this->activeConversationId,
             'sender_id' => auth()->id(),
             'sender_type' => 'admin',
             'body' => $this->reply,
         ]);
+        event(new ChatMessageCreated($message));
 
         $this->reply = '';
     }
@@ -44,12 +46,13 @@ class ChatInbox extends Component
         $conversation->status = 'closed';
         $conversation->save();
 
-        ChatMessage::create([
+        $systemMessage = ChatMessage::create([
             'conversation_id' => $id,
             'sender_id' => null,
             'sender_type' => 'system',
             'body' => 'Conversation closed.',
         ]);
+        event(new ChatMessageCreated($systemMessage));
 
         if ($this->activeConversationId === $id) {
             $this->activeConversationId = null;
