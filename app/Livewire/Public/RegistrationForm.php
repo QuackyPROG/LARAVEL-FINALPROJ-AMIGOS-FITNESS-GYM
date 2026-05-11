@@ -11,6 +11,7 @@ use App\Models\SiteContent;
 use App\Models\User;
 use App\Services\PayMongoService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Rule;
@@ -159,6 +160,11 @@ class RegistrationForm extends Component
                 ],
                 successUrl: route('payment.success').'?ref='.$membership->id,
                 cancelUrl: route('payment.failed').'?ref='.$membership->id,
+                billingDetails: [
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'phone' => $this->phone,
+                ],
             );
 
             $sessionId = $checkoutSession['id'] ?? null;
@@ -172,6 +178,12 @@ class RegistrationForm extends Component
 
             return redirect()->away($checkoutUrl);
         } catch (\Throwable $e) {
+            Log::warning('Registration payment checkout failed.', [
+                'email' => $this->email,
+                'exception' => $e::class,
+                'message' => $e->getMessage(),
+            ]);
+
             if ($user && $user->exists) {
                 $user->profile?->delete();
                 $membership?->delete();
