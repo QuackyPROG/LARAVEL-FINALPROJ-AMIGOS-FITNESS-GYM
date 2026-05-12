@@ -99,14 +99,25 @@ class RegistrationForm extends Component
         }
     }
 
+    public function updatedEmail(): void
+    {
+        $this->validateOnly('email');
+    }
+
     public function submit(PayMongoService $payMongoService): mixed
     {
-        // Final guard: ensure all consents were checked
+        // Final guard: validate all registration fields again before creating the user
         $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:30',
+            'dob' => 'required|date|before:today',
+            'planId' => 'required|integer|exists:membership_plans,id',
             'consentTerms' => 'accepted',
             'consentContract' => 'accepted',
             'consentWaiver' => 'accepted',
             'consentPrivacy' => 'accepted',
+            'governmentId' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $this->processing = true;
