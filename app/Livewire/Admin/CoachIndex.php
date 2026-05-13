@@ -14,8 +14,11 @@ class CoachIndex extends Component
     use WithFileUploads;
 
     public bool $showForm = false;
+    public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+    public ?int $selectedCoachId = null;
+    public ?Coach $selectedCoach = null;
 
     #[Rule('required|string|max:100')]
     public string $name = '';
@@ -85,6 +88,26 @@ class CoachIndex extends Component
         app(AuditLogger::class)->log('coach.deleted', $coach, ['name' => $coach->name]);
         $coach->delete();
         session()->flash('success', 'Coach deleted.');
+    }
+
+    public function confirmDelete(int $id): void
+    {
+        $this->selectedCoachId = $id;
+        $this->selectedCoach = Coach::findOrFail($id);
+        $this->showDeleteModal = true;
+    }
+
+    public function executeDelete(): void
+    {
+        if ($this->selectedCoachId) {
+            $coach = Coach::findOrFail($this->selectedCoachId);
+            app(AuditLogger::class)->log('coach.deleted', $coach, ['name' => $coach->name]);
+            $coach->delete();
+            session()->flash('success', 'Coach deleted.');
+        }
+        $this->showDeleteModal = false;
+        $this->selectedCoachId = null;
+        $this->selectedCoach = null;
     }
 
     private function resetForm(): void

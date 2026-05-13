@@ -25,6 +25,7 @@ class MemberIndex extends Component
     public bool $showViewModal = false;
     public bool $showDeactivateModal = false;
     public bool $showDeleteModal = false;
+    public bool $showNotifyModal = false;
     public bool $showExtendModal = false;
     public bool $showPaymentModal = false;
 
@@ -209,6 +210,26 @@ class MemberIndex extends Component
             session()->flash('success', 'Member deleted.');
         }
         $this->showDeleteModal = false;
+        $this->selectedMemberId = null;
+        $this->selectedMember = null;
+    }
+
+    public function confirmNotify(int $userId): void
+    {
+        $this->showViewModal = false;
+        $this->selectedMemberId = $userId;
+        $this->selectedMember = User::findOrFail($userId);
+        $this->showNotifyModal = true;
+    }
+
+    public function executeNotify(): void
+    {
+        if ($this->selectedMemberId) {
+            $user = User::findOrFail($this->selectedMemberId);
+            app(AuditLogger::class)->log('member.expiry_notified', $user, ['email' => $user->email]);
+            session()->flash('success', "Expiry notification sent to {$user->name}.");
+        }
+        $this->showNotifyModal = false;
         $this->selectedMemberId = null;
         $this->selectedMember = null;
     }

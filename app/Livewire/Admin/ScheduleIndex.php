@@ -12,8 +12,11 @@ use Livewire\Component;
 class ScheduleIndex extends Component
 {
     public bool $showForm = false;
+    public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+    public ?int $selectedScheduleId = null;
+    public ?ClassSchedule $selectedSchedule = null;
 
     #[Rule('required|string|max:100')]
     public string $name = '';
@@ -82,6 +85,26 @@ class ScheduleIndex extends Component
         $schedule = ClassSchedule::findOrFail($id);
         app(AuditLogger::class)->log('schedule.deleted', $schedule, []);
         $schedule->delete();
+    }
+
+    public function confirmDelete(int $id): void
+    {
+        $this->selectedScheduleId = $id;
+        $this->selectedSchedule = ClassSchedule::findOrFail($id);
+        $this->showDeleteModal = true;
+    }
+
+    public function executeDelete(): void
+    {
+        if ($this->selectedScheduleId) {
+            $schedule = ClassSchedule::findOrFail($this->selectedScheduleId);
+            app(AuditLogger::class)->log('schedule.deleted', $schedule, []);
+            $schedule->delete();
+            session()->flash('success', 'Schedule deleted.');
+        }
+        $this->showDeleteModal = false;
+        $this->selectedScheduleId = null;
+        $this->selectedSchedule = null;
     }
 
     private function resetForm(): void
