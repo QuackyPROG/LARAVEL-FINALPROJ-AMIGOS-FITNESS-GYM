@@ -1,4 +1,5 @@
 <div>
+    <x-admin-splash target="saveMember, executeDeactivate, executeDelete, executeNotify, executeNotifyExpiring, recordCashPayment, saveExtension" />
     <div class="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         
         <div>
@@ -9,7 +10,7 @@
         <div class="flex flex-wrap items-center gap-3">
             
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none z-10">
                     <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -88,30 +89,34 @@
                 </div>
             </div>
 
+            <button wire:click="confirmNotifyExpiring" class="bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-amber-400 p-2.5 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.1)] hover:shadow-[0_0_20px_rgba(251,191,36,0.2)] flex items-center justify-center transform hover:-translate-y-0.5" title="Notify Expiring Members">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </button>
+
             <button wire:click="openAddModal" class="bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 transition-all text-black font-bold text-sm px-5 py-2 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] flex items-center gap-2 transform hover:-translate-y-0.5">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                 Walk-in Member
             </button>
         </div>
-    </div> @if(session('success'))
-        <div class="bg-green-900/20 border border-green-700 text-green-300 text-sm px-4 py-3 rounded-md mb-4">{{ session('success') }}</div>
-    @endif
+    </div>
 
-    <div class="bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-visible">
         <table class="w-full text-sm">
-            <thead class="border-b border-white/10 bg-white/[0.03]">
+            <thead class="border-b border-white/10 bg-white/5">
                 <tr>
-                    <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Name</th>
-                    <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Email</th>
-                    <th class="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Status</th>
-                    <th class="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Plan</th>
-                    <th class="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Expires</th>
-                    <th class="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider py-4 px-5">Actions</th>
+                    <th class="text-left text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5 first:rounded-tl-xl">Name</th>
+                    <th class="text-left text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5">Email</th>
+                    <th class="text-center text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5">Status</th>
+                    <th class="text-center text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5">Plan</th>
+                    <th class="text-center text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5">Expires</th>
+                    <th class="text-center text-xs font-semibold text-gray-200 uppercase tracking-wider py-4 px-5 last:rounded-tr-xl">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-white/[0.05] bg-transparent">
+            <tbody class="divide-y divide-white/10">
                 @forelse($members as $member)
-                    <tr class="hover:bg-white/[0.04] transition-all duration-300 group">
+                    <tr class="hover:bg-white/5 transition-all duration-300 group">
                         <td class="py-4 px-5">
                             <button wire:click="openViewModal({{ $member->id }})" class="font-medium text-white underline decoration-white/30 hover:decoration-white cursor-pointer transition-colors">{{ $member->name }}</button>
                         </td>
@@ -138,32 +143,34 @@
                         <td class="py-4 px-5">
                             <div class="flex items-center justify-center relative">
                                 <div class="relative group">
-                                    <button class="text-gray-400 hover:text-gray-200 transition-all p-1.5 hover:bg-gray-700/50 rounded-lg border border-transparent hover:border-gray-600" title="More actions">
+                                    <button class="text-gray-400 hover:text-white transition-all p-1.5 hover:bg-white/10 rounded-lg border border-transparent hover:border-white/20" title="More actions">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <circle cx="3" cy="10" r="1.5" fill="currentColor"/>
                                             <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
                                             <circle cx="17" cy="10" r="1.5" fill="currentColor"/>
                                         </svg>
                                     </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-dark-card border border-gray-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                        <button wire:click="openViewModal({{ $member->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-blue-400 transition-colors rounded-t-lg flex items-center gap-2">
+                                    <div class="absolute right-0 mt-2 w-48 bg-black/80 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60]">
+                                        <div class="p-1.5">
+                                        <button wire:click="openViewModal({{ $member->id }})" class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-blue-400 transition-colors rounded-lg flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
                                             View Details
                                         </button>
-                                        <button wire:click="confirmNotify({{ $member->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-blue-400 transition-colors flex items-center gap-2 border-t border-gray-700">
+                                        <button wire:click="confirmNotify({{ $member->id }})" class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-blue-400 transition-colors flex items-center gap-2 mt-0.5 rounded-lg">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 100 12 6 6 0 000-12zM0 10a10 10 0 1120 0 10 10 0 01-20 0z"/></svg>
                                             Notify Expiry
                                         </button>
                                         @if($member->status === 'active')
-                                        <button wire:click="confirmDeactivate({{ $member->id }})" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-amber-400 transition-colors flex items-center gap-2 border-t border-gray-700">
+                                        <button wire:click="confirmDeactivate({{ $member->id }})" class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-amber-400 transition-colors flex items-center gap-2 mt-0.5 rounded-lg">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"/></svg>
                                             Deactivate
                                         </button>
                                         @endif
-                                        <button wire:click="confirmDelete({{ $member->id }})" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors rounded-b-lg flex items-center gap-2 border-t border-gray-700">
+                                        <button wire:click="confirmDelete({{ $member->id }})" class="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors rounded-lg flex items-center gap-2 mt-0.5">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                                             Delete
                                         </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -186,7 +193,9 @@
         </table>
     </div>
 
-    <div class="mt-4">{{ $members->links() }}</div>
+    @if($members instanceof \Illuminate\Contracts\Pagination\Paginator && $members->hasPages())
+        <div class="mt-6 flex justify-center items-center">{{ $members->links('components.custom-pagination') }}</div>
+    @endif
 
 @if($showAddModal)
         <style>
@@ -227,7 +236,7 @@
                             <div class="flex justify-center mb-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <p class="font-bold text-base mb-2 text-white">Success!</p>
+                            <p class="font-bold text-base mb-2 text-green-400">Success!</p>
                             <p class="mb-3">Temporary Password:</p>
                             <code class="bg-black/50 border border-white/10 px-4 py-2 rounded-lg text-lg text-amber-400 font-mono tracking-wider block mb-3">{{ $tempPasswordResult }}</code>
                             <p class="text-xs mt-2 text-green-400/80">Please copy this password. It won't be shown again.</p>
@@ -347,7 +356,7 @@
             
             <div class="relative w-full max-w-6xl h-[90vh] mx-auto group overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
                 
-                <div class="absolute top-1/2 left-1/2 w-[150%] h-[150%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-gold"></div>
+                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-gold"></div>
                 
                 <div class="relative z-10 bg-dark-card rounded-xl w-full h-full flex flex-col overflow-hidden isolate shadow-2xl">
                     
@@ -369,7 +378,7 @@
                         <div class="flex flex-col gap-6">
                             
                             {{-- Profile Info --}}
-                            <div class="bg-gray-800/30 border border-gray-700 rounded-xl p-5 shadow-inner shrink-0">
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-5 shadow-inner shrink-0">
                                 <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-4">Profile Details</h2>
                                 <div class="grid grid-cols-2 gap-x-6 gap-y-4">
                                     <div class="flex flex-col gap-1">
@@ -404,23 +413,23 @@
                             </div>
 
                             {{-- Legal Agreements / Consent History --}}
-                            <div class="bg-gray-800/30 border border-gray-700 rounded-xl overflow-hidden shadow-inner shrink-0">
-                                <div class="px-4 py-3 border-b border-gray-700 bg-gray-800/50">
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl shrink-0 overflow-hidden">
+                                <div class="px-4 py-3 border-b border-white/10 bg-white/5">
                                     <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Legal Agreements</h2>
                                 </div>
                                 @if(!isset($selectedMember->consents) || $selectedMember->consents->isEmpty())
                                     <div class="p-4 text-xs text-gray-500 text-center italic">No consent records found.</div>
                                 @else
-                                    <div class="overflow-hidden">
+                                    <div class="overflow-visible">
                                         <table class="w-full text-xs">
-                                            <thead class="border-b border-gray-700 bg-gray-800/30">
+                                            <thead class="border-b border-white/10 bg-white/5">
                                                 <tr>
                                                     <th class="text-left font-medium text-gray-400 uppercase tracking-wide py-2 px-4">Document</th>
                                                     <th class="text-center font-medium text-gray-400 uppercase tracking-wide py-2 px-3">Method</th>
                                                     <th class="text-center font-medium text-gray-400 uppercase tracking-wide py-2 px-3">Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-gray-700/50">
+                                            <tbody class="divide-y divide-white/10 bg-transparent">
                                                 @foreach($selectedMember->consents as $consent)
                                                     @php
                                                         $docTitle = match($consent->document_key) {
@@ -431,7 +440,7 @@
                                                             default                      => $consent->document_key,
                                                         };
                                                     @endphp
-                                                    <tr class="hover:bg-gray-700/30 transition-colors">
+                                                    <tr class="hover:bg-white/5 transition-colors">
                                                         <td class="py-2 px-4">
                                                             <div class="font-medium text-white">{{ $docTitle }}</div>
                                                             <div class="text-[10px] text-gray-500">v{{ $consent->version }} • {{ $consent->accepted_at->format('M j, y') }}</div>
@@ -462,23 +471,23 @@
                         </div>
 
                         <div class="flex flex-col h-full min-h-0">
-                            <div class="bg-gray-800/30 border border-gray-700 rounded-xl overflow-hidden flex flex-col shadow-inner h-full min-h-0 w-full">
-                                <div class="px-5 py-4 border-b border-gray-700 bg-gray-800/50 shrink-0">
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl flex flex-col shadow-xl h-full min-h-0 w-full overflow-hidden">
+                                <div class="px-5 py-4 border-b border-white/10 bg-white/5 shrink-0">
                                     <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Membership History</h2>
                                 </div>
                                 
                                 <div class="overflow-y-auto overflow-x-hidden flex-1 custom-scrollbar relative">
                                     <table class="w-full text-sm table-fixed">
-                                        <thead class="sticky top-0 bg-gray-800/95 backdrop-blur shadow-sm z-10 border-b border-gray-700">
+                                        <thead class="sticky top-0 bg-black/50 backdrop-blur-xl shadow-sm z-10 border-b border-white/10">
                                             <tr>
                                                 <th class="text-left text-xs font-medium text-gray-400 uppercase tracking-wide py-3 px-5 w-5/12">Plan</th>
                                                 <th class="text-center text-xs font-medium text-gray-400 uppercase tracking-wide py-3 px-4 w-3/12">Status</th>
                                                 <th class="text-center text-xs font-medium text-gray-400 uppercase tracking-wide py-3 px-4 w-4/12">Timeline</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-700/50">
+                                        <tbody class="divide-y divide-white/10 bg-transparent">
                                             @forelse($selectedMember->memberships ?? [] as $ms)
-                                                <tr class="hover:bg-gray-700/30 transition-colors">
+                                                <tr class="hover:bg-white/5 transition-colors">
                                                     <td class="py-4 px-5 font-medium text-white break-words">{{ $ms->plan?->name ?? '—' }}</td>
                                                     <td class="py-4 px-4 text-center">
                                                         @if($ms->status === 'active')
@@ -506,7 +515,7 @@
                     </div>
                 </div>
                 
-                <div class="p-5 border-t border-gray-700 bg-gray-800/40 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="p-5 border-t border-white/10 bg-white/5 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="text-sm text-gray-500 hidden sm:block">
                         Manage member record
                     </div>
@@ -613,6 +622,32 @@
                     <div class="flex justify-end gap-3">
                         <button wire:click="$set('showNotifyModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
                         <button wire:click="executeNotify" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-blue-900/50 transition-all focus:outline-none">Send Notification</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if($showNotifyExpiringModal)
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+            
+            <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
+                
+                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-blue"></div>
+                
+                <div class="relative z-10 bg-dark-card rounded-xl shadow-2xl p-6 w-full h-full isolate">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 p-3 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Notify Expiring</h2>
+                    </div>
+                    <p class="text-gray-300 text-sm mb-6 leading-relaxed">Send an expiry notification to all members whose subscriptions expire within 7 days.</p>
+                    <div class="flex justify-end gap-3">
+                        <button wire:click="$set('showNotifyExpiringModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
+                        <button wire:click="executeNotifyExpiring" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-blue-900/50 transition-all focus:outline-none">Send Notifications</button>
                     </div>
                 </div>
             </div>

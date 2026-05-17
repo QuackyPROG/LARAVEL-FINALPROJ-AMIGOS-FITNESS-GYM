@@ -36,6 +36,15 @@
             color: #eab308;
             filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.5));
         }
+
+        /* Prevent browser autofill from changing the background and text color */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            transition: background-color 5000s ease-in-out 0s;
+            -webkit-text-fill-color: white !important;
+        }
     </style>
 </head>
 
@@ -53,7 +62,7 @@
     <main class="relative z-10 w-full max-w-7xl mx-4 flex flex-col md:flex-row rounded-2xl overflow-hidden glass-card gold-glow">
         
         <!-- LEFT SIDE: LOGIN FORM -->
-        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center relative">
+        <div class="w-full md:w-2/5 p-8 md:p-16 flex flex-col justify-center relative">
             
             <!-- Gym Logo -->
             <div class="mb-0 flex justify-center">
@@ -140,7 +149,7 @@
         </div>
 
         <!-- RIGHT SIDE: HERO IMAGE -->
-        <div class="hidden md:block w-1/2 relative bg-black">
+        <div class="hidden md:block w-3/5 relative bg-black">
             <!-- Added object-top or object-center to adjust the image if needed, and reduced overlay opacity -->
             <img src="{{ asset('images/gym-bg.png') }}" 
                  class="absolute inset-0 w-full h-full object-cover object-right" 

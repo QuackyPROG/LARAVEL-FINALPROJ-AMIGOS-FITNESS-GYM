@@ -8,9 +8,14 @@ use App\Services\AuditLogger;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ScheduleIndex extends Component
 {
+    use WithPagination;
+
+    public int $onEachSide = 1;
+
     private const DAY_LABELS = [
         0 => 'Sunday',
         1 => 'Monday',
@@ -28,6 +33,11 @@ class ScheduleIndex extends Component
     public ?int $selectedScheduleId = null;
     public ?ClassSchedule $selectedSchedule = null;
 
+    public string $search = '';
+    public string $sort = 'name_asc';
+    public string $coachFilter = '';
+    public string $dayFilter = '';
+
     #[Rule('required|string|max:100')]
     public string $name = '';
 
@@ -44,6 +54,13 @@ class ScheduleIndex extends Component
     public int $capacity = 10;
 
     public bool $isRecurring = true;
+
+    public function updated($property): void
+    {
+        if (in_array($property, ['sort', 'coachFilter', 'dayFilter', 'search'])) {
+            $this->resetPage();
+        }
+    }
 
     public function openCreate(): void
     {
@@ -141,8 +158,32 @@ class ScheduleIndex extends Component
 
     public function render(): View
     {
+        $query = ClassSchedule::with('coach');
+
+        if ($this->search !== '') {
+            $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%']);
+        }
+
+        if ($this->coachFilter !== '') {
+            $query->where('coach_id', $this->coachFilter);
+        }
+
+        if ($this->dayFilter !== '') {
+            $query->where('day_of_week', $this->dayFilter);
+        }
+
+        if ($this->sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } elseif ($this->sort === 'name_desc') {
+            $query->orderBy('name', 'desc');
+        } elseif ($this->sort === 'capacity_asc') {
+            $query->orderBy('capacity', 'asc');
+        } elseif ($this->sort === 'capacity_desc') {
+            $query->orderBy('capacity', 'desc');
+        }
+
         return view('livewire.admin.schedule-index', [
-            'schedules' => ClassSchedule::with('coach')->orderBy('day_of_week')->orderBy('time')->get(),
+            'schedules' => $query->paginate(6),
             'coaches' => Coach::orderBy('name')->get(),
         ]);
     }

@@ -13,6 +13,9 @@ use Livewire\Component;
 
 class LegalDocumentEditor extends Component
 {
+    public $documents = [];
+    public bool $showForm = false;
+
     public string $slug = '';
 
     public string $siteContentKey = '';
@@ -36,15 +39,30 @@ class LegalDocumentEditor extends Component
 
     public bool $saved = false;
 
-    public function mount(string $slug): void
+    public function mount(mixed $documents = [], string $slug = ''): void
     {
-        abort_unless(array_key_exists($slug, LegalDocumentController::DOCUMENTS), 404);
+        $this->documents = collect($documents)->toArray();
+
+        if ($slug !== '') {
+            $this->openEdit($slug);
+        }
+    }
+
+    public function openEdit(string $slug): void
+    {
+        $docConfig = LegalDocumentController::DOCUMENTS[$slug] ?? null;
+        abort_if(! $docConfig, 404);
 
         $this->slug = $slug;
-        $this->siteContentKey = LegalDocumentController::DOCUMENTS[$slug]['key'];
-        $this->title = LegalDocumentController::DOCUMENTS[$slug]['title'];
+        $this->siteContentKey = $docConfig['key'];
+        $this->title = $docConfig['title'];
         $this->body = SiteContent::get($this->siteContentKey);
         $this->version = (int) SiteContent::get($this->siteContentKey.'_version', '1');
+
+        $this->showForm = true;
+        $this->saved = false;
+        $this->draftError = '';
+        $this->resetValidation();
     }
 
     public function save(): void
@@ -65,7 +83,16 @@ class LegalDocumentEditor extends Component
             ]);
         }
 
+        foreach ($this->documents as &$doc) {
+            if ($doc['slug'] === $this->slug) {
+                $doc['updated_at'] = now()->toDateTimeString();
+                $doc['version'] = $newVersion;
+            }
+        }
+
         $this->saved = true;
+        $this->showForm = false;
+        session()->flash('success', "Document saved and version incremented to v{$newVersion}.");
     }
 
     public function preview(): void

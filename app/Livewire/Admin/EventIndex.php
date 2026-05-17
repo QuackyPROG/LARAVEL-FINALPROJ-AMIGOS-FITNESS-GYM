@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\Event;
 use App\Services\AuditLogger;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,8 +16,11 @@ class EventIndex extends Component
     use WithFileUploads;
 
     public bool $showForm = false;
+    public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+    public ?int $selectedEventId = null;
+    public ?Event $selectedEvent = null;
 
     #[Rule('required|string|max:200')]
     public string $title = '';
@@ -30,6 +35,8 @@ class EventIndex extends Component
 
     #[Rule('nullable|image|max:4096')]
     public $coverImage = null;
+    // cropped base64 data URL from client-side cropper
+    public ?string $coverImageCropped = null;
 
     public function openCreate(): void
     {
@@ -54,7 +61,7 @@ class EventIndex extends Component
             'title' => 'required|string|max:200',
             'description' => 'nullable|string',
             'date' => 'required|date',
-            'coverImage' => 'nullable|image|max:4096',
+            'coverImageCropped' => 'nullable|string',
         ]);
 
         $data = [
@@ -64,7 +71,18 @@ class EventIndex extends Component
             'is_visible' => $this->isVisible,
         ];
 
-        if ($this->coverImage) {
+        if ($this->coverImageCropped) {
+            if (preg_match('/^data:image\/([a-zA-Z]+);base64,/', $this->coverImageCropped, $matches)) {
+                $ext = strtolower($matches[1]) === 'jpeg' ? 'jpg' : strtolower($matches[1]);
+            } else {
+                $ext = 'jpg';
+            }
+            $filename = 'events/' . Str::random(40) . '.' . $ext;
+            $dataBody = substr($this->coverImageCropped, strpos($this->coverImageCropped, ',') + 1);
+            $decoded = base64_decode($dataBody);
+            Storage::disk('public')->put($filename, $decoded);
+            $data['cover_image'] = $filename;
+        } elseif ($this->coverImage) {
             $data['cover_image'] = $this->coverImage->storeAs('events', $this->coverImage->hashName(), 'public');
         }
 
@@ -89,6 +107,26 @@ class EventIndex extends Component
         app(AuditLogger::class)->log('event.toggled', $event, ['is_visible' => $event->is_visible]);
     }
 
+    public function confirmDelete(int $id): void
+    {
+        $this->selectedEventId = $id;
+        $this->selectedEvent = Event::findOrFail($id);
+        $this->showDeleteModal = true;
+    }
+
+    public function executeDelete(): void
+    {
+        if ($this->selectedEventId) {
+            $event = Event::findOrFail($this->selectedEventId);
+            app(AuditLogger::class)->log('event.deleted', $event, ['title' => $event->title]);
+            $event->delete();
+            session()->flash('success', 'Event deleted.');
+        }
+        $this->showDeleteModal = false;
+        $this->selectedEventId = null;
+        $this->selectedEvent = null;
+    }
+
     private function resetForm(): void
     {
         $this->showForm = false;
@@ -98,6 +136,7 @@ class EventIndex extends Component
         $this->date = '';
         $this->isVisible = true;
         $this->coverImage = null;
+        $this->coverImageCropped = null;
     }
 
     public function render(): View

@@ -17,6 +17,10 @@ class AnnouncementIndex extends Component
 
     public bool $showPreview = false;
 
+    public string $search = '';
+
+    public string $filterStatus = '';
+
     #[Rule('required|string|max:255')]
     public string $subject = '';
 
@@ -87,8 +91,15 @@ class AnnouncementIndex extends Component
 
     public function render(): View
     {
+        $query = Announcement::with('admin')
+            ->when($this->search, function ($q) {
+                $q->whereRaw('LOWER(subject) LIKE ?', ['%' . strtolower($this->search) . '%']);
+            })
+            ->when($this->filterStatus === 'sent', fn ($q) => $q->whereNotNull('sent_at'))
+            ->when($this->filterStatus === 'draft', fn ($q) => $q->whereNull('sent_at'));
+
         return view('livewire.admin.announcement-index', [
-            'announcements' => Announcement::with('admin')->latest()->get(),
+            'announcements' => $query->latest()->get(),
             'plans' => MembershipPlan::active()->get(),
             'recipientCount' => $this->recipientCount(),
         ]);

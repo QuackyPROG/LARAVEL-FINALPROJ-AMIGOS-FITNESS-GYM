@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\Coach;
 use App\Services\AuditLogger;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -31,6 +33,8 @@ class CoachIndex extends Component
 
     #[Rule('nullable|image|max:2048')]
     public $photo = null;
+    // base64 cropped image from client-side Cropper.js (data URL)
+    public ?string $photoCropped = null;
 
     public function openCreate(): void
     {
@@ -54,7 +58,7 @@ class CoachIndex extends Component
             'name' => 'required|string|max:100',
             'bio' => 'nullable|string',
             'specializationsRaw' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048',
+            'photoCropped' => 'nullable|string',
         ]);
 
         $specializations = array_filter(array_map('trim', explode("\n", $this->specializationsRaw)));
@@ -65,7 +69,18 @@ class CoachIndex extends Component
             'specializations' => array_values($specializations),
         ];
 
-        if ($this->photo) {
+        if ($this->photoCropped) {
+            if (preg_match('/^data:image\/([a-zA-Z]+);base64,/', $this->photoCropped, $matches)) {
+                $ext = strtolower($matches[1]) === 'jpeg' ? 'jpg' : strtolower($matches[1]);
+            } else {
+                $ext = 'jpg';
+            }
+            $filename = 'coaches/' . Str::random(40) . '.' . $ext;
+            $dataBody = substr($this->photoCropped, strpos($this->photoCropped, ',') + 1);
+            $decoded = base64_decode($dataBody);
+            Storage::disk('public')->put($filename, $decoded);
+            $data['photo'] = $filename;
+        } elseif ($this->photo) {
             $data['photo'] = $this->photo->storeAs('coaches', $this->photo->hashName(), 'public');
         }
 
@@ -117,7 +132,8 @@ class CoachIndex extends Component
         $this->name = '';
         $this->bio = '';
         $this->specializationsRaw = '';
-        $this->photo = null;
+        $this->reset('photo');
+        $this->photoCropped = null;
     }
 
     public function render(): View

@@ -18,6 +18,8 @@ class MemberIndex extends Component
 {
     use WithPagination;
 
+    public int $onEachSide = 1;
+
     public string $search = '';
     public string $statusFilter = '';
 
@@ -26,6 +28,7 @@ class MemberIndex extends Component
     public bool $showDeactivateModal = false;
     public bool $showDeleteModal = false;
     public bool $showNotifyModal = false;
+    public bool $showNotifyExpiringModal = false;
     public bool $showExtendModal = false;
     public bool $showPaymentModal = false;
 
@@ -234,6 +237,34 @@ class MemberIndex extends Component
         $this->selectedMember = null;
     }
 
+    public function confirmNotifyExpiring(): void
+    {
+        $this->showNotifyExpiringModal = true;
+    }
+
+    public function executeNotifyExpiring(): void
+    {
+        $expiringMembers = User::where('role', 'member')
+            ->where('status', 'active')
+            ->whereHas('activeMembership', function ($q) {
+                $q->whereBetween('expires_at', [now()->startOfDay(), now()->addDays(7)->endOfDay()]);
+            })
+            ->get();
+
+        if ($expiringMembers->isEmpty()) {
+            session()->flash('success', 'No members are expiring within 7 days.');
+            $this->showNotifyExpiringModal = false;
+            return;
+        }
+
+        foreach ($expiringMembers as $user) {
+            app(AuditLogger::class)->log('member.expiry_notified', $user, ['email' => $user->email, 'bulk' => true]);
+        }
+
+        session()->flash('success', "Expiry notifications queued for {$expiringMembers->count()} members.");
+        $this->showNotifyExpiringModal = false;
+    }
+
     public function resetPassword(int $userId): void
     {
         $user = User::findOrFail($userId);
@@ -309,8 +340,9 @@ class MemberIndex extends Component
         $query = User::where('role', 'member')
             ->with(['activeMembership.plan'])
             ->when($this->search, fn ($q) => $q->where(function ($q2): void {
-                $q2->where('name', 'ilike', '%'.$this->search.'%')
-                    ->orWhere('email', 'ilike', '%'.$this->search.'%');
+                $term = '%' . strtolower($this->search) . '%';
+                $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                   ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
             }))
             ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
             ->latest();

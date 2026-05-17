@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }} Admin — @yield('title', 'Dashboard')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
     @livewireStyles
     <style>
         /* Premium Glassmorphism for Table Cards */
@@ -87,10 +88,10 @@
     <!-- Removed sidebar toggle x button -->
 
     <div class="px-4 py-4 bg-dark-card">
-        <a href="{{ route('admin.dashboard') }}" class="text-sm hover:opacity-80 transition-opacity">
-            <span class="block font-black uppercase bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 bg-clip-text text-transparent">Amigos Admin</span>
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-sm hover:opacity-80 transition-opacity">
+            <img src="{{ asset('images/amigos1.png') }}" alt="Amigo's Fitness Gym" class="h-8 w-auto filter drop-shadow-md">
+            <span class="block font-extrabold uppercase bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 bg-clip-text text-transparent">Amigos Admin</span>
         </a>
-        <p class="text-xs text-gray-300 mt-0.5">Management Panel</p>
     </div>
 
     <flux:navlist class="bg-dark-card flex-1 overflow-hidden admin-navlist">
@@ -141,6 +142,8 @@
 
 @fluxScripts
 @livewireScripts
+
+@stack('scripts')
 
 <script>
     function initAdminNav() {
