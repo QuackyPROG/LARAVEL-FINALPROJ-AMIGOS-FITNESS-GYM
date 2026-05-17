@@ -1,9 +1,12 @@
 <?php
 
+use App\Jobs\SendWelcomeEmail;
 use App\Models\Membership;
 use App\Models\MembershipPlan;
 use App\Models\User;
+use App\Services\PayMongoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
 
@@ -57,6 +60,63 @@ it('shows a pending message when webhook has not fired yet', function (): void {
 
     $response->assertStatus(200);
     $response->assertSee('Processing');
+});
+
+it('activates a pending membership from a paid checkout session on success redirect', function (): void {
+    Queue::fake();
+    config(['paymongo.secret_key' => 'sk_test_dummy']);
+
+    $membership = membershipWithPlan('pending_payment');
+
+    $this->mock(PayMongoService::class, function ($mock): void {
+        $mock->shouldReceive('getCheckoutSession')
+            ->once()
+            ->with('cs_test_result')
+            ->andReturn([
+                'id' => 'cs_test_result',
+                'attributes' => [
+                    'status' => 'paid',
+                ],
+            ]);
+    });
+
+    $response = $this->get('/payment/success?ref='.$membership->id);
+
+    $response->assertStatus(200);
+    $response->assertSee('Payment Confirmed!');
+
+    $membership->refresh();
+    expect($membership->status)->toBe('active');
+    expect($membership->payment_ref)->toBe('cs_test_result');
+    expect($membership->user->fresh()->status)->toBe('active');
+
+    Queue::assertPushed(SendWelcomeEmail::class);
+});
+
+it('keeps a membership pending when the checkout session is not paid yet', function (): void {
+    config(['paymongo.secret_key' => 'sk_test_dummy']);
+
+    $membership = membershipWithPlan('pending_payment');
+
+    $this->mock(PayMongoService::class, function ($mock): void {
+        $mock->shouldReceive('getCheckoutSession')
+            ->once()
+            ->with('cs_test_result')
+            ->andReturn([
+                'id' => 'cs_test_result',
+                'attributes' => [
+                    'status' => 'active',
+                    'payment_status' => 'unpaid',
+                ],
+            ]);
+    });
+
+    $response = $this->get('/payment/success?ref='.$membership->id);
+
+    $response->assertStatus(200);
+    $response->assertSee('Processing');
+
+    expect($membership->fresh()->status)->toBe('pending_payment');
 });
 
 it('returns 200 on the payment failed page', function (): void {

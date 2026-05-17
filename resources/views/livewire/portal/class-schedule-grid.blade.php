@@ -5,13 +5,13 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        @foreach($days as $day)
+        @foreach($days as $dayValue => $dayLabel)
         <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
             <div class="px-3 py-2 border-b border-gray-100 bg-gray-50">
-                <p class="text-xs font-semibold text-gray-700 uppercase tracking-wide">{{ $day }}</p>
+                <p class="text-xs font-semibold text-gray-700 uppercase tracking-wide">{{ $dayLabel }}</p>
             </div>
             <div class="divide-y divide-gray-50">
-                @forelse($schedules->get($day, collect()) as $class)
+                @forelse($schedules->get($dayValue, collect()) as $class)
                 <div class="px-3 py-3">
                     <p class="text-sm font-medium text-gray-900">{{ $class->name }}</p>
                     <p class="text-xs text-gray-500">{{ $class->time }}</p>

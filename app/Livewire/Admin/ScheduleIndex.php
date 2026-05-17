@@ -11,6 +11,16 @@ use Livewire\Component;
 
 class ScheduleIndex extends Component
 {
+    private const DAY_LABELS = [
+        0 => 'Sunday',
+        1 => 'Monday',
+        2 => 'Tuesday',
+        3 => 'Wednesday',
+        4 => 'Thursday',
+        5 => 'Friday',
+        6 => 'Saturday',
+    ];
+
     public bool $showForm = false;
     public bool $showDeleteModal = false;
 
@@ -24,8 +34,8 @@ class ScheduleIndex extends Component
     #[Rule('nullable|exists:coaches,id')]
     public ?int $coachId = null;
 
-    #[Rule('required|string')]
-    public string $dayOfWeek = 'Monday';
+    #[Rule('required|integer|between:0,6')]
+    public int $dayOfWeek = 1;
 
     #[Rule('required|string')]
     public string $time = '09:00';
@@ -47,7 +57,7 @@ class ScheduleIndex extends Component
         $this->editingId = $id;
         $this->name = $schedule->name;
         $this->coachId = $schedule->coach_id;
-        $this->dayOfWeek = $schedule->day_of_week;
+        $this->dayOfWeek = (int) $schedule->day_of_week;
         $this->time = $schedule->time;
         $this->capacity = $schedule->capacity;
         $this->isRecurring = $schedule->is_recurring;
@@ -113,10 +123,20 @@ class ScheduleIndex extends Component
         $this->editingId = null;
         $this->name = '';
         $this->coachId = null;
-        $this->dayOfWeek = 'Monday';
+        $this->dayOfWeek = 1;
         $this->time = '09:00';
         $this->capacity = 10;
         $this->isRecurring = true;
+    }
+
+    public function dayLabel(int $day): string
+    {
+        return self::DAY_LABELS[$day] ?? 'Unknown';
+    }
+
+    public function dayOptions(): array
+    {
+        return self::DAY_LABELS;
     }
 
     public function render(): View

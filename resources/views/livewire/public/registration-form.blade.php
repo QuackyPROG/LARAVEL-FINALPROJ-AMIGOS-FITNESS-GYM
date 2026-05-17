@@ -1,84 +1,77 @@
-{{-- Step progress track --}}
 @php
     $steps = [1 => 'Details', 2 => 'Plan', 3 => 'Agreements', 4 => 'ID', 5 => 'Payment'];
 @endphp
 
-<div class="max-w-2xl mx-auto">
-    {{-- Progress Track --}}
-    <div class="flex items-center mb-8" aria-label="Registration progress">
+<div class="rg-wizard">
+    <div class="rg-progress" aria-label="Registration progress">
         @foreach($steps as $step => $label)
-            <div class="flex flex-col items-center">
-                <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm {{ $currentStep > $step ? 'bg-gray-900 border-gray-900 text-white' : ($currentStep === $step ? 'border-gray-900 text-gray-900 font-semibold' : 'border-gray-200 text-gray-300') }}">
+            <div class="rg-progress-item {{ $currentStep > $step ? 'is-complete' : ($currentStep === $step ? 'is-active' : '') }}">
+                <div class="rg-progress-marker">
                     @if($currentStep > $step)
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15 3.293 9.879a1 1 0 011.414-1.414L8.414 12.172l6.879-6.879a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
                     @else
                         {{ $step }}
                     @endif
                 </div>
-                <span class="text-xs text-gray-500 mt-1">{{ $label }}</span>
+                <span class="rg-progress-label">{{ $label }}</span>
             </div>
-            @if($step < 5)
-                <div class="flex-1 h-px bg-gray-200 mx-2 mb-4"></div>
-            @endif
         @endforeach
     </div>
 
-    {{-- Step Card --}}
-    <div class="bg-white border border-gray-200 rounded-md p-6">
-
-        {{-- ───── STEP 1: Personal Details ───── --}}
+    <div class="rg-card">
         @if($currentStep === 1)
             <div>
-                <p class="text-xs text-gray-400 mb-1">Step 1 of 5</p>
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Personal Details</h2>
+                <span class="rg-step-eyebrow">Step 1 of 5</span>
+                <h2 class="rg-heading">Personal Details</h2>
 
-                <div class="space-y-4">
-                    <div class="flex flex-col gap-1">
-                        <label for="name" class="text-sm font-medium text-gray-700">Full Name</label>
-                        <input type="text" id="name" wire:model="name" placeholder="e.g. Juan dela Cruz" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full">
-                        @error('name') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                <div class="rg-field-grid">
+                    <div class="rg-field rg-field--full">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" wire:model="name" placeholder="e.g. Juan dela Cruz" class="rg-input">
+                        <p class="rg-field-help">Use the same name shown on your valid ID.</p>
+                        @error('name') <p class="rg-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
-                        <input type="email" id="email" wire:model="email" placeholder="you@email.com" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full">
-                        @error('email') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                    <div class="rg-field">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" wire:model="email" placeholder="you@email.com" class="rg-input">
+                        @error('email') <p class="rg-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label>
-                        <input type="tel" id="phone" wire:model="phone" placeholder="+63 9XX XXX XXXX" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full">
-                        @error('phone') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                    <div class="rg-field">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" wire:model="phone" placeholder="+63 9XX XXX XXXX" class="rg-input">
+                        @error('phone') <p class="rg-error">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="dob" class="text-sm font-medium text-gray-700">Date of Birth</label>
-                        <input type="date" id="dob" wire:model="dob" class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full">
-                        @error('dob') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                    <div class="rg-field rg-field--full">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" wire:model="dob" class="rg-input">
+                        @error('dob') <p class="rg-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
-        {{-- ───── STEP 2: Plan Selection ───── --}}
         @elseif($currentStep === 2)
             <div>
-                <p class="text-xs text-gray-400 mb-1">Step 2 of 5</p>
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Choose Your Plan</h2>
+                <span class="rg-step-eyebrow">Step 2 of 5</span>
+                <h2 class="rg-heading">Choose Your Plan</h2>
 
-                <div class="space-y-3">
+                <div class="rg-plan-grid">
                     @foreach($plans as $plan)
-                        <label wire:click="$set('planId', {{ $plan->id }})" class="block border border-gray-200 rounded-md p-4 cursor-pointer {{ $planId == $plan->id ? 'border-gray-900 bg-gray-50' : '' }}">
+                        <label wire:click="$set('planId', {{ $plan->id }})" class="rg-plan {{ $planId == $plan->id ? 'is-selected' : '' }}">
                             <input type="radio" wire:model="planId" name="planId" value="{{ $plan->id }}" class="sr-only">
-                            <div class="flex items-center justify-between">
+                            <div class="rg-plan-top">
                                 <div>
-                                    <h3 class="font-semibold text-gray-900">{{ $plan->name }}</h3>
-                                    <p class="text-sm text-gray-400">{{ $plan->duration_days }}-day access</p>
+                                    <h3 class="rg-plan-name">{{ $plan->name }}</h3>
+                                    <p class="rg-plan-term">{{ $plan->duration_days }}-day access</p>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">₱{{ number_format($plan->price, 0) }}</span>
+                                <span class="rg-price">₱{{ number_format($plan->price, 0) }}</span>
                             </div>
-                            <ul class="mt-3 text-sm text-gray-500 space-y-1 list-disc pl-4">
+
+                            <ul class="rg-benefits">
                                 @foreach(($plan->benefits ?? []) as $benefit)
                                     <li>{{ $benefit }}</li>
                                 @endforeach
@@ -86,139 +79,141 @@
                         </label>
                     @endforeach
                 </div>
-                @error('planId') <p class="text-xs text-red-500 mt-2">{{ $message }}</p> @enderror
+
+                @error('planId') <p class="rg-error" style="margin-top: 10px;">{{ $message }}</p> @enderror
             </div>
 
-        {{-- ───── STEP 3: Legal Agreements ───── --}}
         @elseif($currentStep === 3)
             <div>
-                <p class="text-xs text-gray-400 mb-1">Step 3 of 5</p>
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">Legal Agreements</h2>
-                <p class="text-sm text-gray-500 mb-4">Please read each document carefully and check the box to confirm your agreement. All four are required to proceed.</p>
+                <span class="rg-step-eyebrow">Step 3 of 5</span>
+                <h2 class="rg-heading">Legal Agreements</h2>
+                <p class="rg-muted">Please read each document carefully and confirm your agreement. All four are required to proceed.</p>
 
-                <div class="space-y-4">
+                <div class="rg-docs">
                     @foreach($legalDocs as $key => $doc)
                         @php $consentProp = $doc['consent']; @endphp
-                        <div class="border border-gray-200 rounded-md overflow-hidden">
-                            <h3 class="px-4 py-3 border-b border-gray-100 font-medium text-sm text-gray-900 bg-gray-50">{{ $doc['title'] }}</h3>
-                            <div class="max-h-40 overflow-y-auto px-4 py-3 text-sm text-gray-600">
+                        <div class="rg-doc">
+                            <h3 class="rg-doc-title">{{ $doc['title'] }}</h3>
+                            <div class="rg-doc-body">
                                 {!! $doc['body'] !!}
                             </div>
-                            <label class="flex items-center gap-2 px-4 py-3 border-t border-gray-100 bg-white text-sm text-gray-700">
+                            <label class="rg-check">
                                 <input type="checkbox" wire:model.live="{{ $consentProp }}">
                                 <span>{{ $doc['label'] }}</span>
                             </label>
-                            @error($consentProp) <p class="px-4 pb-2 text-xs text-red-500">{{ $message }}</p> @enderror
+                            @error($consentProp) <p class="rg-error" style="padding: 0 15px 12px;">{{ $message }}</p> @enderror
                         </div>
                     @endforeach
                 </div>
             </div>
 
-        {{-- ───── STEP 4: Identity Verification ───── --}}
         @elseif($currentStep === 4)
             <div>
-                <p class="text-xs text-gray-400 mb-1">Step 4 of 5</p>
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">Identity Verification</h2>
-                <p class="text-sm text-gray-500 mb-4">Upload a valid government-issued ID. This is required for membership verification and is stored securely.</p>
+                <span class="rg-step-eyebrow">Step 4 of 5</span>
+                <h2 class="rg-heading">Identity Verification</h2>
+                <p class="rg-muted">Upload a valid government-issued ID for membership verification. JPG, PNG, and PDF files are accepted up to 5 MB.</p>
 
-                <div x-data="{ fileName: '', fileSize: '' }" class="space-y-2">
-                    <label for="governmentId" class="text-sm font-medium text-gray-700">Government ID</label>
-                    <div>
-                        <input type="file" id="governmentId" wire:model="governmentId" accept="image/*,.pdf"
-                            class="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
-                            x-on:change="
-                                const f = $event.target.files[0];
-                                fileName = f ? f.name : '';
-                                fileSize = f ? (f.size < 1048576 ? (f.size / 1024).toFixed(0) + ' KB' : (f.size / 1048576).toFixed(1) + ' MB') : '';
-                            ">
+                <div x-data="{ fileName: '', fileSize: '' }" class="rg-upload" style="margin-top: 16px;">
+                    <div class="rg-upload-head">
+                        <div class="rg-upload-icon" aria-hidden="true">
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="rg-upload-title">Upload your government ID</p>
+                            <label for="governmentId" class="rg-file-label">Choose JPG, PNG, or PDF</label>
+                        </div>
                     </div>
-                    <p class="text-xs text-gray-400">Accepted: JPG, PNG, PDF. Max 5 MB.</p>
-                    <div wire:loading wire:target="governmentId" class="text-sm text-gray-400">
+
+                    <input type="file" id="governmentId" wire:model="governmentId" accept="image/*,.pdf"
+                        class="rg-input"
+                        x-on:change="
+                            const f = $event.target.files[0];
+                            fileName = f ? f.name : '';
+                            fileSize = f ? (f.size < 1048576 ? (f.size / 1024).toFixed(0) + ' KB' : (f.size / 1048576).toFixed(1) + ' MB') : '';
+                        ">
+
+                    <p class="rg-upload-meta">Accepted: JPG, PNG, PDF. Max 5 MB.</p>
+
+                    <div wire:loading wire:target="governmentId" class="rg-upload-meta">
                         Uploading...
                     </div>
-                    <div wire:loading.remove wire:target="governmentId" x-show="fileName" x-cloak class="text-sm text-gray-600 flex items-center gap-2">
+
+                    <div wire:loading.remove wire:target="governmentId" x-show="fileName" x-cloak class="rg-file-chip">
                         <span x-text="fileName"></span>
-                        <span class="text-gray-400" x-text="fileSize"></span>
+                        <span style="color: #b6a06a;" x-text="fileSize"></span>
                     </div>
-                    @error('governmentId') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+
+                    @error('governmentId') <p class="rg-error" style="margin-top: 8px;">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="bg-gray-50 border border-gray-100 rounded-md p-3 mt-4">
-                    <p class="text-xs text-gray-500">
-                        Your ID is stored in a private, encrypted storage location. It is only accessible to gym administrators for identity verification and is never shared with third parties.
-                    </p>
+                <div class="rg-secure">
+                    Your ID is stored in a private storage location. It is only accessible to gym administrators for identity verification and is never shared with third parties.
                 </div>
             </div>
 
-        {{-- ───── STEP 5: Review & Pay ───── --}}
         @elseif($currentStep === 5)
             <div>
-                <p class="text-xs text-gray-400 mb-1">Step 5 of 5</p>
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Review &amp; Pay</h2>
+                <span class="rg-step-eyebrow">Step 5 of 5</span>
+                <h2 class="rg-heading">Review &amp; Pay</h2>
 
-                <div class="bg-gray-50 border border-gray-100 rounded-md p-4 mb-4">
-                    <div>
-                        <div class="flex justify-between py-1.5 border-b border-gray-100">
-                            <p class="text-xs text-gray-400 uppercase">Name</p>
-                            <p class="text-sm font-medium text-gray-900">{{ $name }}</p>
-                        </div>
-                        <div class="flex justify-between py-1.5 border-b border-gray-100">
-                            <p class="text-xs text-gray-400 uppercase">Email</p>
-                            <p class="text-sm font-medium text-gray-900">{{ $email }}</p>
-                        </div>
-                        @if($selectedPlan)
-                            <div class="flex justify-between py-1.5 border-b border-gray-100">
-                                <p class="text-xs text-gray-400 uppercase">Plan</p>
-                                <p class="text-sm font-medium text-gray-900">{{ $selectedPlan->name }}</p>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-gray-100">
-                                <p class="text-xs text-gray-400 uppercase">Amount</p>
-                                <p class="text-sm font-semibold text-gray-900">₱{{ number_format($selectedPlan->price, 2) }}</p>
-                            </div>
-                            <div class="flex justify-between py-1.5 border-b border-gray-100">
-                                <p class="text-xs text-gray-400 uppercase">Duration</p>
-                                <p class="text-sm font-medium text-gray-900">{{ $selectedPlan->duration_days }} days</p>
-                            </div>
-                            <div class="flex justify-between py-1.5">
-                                <p class="text-xs text-gray-400 uppercase">Estimated Expiry</p>
-                                <p class="text-sm font-medium text-gray-900">{{ now()->addDays($selectedPlan->duration_days)->format('M j, Y') }}</p>
-                            </div>
-                        @endif
+                <div class="rg-review">
+                    <div class="rg-review-row">
+                        <p class="rg-review-label">Name</p>
+                        <p class="rg-review-value">{{ $name }}</p>
                     </div>
+                    <div class="rg-review-row">
+                        <p class="rg-review-label">Email</p>
+                        <p class="rg-review-value">{{ $email }}</p>
+                    </div>
+
+                    @if($selectedPlan)
+                        <div class="rg-review-row">
+                            <p class="rg-review-label">Plan</p>
+                            <p class="rg-review-value">{{ $selectedPlan->name }}</p>
+                        </div>
+                        <div class="rg-review-row is-total">
+                            <p class="rg-review-label">Amount</p>
+                            <p class="rg-review-value">₱{{ number_format($selectedPlan->price, 2) }}</p>
+                        </div>
+                        <div class="rg-review-row">
+                            <p class="rg-review-label">Duration</p>
+                            <p class="rg-review-value">{{ $selectedPlan->duration_days }} days</p>
+                        </div>
+                        <div class="rg-review-row">
+                            <p class="rg-review-label">Estimated Expiry</p>
+                            <p class="rg-review-value">{{ now()->addDays($selectedPlan->duration_days)->format('M j, Y') }}</p>
+                        </div>
+                    @endif
                 </div>
 
-                <div class="bg-green-50 border border-green-200 rounded-md px-4 py-3 mb-4">
-                    <p class="text-sm text-green-700">
-                        ✓ All legal agreements accepted — Terms &amp; Conditions, Membership Contract, Liability Waiver, Privacy Policy
-                    </p>
+                <div class="rg-success">
+                    All legal agreements accepted: Terms &amp; Conditions, Membership Contract, Liability Waiver, and Privacy Policy.
                 </div>
 
-                <p class="text-xs text-gray-400 mb-4">
-                    You will be redirected to PayMongo's secure checkout to complete payment via GCash, Maya, credit/debit card, or GrabPay. Your membership will be activated upon confirmed payment.
+                <p class="rg-muted" style="margin-top: 14px;">
+                    You will be redirected to PayMongo's secure checkout to complete payment via GCash, Maya, credit/debit card, or GrabPay.
                 </p>
 
                 <button
                     wire:click="submit"
                     wire:loading.attr="disabled"
                     wire:loading.class="opacity-75 cursor-wait"
-                    class="w-full bg-gray-900 text-white text-sm px-4 py-3 rounded-md">
+                    class="rg-btn rg-btn-primary rg-btn-wide">
                     <span wire:loading.remove wire:target="submit">Pay Now — ₱{{ $selectedPlan ? number_format($selectedPlan->price, 2) : '0.00' }}</span>
                     <span wire:loading wire:target="submit">Redirecting to PayMongo...</span>
                 </button>
 
-                @error('email') <p class="text-xs text-red-500 mt-2">{{ $message }}</p> @enderror
+                @error('email') <p class="rg-error" style="margin-top: 10px;">{{ $message }}</p> @enderror
             </div>
         @endif
 
-        {{-- Navigation Footer --}}
-        <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+        <div class="rg-actions">
             <div>
-                @if($currentStep > 1 && $currentStep < 5)
-                    <button wire:click="prevStep" class="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">Back</button>
-                @endif
-
-                @if($currentStep === 5)
-                    <button wire:click="prevStep" class="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">Back</button>
+                @if($currentStep > 1)
+                    <button wire:click="prevStep" class="rg-btn rg-btn-secondary">Back</button>
                 @endif
             </div>
 
@@ -227,7 +222,7 @@
                     <button wire:click="nextStep"
                         wire:loading.attr="disabled"
                         wire:loading.class="opacity-75"
-                        class="bg-gray-900 text-white text-sm px-4 py-2 rounded-md">
+                        class="rg-btn rg-btn-primary">
                         <span wire:loading.remove wire:target="nextStep">Continue</span>
                         <span wire:loading wire:target="nextStep">Validating...</span>
                     </button>

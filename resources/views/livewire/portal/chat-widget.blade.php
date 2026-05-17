@@ -60,3 +60,81 @@
         </div>
     @endif
 </div>
+
+@script
+<script>
+    (() => {
+        if (!window.Echo) {
+            return;
+        }
+
+        const componentId = @js($this->getId());
+        const conversationId = @js($conversationId);
+        const bucket = window.__chatRealtimeMember ?? new Map();
+        window.__chatRealtimeMember = bucket;
+
+        const cleanup = () => {
+            const state = bucket.get(componentId);
+
+            if (!state) {
+                return;
+            }
+
+            window.Echo.leave(state.channelName);
+            bucket.delete(componentId);
+        };
+
+        const current = bucket.get(componentId);
+        const targetChannelName = conversationId ? `support.conversation.${conversationId}` : null;
+
+        if (!targetChannelName) {
+            if (current) {
+                cleanup();
+            }
+
+            return;
+        }
+
+        if (current && current.channelName !== targetChannelName) {
+            cleanup();
+        }
+
+        if (bucket.has(componentId)) {
+            return;
+        }
+
+        window.Echo.private(targetChannelName)
+            .listen('.chat.message.created', (event) => {
+                if (Number(event.conversation_id) !== Number(conversationId)) {
+                    return;
+                }
+
+                $wire.$refresh();
+            });
+
+        bucket.set(componentId, {
+            channelName: targetChannelName,
+        });
+
+        if (!window.__chatRealtimeMemberCleanupBound) {
+            window.__chatRealtimeMemberCleanupBound = true;
+
+            document.addEventListener('livewire:navigating', () => {
+                for (const entry of bucket.values()) {
+                    window.Echo.leave(entry.channelName);
+                }
+
+                bucket.clear();
+            });
+
+            window.addEventListener('beforeunload', () => {
+                for (const entry of bucket.values()) {
+                    window.Echo.leave(entry.channelName);
+                }
+
+                bucket.clear();
+            });
+        }
+    })();
+</script>
+@endscript

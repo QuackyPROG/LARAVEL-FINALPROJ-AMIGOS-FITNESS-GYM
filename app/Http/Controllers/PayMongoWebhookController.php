@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendWelcomeEmail;
 use App\Models\Membership;
 use App\Models\WebhookLog;
+use App\Services\MembershipPaymentService;
 use App\Services\PayMongoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,10 @@ use Illuminate\Support\Str;
 
 class PayMongoWebhookController extends Controller
 {
-    public function __construct(private readonly PayMongoService $payMongoService) {}
+    public function __construct(
+        private readonly PayMongoService $payMongoService,
+        private readonly MembershipPaymentService $membershipPaymentService,
+    ) {}
 
     public function handle(Request $request): JsonResponse
     {
@@ -69,28 +72,13 @@ class PayMongoWebhookController extends Controller
 
     private function activateMembership(Membership $membership, string $paymongoId, WebhookLog $log): void
     {
-        $tempPassword = Str::random(12);
-
-        $user = $membership->user;
-        $user->password = bcrypt($tempPassword);
-        $user->must_change_password = true;
-        $user->status = 'active';
-        $user->email_verified_at = now();
-        $user->save();
-
-        $membership->update([
-            'status' => 'active',
-            'payment_ref' => $paymongoId,
-        ]);
-
+        $this->membershipPaymentService->activate($membership, $paymongoId);
         $log->update(['status' => 'processed']);
-
-        SendWelcomeEmail::dispatch($user->fresh(), $tempPassword);
     }
 
     private function failMembership(Membership $membership, WebhookLog $log): void
     {
-        $membership->update(['status' => 'failed']);
+        $this->membershipPaymentService->fail($membership);
         $log->update(['status' => 'processed']);
     }
 }

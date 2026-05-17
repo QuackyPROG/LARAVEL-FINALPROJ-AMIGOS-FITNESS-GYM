@@ -3,6 +3,7 @@
 use App\Livewire\Public\RegistrationForm;
 use App\Models\MembershipPlan;
 use App\Models\SiteContent;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

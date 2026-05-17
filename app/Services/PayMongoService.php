@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
-use Luigel\Paymongo\Facades\Paymongo;
+use Kirame\PayMongo\Facades\PayMongo;
 
 class PayMongoService
 {
@@ -16,24 +16,19 @@ class PayMongoService
         array $lineItems,
         string $successUrl,
         string $cancelUrl,
-        array $paymentMethodTypes = ['gcash', 'card', 'paymaya', 'grabpay', 'qrph'],
+        array $paymentMethodTypes = ['gcash', 'card', 'paymaya', 'grab_pay', 'qrph'],
+        array $billingDetails = [],
     ): array {
-        $session = Paymongo::checkoutSession()->create([
-            'data' => [
-                'attributes' => [
-                    'line_items' => $lineItems,
-                    'payment_method_types' => $paymentMethodTypes,
-                    'success_url' => $successUrl,
-                    'cancel_url' => $cancelUrl,
-                    'billing' => [
-                        'name' => auth()->user()?->name ?? 'Guest',
-                        'email' => auth()->user()?->email ?? '',
-                    ],
-                ],
+        return PayMongo::createCheckoutSession([
+            'line_items' => $lineItems,
+            'payment_method_types' => $paymentMethodTypes,
+            'success_url' => $successUrl,
+            'cancel_url' => $cancelUrl,
+            'billing' => $billingDetails ?: [
+                'name' => auth()->user()?->name ?? 'Guest',
+                'email' => auth()->user()?->email ?? '',
             ],
         ]);
-
-        return $session->getData();
     }
 
     /**
@@ -41,7 +36,7 @@ class PayMongoService
      */
     public function getCheckoutSession(string $id): array
     {
-        return Paymongo::checkoutSession()->find($id)->getData();
+        return PayMongo::retrieveCheckoutSession($id);
     }
 
     /**
@@ -54,17 +49,11 @@ class PayMongoService
         string $currency = 'PHP',
         array $paymentMethodTypes = ['card'],
     ): array {
-        $intent = Paymongo::paymentIntent()->create([
-            'data' => [
-                'attributes' => [
-                    'amount' => $amount,
-                    'currency' => $currency,
-                    'payment_method_allowed' => $paymentMethodTypes,
-                ],
-            ],
+        return PayMongo::createPaymentIntent([
+            'amount' => $amount,
+            'currency' => $currency,
+            'payment_method_allowed' => $paymentMethodTypes,
         ]);
-
-        return $intent->getData();
     }
 
     /**
@@ -74,28 +63,22 @@ class PayMongoService
      */
     public function createPaymentMethod(array $cardDetails, array $billingDetails = []): array
     {
-        $method = Paymongo::paymentMethod()->create([
-            'data' => [
-                'attributes' => [
-                    'type' => 'card',
-                    'details' => $cardDetails,
-                    'billing' => $billingDetails ?: [
-                        'name' => auth()->user()?->name ?? 'Guest',
-                        'email' => auth()->user()?->email ?? '',
-                        'phone' => '',
-                        'address' => [
-                            'line1' => '',
-                            'city' => '',
-                            'state' => '',
-                            'postal_code' => '',
-                            'country' => 'PH',
-                        ],
-                    ],
+        return PayMongo::createPaymentMethod([
+            'type' => 'card',
+            'details' => $cardDetails,
+            'billing' => $billingDetails ?: [
+                'name' => auth()->user()?->name ?? 'Guest',
+                'email' => auth()->user()?->email ?? '',
+                'phone' => '',
+                'address' => [
+                    'line1' => '',
+                    'city' => '',
+                    'state' => '',
+                    'postal_code' => '',
+                    'country' => 'PH',
                 ],
             ],
         ]);
-
-        return $method->getData();
     }
 
     /**
@@ -115,17 +98,27 @@ class PayMongoService
         // PayMongo signature format: t=timestamp,te=hash,li=hash
         $parts = [];
         foreach (explode(',', $signature) as $part) {
-            [$key, $value] = explode('=', $part, 2);
-            $parts[$key] = $value;
+            $segments = explode('=', $part, 2);
+
+            if (count($segments) === 2) {
+                $parts[$segments[0]] = $segments[1];
+            }
         }
 
         $timestamp = $parts['t'] ?? '';
+        $providedHash = $parts['te'] ?? $parts['li'] ?? '';
         $expectedHash = hash_hmac('sha256', $timestamp.'.'.$payload, $secret);
 
-        if (! hash_equals($expectedHash, $parts['te'] ?? '')) {
+        if (! $timestamp || ! hash_equals($expectedHash, $providedHash)) {
             throw new \RuntimeException('Invalid webhook signature.');
         }
 
-        return json_decode($payload, true);
+        $event = json_decode($payload, true);
+
+        if (! is_array($event)) {
+            throw new \RuntimeException('Invalid webhook payload.');
+        }
+
+        return $event;
     }
 }
