@@ -11,7 +11,7 @@ class ForcePasswordChange
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user() && $request->user()->must_change_password) {
-            if (! $request->routeIs('password.change', 'password.change.update', 'logout')) {
+            if (! $request->routeIs('password.change', 'password.change.update', 'password.update', 'logout')) {
                 return redirect()->route('password.change');
             }
         }
