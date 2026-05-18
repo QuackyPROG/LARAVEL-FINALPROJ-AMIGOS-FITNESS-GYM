@@ -154,54 +154,11 @@ h1, h2, h3, h4, h5, h6 {
     gap: 0.125rem !important;
 }
 
-/* Remove all borders from admin section - global override */
-body.antialiased [class*="border"] {
-    border-color: transparent !important;
-}
-
-/* Specific border removal for Tailwind border utilities */
-.border,
-.border-b,
-.border-t,
-.border-r,
-.border-l,
-.border-x,
-.border-y {
-    border-color: transparent !important;
-}
-
-/* Sidebar border - RESTORE with subtle gray */
+/* Sidebar border */
 flux-sidebar,
 [data-flux-sidebar],
 .flux-sidebar {
     border-right-color: #111111 !important;
     border-right-style: solid !important;
     border-right-width: 1px !important;
-}
-
-/* Remove borders from dividers */
-.divide-y > * + *,
-.divide-x > * + * {
-    border-color: transparent !important;
-}
-
-/* Remove borders from cards and containers */
-.bg-dark-card,
-[class*="border-gray"],
-[class*="border-red"],
-[class*="border-green"],
-[class*="border-yellow"],
-[class*="border-blue"],
-[class*="border-amber"] {
-    border-color: transparent !important;
-}
-
-/* Ensure all HTML borders are removed */
-*[class*="border-"] {
-    border-color: transparent !important;
-}
-
-/* Override sidebar border to show */
-.border-r.border-gray-900 {
-    border-right-color: #111111 !important;
 }

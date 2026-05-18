@@ -15,6 +15,13 @@ class MemberDashboard extends Component
             ->with('plan')
             ->latest('created_at')
             ->first();
+        $upcomingBookings = $user->bookings()
+            ->with('coach')
+            ->where('scheduled_at', '>=', now())
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('scheduled_at')
+            ->limit(3)
+            ->get();
 
         $status = 'no_membership';
         $daysRemaining = null;
@@ -48,6 +55,7 @@ class MemberDashboard extends Component
             'membershipStatus' => $status,
             'daysRemaining' => $daysRemaining,
             'showRenew' => $showRenew,
+            'upcomingBookings' => $upcomingBookings,
         ]);
     }
 }

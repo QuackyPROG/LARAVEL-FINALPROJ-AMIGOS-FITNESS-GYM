@@ -13,32 +13,38 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Amigos Admin',
-            'email' => 'admin@amigosgym.com',
-            'phone' => '+63 900 000 0000',
-            'role' => 'admin',
-            'status' => 'active',
-            'must_change_password' => false,
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@amigosgym.com'],
+            [
+                'name' => 'Amigos Admin',
+                'phone' => '+63 900 000 0000',
+                'role' => 'admin',
+                'status' => 'active',
+                'must_change_password' => false,
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        MembershipPlan::create([
-            'name' => 'Monthly',
-            'duration_days' => 30,
-            'price' => 999.00,
-            'benefits' => ['Unlimited gym access', 'Locker room access', 'Free fitness assessment'],
-            'is_active' => true,
-        ]);
+        MembershipPlan::updateOrCreate(
+            ['name' => 'Monthly'],
+            [
+                'duration_days' => 30,
+                'price' => 999.00,
+                'benefits' => ['Unlimited gym access', 'Locker room access', 'Free fitness assessment'],
+                'is_active' => true,
+            ]
+        );
 
-        MembershipPlan::create([
-            'name' => 'Quarterly',
-            'duration_days' => 90,
-            'price' => 2499.00,
-            'benefits' => ['Unlimited gym access', 'Locker room access', 'Free fitness assessment', '1 free coach session'],
-            'is_active' => true,
-        ]);
+        MembershipPlan::updateOrCreate(
+            ['name' => 'Quarterly'],
+            [
+                'duration_days' => 90,
+                'price' => 2499.00,
+                'benefits' => ['Unlimited gym access', 'Locker room access', 'Free fitness assessment', '1 free coach session'],
+                'is_active' => true,
+            ]
+        );
 
         $contents = [
             ['key' => 'hero_title', 'value' => 'Train Hard. Live Strong.', 'type' => 'text'],
@@ -50,7 +56,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($contents as $content) {
-            SiteContent::create($content);
+            SiteContent::updateOrCreate(
+                ['key' => $content['key']],
+                ['value' => $content['value'], 'type' => $content['type']]
+            );
         }
 
         $coaches = [
@@ -75,7 +84,14 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($coaches as $coach) {
-            Coach::create($coach);
+            Coach::updateOrCreate(
+                ['name' => $coach['name']],
+                [
+                    'bio' => $coach['bio'],
+                    'specializations' => $coach['specializations'],
+                    'photo' => $coach['photo'],
+                ]
+            );
         }
     }
 }

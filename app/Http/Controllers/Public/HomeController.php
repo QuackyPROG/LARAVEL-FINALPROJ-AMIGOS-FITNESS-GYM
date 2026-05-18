@@ -13,6 +13,11 @@ class HomeController extends Controller
     public function index(): View
     {
         $plans = MembershipPlan::active()->orderBy('price')->get();
+
+        if ($plans->isEmpty()) {
+            $plans = MembershipPlan::orderBy('price')->get();
+        }
+
         $coaches = Coach::orderBy('name')->get();
 
         $content = [
