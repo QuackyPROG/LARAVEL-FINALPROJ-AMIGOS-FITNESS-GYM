@@ -56,6 +56,11 @@
     .hm-reveal-stagger.hm-visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.15s; }
     .hm-reveal-stagger.hm-visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.25s; }
     .hm-reveal-stagger.hm-visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.35s; }
+    .hm-plans-grid.hm-reveal-stagger > *,
+    .hm-coaches-grid.hm-reveal-stagger > * {
+        opacity: 1;
+        transform: none;
+    }
     .hm-hero {
         min-height: calc(100vh - 102px);
         display: grid;
@@ -276,6 +281,29 @@
     }
     .hm-plan-btn:hover { border-color: #fbbf24; color: #fbbf24; }
 
+    .hm-empty-card {
+        grid-column: 1 / -1;
+        max-width: 480px;
+        width: 100%;
+        margin: 0 auto;
+        background: rgba(251,191,36,0.045);
+        border: 1px dashed rgba(251,191,36,0.28);
+        border-radius: 16px;
+        padding: 28px 24px;
+        text-align: center;
+    }
+    .hm-empty-card h3 {
+        color: #fff !important;
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+    .hm-empty-card p {
+        color: #666;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
     .hm-coaches-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
@@ -438,8 +466,8 @@
         <h2 class="hm-heading hm-reveal">Choose Your Plan</h2>
         <p class="hm-sub hm-reveal">Flexible options designed for every training goal and schedule.</p>
 
-        <div class="hm-plans-grid hm-reveal-stagger">
-            @foreach($plans as $plan)
+        <div class="hm-plans-grid hm-reveal-stagger hm-visible">
+            @forelse($plans as $plan)
                 <div class="hm-plan-card" data-plan-name="{{ $plan->name }}">
 
                     <p class="hm-plan__name">{{ $plan->name }}</p>
@@ -464,13 +492,17 @@
                     @endguest
 
                 </div>
-            @endforeach
+            @empty
+                <div class="hm-empty-card">
+                    <h3>No membership plans yet</h3>
+                    <p>Plan cards will appear here automatically after plans are added in the admin plan manager.</p>
+                </div>
+            @endforelse
         </div>
 
     </div>
 </section>
 
-@if($coaches->isNotEmpty())
 <section id="coaches" class="hm-section hm-section--dark">
     <div class="hm-max hm-px">
 
@@ -478,8 +510,8 @@
         <h2 class="hm-heading hm-reveal">Meet Your Coaches</h2>
         <p class="hm-sub hm-reveal">World-class coaches dedicated to helping you reach your peak performance.</p>
 
-        <div class="hm-coaches-grid hm-reveal-stagger">
-            @foreach($coaches as $coach)
+        <div class="hm-coaches-grid hm-reveal-stagger hm-visible">
+            @forelse($coaches as $coach)
                 <div class="hm-coach-card" data-coach-name="{{ $coach->name }}">
 
                     <div class="hm-coach-avatar">
@@ -501,12 +533,16 @@
                     <p class="hm-coach-bio">{{ $coach->bio }}</p>
 
                 </div>
-            @endforeach
+            @empty
+                <div class="hm-empty-card">
+                    <h3>No coaches yet</h3>
+                    <p>Coach cards will appear here automatically after coaches are added in the admin coach manager.</p>
+                </div>
+            @endforelse
         </div>
 
     </div>
 </section>
-@endif
 
 <section id="contact" class="hm-section hm-section--surface">
     <div class="hm-max hm-px">

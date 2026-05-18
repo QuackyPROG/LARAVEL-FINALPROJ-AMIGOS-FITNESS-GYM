@@ -4,100 +4,117 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Membership Card — {{ $user->name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f5f5;
+            font-family: 'Barlow', sans-serif;
+            background: #050505;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 40px;
         }
         .card {
-            width: 400px;
-            background: linear-gradient(135deg, #1A1A1A 0%, #0D0D0D 100%);
-            border-radius: 16px;
+            width: 420px;
+            background: #080808;
+            border: 1px solid rgba(251, 191, 36, 0.22);
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
         }
-        .stripe {
-            height: 4px;
-            background: #E8400C;
-        }
-        .card-body {
-            padding: 32px;
-        }
-        .label {
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #555;
-            margin-bottom: 4px;
-        }
+        .stripe { height: 4px; background: #fbbf24; }
+        .card-body { padding: 28px; }
+
         .gym-name {
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
-            color: #555;
-            margin-bottom: 8px;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
         }
         .member-name {
-            font-size: 22px;
-            font-weight: 700;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            text-transform: uppercase;
             color: #ffffff;
-            margin-bottom: 4px;
-        }
-        .member-id {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            color: #666;
-        }
-        .divider {
-            border-top: 1px solid rgba(255,255,255,0.08);
-            margin: 20px 0;
-        }
-        .info-grid {
-            display: flex;
-            gap: 32px;
-            margin-bottom: 20px;
-        }
-        .info-item {}
-        .info-value {
-            font-size: 13px;
-            font-weight: 600;
-            color: #ffffff;
+            line-height: 1.1;
+            flex: 1;
         }
         .badge {
+            flex-shrink: 0;
             display: inline-block;
             padding: 3px 10px;
-            border-radius: 6px;
+            border-radius: 999px;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            margin-top: 4px;
         }
-        .badge-active { background: rgba(34,197,94,0.2); color: #4ade80; }
-        .badge-expiring { background: rgba(245,158,11,0.2); color: #fbbf24; }
-        .badge-expired { background: rgba(239,68,68,0.2); color: #f87171; }
-        .header-row {
+        .badge-active  { background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.25); color: #6ee7b7; }
+        .badge-expiring{ background: rgba(251,191,36,0.10);  border: 1px solid rgba(251,191,36,0.35);  color: #fcd34d; }
+        .badge-expired { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.30); color: #fca5a5; }
+        .badge-none    { background: #18181b; border: 1px solid #3f3f46; color: #d4d4d8; }
+
+        .member-id {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: #52525b;
+            margin-bottom: 18px;
+        }
+
+        .meta-strip {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 22px;
         }
-        .qr-section {
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 20px;
+        .meta-item { flex: 1; padding: 10px 14px; }
+        .meta-item + .meta-item { border-left: 1px solid rgba(255,255,255,0.08); }
+        .meta-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #52525b;
+            margin-bottom: 3px;
         }
+        .meta-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .qr-section { text-align: center; }
         .qr-wrapper {
             display: inline-block;
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(251,191,36,0.20);
         }
+        .qr-wrapper svg { display: block; width: 160px !important; height: 160px !important; }
         .verify-note {
             font-size: 9px;
-            color: #444;
-            margin-top: 8px;
+            font-weight: 600;
+            color: #52525b;
+            margin-top: 10px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -105,53 +122,50 @@
 <div class="card">
     <div class="stripe"></div>
     <div class="card-body">
-        <div class="header-row">
-            <div>
-                <div class="gym-name">Amigos Fitness Gym</div>
-                <div class="member-name">{{ $user->name }}</div>
-                <div class="member-id">{{ $memberId }}</div>
-            </div>
-            <div>
-                @if($user->activeMembership)
-                    @php
-                        $membership = $user->activeMembership;
-                        $daysLeft = $membership->expires_at
-                            ? (int) \Illuminate\Support\Carbon::today()->diffInDays($membership->expires_at, false)
-                            : null;
-                    @endphp
-                    @if($daysLeft !== null && $daysLeft < 0)
-                        <span class="badge badge-expired">Expired</span>
-                    @elseif($daysLeft !== null && $daysLeft <= 7)
-                        <span class="badge badge-expiring">Expiring Soon</span>
-                    @else
-                        <span class="badge badge-active">Active</span>
-                    @endif
+
+        <div class="gym-name">Amigos Fitness Gym</div>
+
+        <div class="name-row">
+            <div class="member-name">{{ $user->name }}</div>
+            @if($user->activeMembership)
+                @php
+                    $membership = $user->activeMembership;
+                    $daysLeft = $membership->expires_at
+                        ? (int) \Illuminate\Support\Carbon::today()->diffInDays($membership->expires_at, false)
+                        : null;
+                @endphp
+                @if($daysLeft !== null && $daysLeft < 0)
+                    <span class="badge badge-expired">Expired</span>
+                @elseif($daysLeft !== null && $daysLeft <= 7)
+                    <span class="badge badge-expiring">Expiring Soon</span>
                 @else
-                    <span class="badge badge-expired">No Membership</span>
+                    <span class="badge badge-active">Active</span>
                 @endif
-            </div>
+            @else
+                <span class="badge badge-none">No Membership</span>
+            @endif
         </div>
 
+        <div class="member-id">{{ $memberId }}</div>
+
         @if($user->activeMembership)
-        <div class="divider"></div>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="label">Plan</div>
-                <div class="info-value">{{ $user->activeMembership->plan?->name ?? '—' }}</div>
+        <div class="meta-strip">
+            <div class="meta-item">
+                <div class="meta-label">Plan</div>
+                <div class="meta-value">{{ $membership->plan?->name ?? '—' }}</div>
             </div>
-            <div class="info-item">
-                <div class="label">Expires</div>
-                <div class="info-value">{{ $user->activeMembership->expires_at?->format('M j, Y') ?? '—' }}</div>
+            <div class="meta-item">
+                <div class="meta-label">Expires</div>
+                <div class="meta-value">{{ $membership->expires_at?->format('M j, Y') ?? '—' }}</div>
             </div>
         </div>
         @endif
 
         <div class="qr-section">
-            <div class="qr-wrapper">
-                {!! $qrSvg !!}
-            </div>
+            <div class="qr-wrapper">{!! $qrSvg !!}</div>
             <div class="verify-note">Scan to verify membership</div>
         </div>
+
     </div>
 </div>
 </body>
