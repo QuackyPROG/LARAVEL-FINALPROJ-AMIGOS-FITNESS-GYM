@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class ChangePasswordController extends Controller
@@ -23,12 +22,13 @@ class ChangePasswordController extends Controller
         ]);
 
         $user = Auth::user();
+
         $user->update([
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'must_change_password' => false,
         ]);
 
-        return redirect()->intended($user->isAdmin() ? '/admin/dashboard' : '/portal/dashboard')
+        return redirect($user->isAdmin() ? '/admin/dashboard' : '/portal/dashboard')
             ->with('success', 'Password updated successfully.');
     }
 }

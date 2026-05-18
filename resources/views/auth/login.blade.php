@@ -65,6 +65,15 @@
                 <p class="text-gray-400 text-sm">Enter your credentials to access your dashboard</p>
             </div>
 
+            @if (session('status'))
+                <div class="bg-green-900/30 border border-green-500/50 text-green-300 text-sm px-4 py-3 rounded-lg mb-6 flex items-center justify-center gap-3 text-center">
+                    <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ session('status') }}</span>
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="bg-red-900/30 border border-red-500/50 text-red-300 text-sm px-4 py-3 rounded-lg mb-6 flex items-center justify-center gap-3 text-center">
                     <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -124,7 +133,7 @@
                         </div>
                         <span class="text-sm text-gray-400 group-hover:text-gray-200 transition-colors">Remember me</span>
                     </label>
-                    <a href="#" class="text-sm text-yellow-500 hover:text-yellow-400 transition-colors">Forgot Password?</a>
+                    <a href="{{ route('password.request') }}" class="text-sm text-yellow-500 hover:text-yellow-400 transition-colors">Forgot Password?</a>
                 </div>
 
                 <!-- Login Button -->
@@ -141,12 +150,10 @@
 
         <!-- RIGHT SIDE: HERO IMAGE -->
         <div class="hidden md:block w-1/2 relative bg-black">
-            <!-- Added object-top or object-center to adjust the image if needed, and reduced overlay opacity -->
             <img src="{{ asset('images/gym-bg.png') }}" 
                  class="absolute inset-0 w-full h-full object-cover object-right" 
                  alt="Gym">
             
-            <!-- Reduced Dark Overlay for better Readability of the man -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
             
             <!-- Side Branding / Text -->
@@ -179,7 +186,5 @@
 
     @fluxScripts
     @livewireScripts
-</body>
-</html>
 </body>
 </html>

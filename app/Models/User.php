@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -35,16 +34,15 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'hashed',  // This cast handles hashing automatically — no mutator needed
             'dob' => 'date',
             'must_change_password' => 'boolean',
         ];
     }
 
-    public function setPasswordAttribute($value): void
-    {
-        $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::make($value);
-    }
+    // REMOVED: setPasswordAttribute() mutator — it conflicted with the 'hashed' cast above,
+    // causing the password to be hashed twice (once by the mutator, once by the cast).
+    // The 'hashed' cast in casts() is sufficient and is the Laravel-recommended approach.
 
     public function isAdmin(): bool
     {
