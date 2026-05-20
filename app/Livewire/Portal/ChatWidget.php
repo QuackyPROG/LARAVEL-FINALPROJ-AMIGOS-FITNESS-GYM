@@ -6,6 +6,7 @@ use App\Events\ChatMessageCreated;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
 use App\Services\ChatbotService;
+use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
@@ -64,7 +65,7 @@ class ChatWidget extends Component
             'sender_type' => 'member',
             'body' => $this->message,
         ]);
-        event(new ChatMessageCreated($memberMessage));
+        $this->broadcast($memberMessage);
 
         $userMessage = $this->message;
         $this->message = '';
@@ -79,7 +80,7 @@ class ChatWidget extends Component
                     'sender_type' => 'bot',
                     'body' => $result->reply,
                 ]);
-                event(new ChatMessageCreated($botMessage));
+                $this->broadcast($botMessage);
 
                 if ($result->shouldEscalate) {
                     $conversation->status = 'escalated';
@@ -92,11 +93,20 @@ class ChatWidget extends Component
                     'sender_type' => 'bot',
                     'body' => 'Sorry, I\'m having trouble responding right now. A staff member will follow up with you shortly.',
                 ]);
-                event(new ChatMessageCreated($botFallbackMessage));
+                $this->broadcast($botFallbackMessage);
 
                 $conversation->status = 'escalated';
                 $conversation->save();
             }
+        }
+    }
+
+    private function broadcast(ChatMessage $message): void
+    {
+        try {
+            event(new ChatMessageCreated($message));
+        } catch (BroadcastException) {
+            // Reverb server not running — message saved, real-time push skipped
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Events\ChatMessageCreated;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
+use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -37,7 +38,12 @@ class ChatInbox extends Component
             'sender_type' => 'admin',
             'body' => $this->reply,
         ]);
-        event(new ChatMessageCreated($message));
+
+        try {
+            event(new ChatMessageCreated($message));
+        } catch (BroadcastException) {
+            // Reverb server not running — message is saved, real-time push skipped
+        }
 
         $this->reply = '';
     }
@@ -54,7 +60,11 @@ class ChatInbox extends Component
             'sender_type' => 'system',
             'body' => 'Conversation closed.',
         ]);
-        event(new ChatMessageCreated($systemMessage));
+        try {
+            event(new ChatMessageCreated($systemMessage));
+        } catch (BroadcastException) {
+            // Reverb server not running — message saved, push skipped
+        }
 
         if ($this->activeConversationId === $id) {
             $this->activeConversationId = null;
