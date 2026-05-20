@@ -31,6 +31,7 @@ class ChatWidget extends Component
 
             if ($existing) {
                 $this->conversationId = $existing->id;
+                $this->dispatch('chat-channel-subscribe', conversationId: $existing->id);
             }
         }
     }
@@ -50,6 +51,7 @@ class ChatWidget extends Component
                 'status' => 'open',
             ]);
             $this->conversationId = $conversation->id;
+            $this->dispatch('chat-channel-subscribe', conversationId: $conversation->id);
         } else {
             $conversation = Conversation::where('id', $this->conversationId)
                 ->where('member_id', auth()->id())

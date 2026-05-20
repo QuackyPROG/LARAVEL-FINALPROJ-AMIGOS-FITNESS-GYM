@@ -24,7 +24,11 @@ use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\PaymentResultController;
 use App\Http\Controllers\Public\RegisterController;
 use App\Http\Controllers\Public\VerifyCardController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+// Register broadcast authentication routes (/broadcasting/auth)
+Broadcast::routes(['middleware' => ['web', 'auth']]);
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');

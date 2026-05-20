@@ -14,21 +14,21 @@
     },
     updateClock() {
         const now = new Date();
-        this.date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        this.time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        this.date = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        this.time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     }
 }">
-    <div class="text-amber-400 text-sm font-medium tracking-wide uppercase" x-text="date"></div>
-    <div class="text-white text-4xl font-extrabold tracking-tight mt-0.5" x-text="time"></div>
+    <div class="text-xs text-zinc-500 font-medium tracking-wide" x-text="date"></div>
+    <div class="text-sm text-zinc-400 font-semibold mt-0.5" x-text="time"></div>
 </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <x-stat-card
             title="Total Members"
             value="{{ $totalMembers }}"
             icon="people"
-            color="green"
+            color="gold"
             percentage="{{ $totalMembersChange['value'] }}"
             trend="{{ $totalMembersChange['trend'] }}"
         />
@@ -36,7 +36,7 @@
             title="Active Members"
             value="{{ $activeMembers }}"
             icon="activity"
-            color="red"
+            color="gold"
             percentage="{{ $activeMembersChange['value'] }}"
             trend="{{ $activeMembersChange['trend'] }}"
         />
@@ -44,7 +44,7 @@
             title="Expiring Soon"
             value="{{ $expiringSoon }}"
             icon="alert"
-            color="cyan"
+            color="gold"
             percentage="{{ $expiringChange['value'] }}"
             trend="{{ $expiringChange['trend'] }}"
         />
@@ -52,7 +52,7 @@
             title="New This Month"
             value="{{ $newThisMonth }}"
             icon="calendar"
-            color="purple"
+            color="gold"
             percentage="{{ $newMembersChange['value'] }}"
             trend="{{ $newMembersChange['trend'] }}"
         />

@@ -1,71 +1,153 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
-/* Custom Dark Theme */
-.bg-dark-page {
-    background-color: #000000;
+/* ── Brand tokens ─────────────────────────────────────────────────────────── */
+:root {
+    --brand-gold:        #e8a020;
+    --brand-gold-hover:  #d4911c;
+    --brand-gold-dim:    rgba(232, 160, 32, 0.10);
+    --brand-gold-border: rgba(232, 160, 32, 0.22);
+
+    --surface-0: #000000;
+    --surface-1: #080808;
+    --surface-2: #111111;
+    --surface-3: #1a1a1a;
+    --surface-4: #222222;
+
+    --text-primary:   #f0f0f0;
+    --text-secondary: #909090;
+    --text-muted:     #505050;
 }
 
-.bg-dark-card {
-    background-color: #0f0f0f;
+/* ── Base surfaces ────────────────────────────────────────────────────────── */
+.bg-dark-page  { background-color: var(--surface-0); }
+.bg-dark-card  { background-color: #0f0f0f; }
+.text-dark     { color: var(--text-primary); }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand-gold) var(--surface-1);
+}
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surface-1); }
+::-webkit-scrollbar-thumb { background: var(--brand-gold); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-gold-hover); }
+
+/* ── Button utilities ─────────────────────────────────────────────────────── */
+.btn-gold {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--brand-gold); color: #000;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    padding: 9px 20px; border-radius: 7px; border: none;
+    text-decoration: none;
+    transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+}
+.btn-gold:hover {
+    background: var(--brand-gold-hover); color: #000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(232, 160, 32, 0.28);
+}
+.btn-gold:active { transform: none; box-shadow: none; }
+
+.btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent; color: #aaa;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 8px 16px; border-radius: 6px;
+    border: 1px solid var(--surface-3);
+    text-decoration: none;
+    transition: color 0.18s, border-color 0.18s, background 0.18s;
+    cursor: pointer;
+}
+.btn-ghost:hover {
+    color: var(--brand-gold);
+    border-color: var(--brand-gold-border);
+    background: var(--brand-gold-dim);
 }
 
-.text-dark {
-    color: white;
+.btn-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent; color: #ddd;
+    font-size: 13px; font-weight: 600;
+    padding: 9px 20px; border-radius: 7px;
+    border: 1px solid var(--surface-3);
+    text-decoration: none;
+    transition: border-color 0.18s, background 0.18s, color 0.18s;
+    cursor: pointer;
+}
+.btn-outline:hover {
+    border-color: var(--surface-4);
+    background: var(--surface-2);
+    color: #fff;
 }
 
-/* Make all heading titles gold to match the interface style */
-h1, h2, h3, h4, h5, h6 {
-    color: #fbbf24 !important;
+/* ── Portal button utilities (used in Livewire portal components) ─────────── */
+.pub-btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    background: #fbbf24; color: #000;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    padding: 8px 18px; border-radius: 7px; border: none;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.18s, box-shadow 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.pub-btn-primary:hover {
+    background: #f59e0b; color: #000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(251,191,36,0.3);
+}
+.pub-btn-primary:active { transform: translateY(0); box-shadow: none; }
+
+.pub-btn-outline {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    background: transparent; color: #fff;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    padding: 8px 18px; border-radius: 7px; border: 2px solid #3f3f46;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.pub-btn-outline:hover { border-color: #fbbf24; color: #fbbf24; }
+
+/* ── Section / badge labels ───────────────────────────────────────────────── */
+.section-label {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--brand-gold);
+    border: 1px solid var(--brand-gold-border);
+    padding: 4px 12px; border-radius: 100px;
+    margin-bottom: 16px;
 }
 
-/* ===== STAT CARD COMPONENT STYLES ===== */
-
-.stat-card {
-    @apply relative rounded-2xl p-5 border-2 backdrop-blur-sm transition-all duration-300 cursor-default flex items-stretch justify-between gap-6;
-    background-color: #0b0b0b;
-    box-shadow: 0 0 12px currentColor;
-    opacity: 0.9;
-}
-
-.stat-card:hover {
-    @apply scale-105;
-    opacity: 1;
-    filter: brightness(1.1);
-    box-shadow: 0 0 16px currentColor;
-}
-
+/* ── Stat card component ──────────────────────────────────────────────────── */
+/* Base styles are in resources/views/components/stat-card.blade.php */
+/* These classes remain for backward-compat if referenced elsewhere */
 .stat-card-title {
-    @apply text-xs font-medium tracking-wide uppercase;
-    color: rgba(255, 255, 255, 0.5);
+    @apply text-xs font-medium tracking-widest uppercase;
+    color: rgba(255, 255, 255, 0.4);
     margin-bottom: 0.5rem;
 }
-
 .stat-card-value {
-    @apply text-3xl md:text-4xl font-black tracking-tight;
+    @apply text-3xl font-black tracking-tight;
     color: #ffffff;
-    line-height: 1.2;
+    line-height: 1;
 }
-
 .stat-card-right {
     @apply flex flex-col items-center justify-center gap-1.5;
-    min-width: 60px;
+    min-width: 48px;
 }
-
 .stat-card-icon {
-    @apply w-8 h-8 md:w-9 md:h-9;
-    stroke-width: 2;
+    @apply w-7 h-7;
+    stroke-width: 1.75;
 }
+.stat-card-percentage { @apply text-xs font-semibold tracking-tight; }
 
-.stat-card-percentage {
-    @apply text-xs font-semibold tracking-tight;
-}
-
-/* ===== END STAT CARD STYLES ===== */
-
-/* Custom hover styles for Flux navlist - Modern Dashboard UI */
-
-/* Base nav item styling - modern rounded */
+/* ── Flux navlist overrides ───────────────────────────────────────────────── */
 [data-flux-navlist-item] {
     position: relative !important;
     border-radius: 0 !important;
@@ -74,47 +156,40 @@ h1, h2, h3, h4, h5, h6 {
     display: flex !important;
     align-items: center !important;
     gap: 0.5rem !important;
-    color: #d1d5db !important;
+    color: #c0c0c0 !important;
 }
 
-/* Icons styling - improved visibility */
 [data-flux-navlist-item] svg {
     flex-shrink: 0 !important;
-    width: 1.25rem !important;
-    height: 1.25rem !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
     color: currentColor !important;
     stroke-width: 1.5 !important;
 }
 
-/* Hover state: subtle background highlight */
 [data-flux-navlist-item]:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
     color: #ffffff !important;
 }
 
-/* Active/current state: subtle gold background with gold text */
 [data-flux-navlist-item][data-current],
 [data-flux-navlist-item].is-active {
-    background-color: rgba(251, 191, 36, 0.1) !important;
-    color: #fbbf24 !important;
+    background-color: var(--brand-gold-dim) !important;
+    color: var(--brand-gold) !important;
 }
 
-/* Left gold bar for active state */
 [data-flux-navlist-item][data-current]::before,
 [data-flux-navlist-item].is-active::before {
     content: '' !important;
     position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    left: 0 !important; top: 0 !important;
     transform: none !important;
-    width: 3px !important;
-    height: 100% !important;
-    background-color: #fbbf24 !important;
+    width: 3px !important; height: 100% !important;
+    background-color: var(--brand-gold) !important;
     border-radius: 0 2px 2px 0 !important;
     box-shadow: none !important;
 }
 
-/* Ensure text remains white in all child elements */
 [data-flux-navlist-item],
 [data-flux-navlist-item] *,
 [data-flux-navlist-item] span,
@@ -122,7 +197,6 @@ h1, h2, h3, h4, h5, h6 {
     color: inherit !important;
 }
 
-/* Active state text color gold */
 [data-flux-navlist-item][data-current],
 [data-flux-navlist-item].is-active,
 [data-flux-navlist-item][data-current] *,
@@ -131,22 +205,15 @@ h1, h2, h3, h4, h5, h6 {
 [data-flux-navlist-item].is-active span,
 [data-flux-navlist-item][data-current] a,
 [data-flux-navlist-item].is-active a {
-    color: #fbbf24 !important;
+    color: var(--brand-gold) !important;
 }
 
-/* SVG fill styling */
 [data-flux-navlist-item][data-current] svg,
 [data-flux-navlist-item]:hover svg,
 [data-flux-navlist-item].is-active svg {
     fill: currentColor !important;
 }
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-
-/* Navlist container spacing */
 [data-flux-navlist] {
     padding: 0.25rem 0 !important;
     display: flex !important;
@@ -154,11 +221,17 @@ h1, h2, h3, h4, h5, h6 {
     gap: 0.125rem !important;
 }
 
-/* Sidebar border */
+/* ── Tailwind source discovery ────────────────────────────────────────────── */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* ── Sidebar border ───────────────────────────────────────────────────────── */
 flux-sidebar,
 [data-flux-sidebar],
 .flux-sidebar {
-    border-right-color: #111111 !important;
+    border-right-color: var(--surface-2) !important;
     border-right-style: solid !important;
     border-right-width: 1px !important;
 }

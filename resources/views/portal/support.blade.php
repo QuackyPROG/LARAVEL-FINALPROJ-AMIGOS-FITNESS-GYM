@@ -2,41 +2,36 @@
 
 @section('title', 'Support')
 
-@push('styles')
-@endpush
-
 @section('content')
-<div class="mx-auto max-w-5xl space-y-6">
-    <section class="relative overflow-hidden rounded-lg bg-[#080808] px-5 py-6 ring-1 ring-amber-400/10 sm:px-7">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_34%)]"></div>
-        <div class="relative">
-            <span class="inline-flex rounded-full border border-amber-400/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
-                Member Support
-            </span>
-            <h1 class="mt-4 text-4xl font-black uppercase leading-none text-white sm:text-5xl">Support</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-                Get help with memberships, bookings, billing, and gym access without leaving your portal.
-            </p>
-        </div>
-    </section>
 
-    <section class="rounded-lg bg-[#0b0b0b] p-5 ring-1 ring-white/10 sm:p-6">
-        <div class="grid gap-5 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
-            <div>
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">Chat With Us</p>
-                <h2 class="mt-2 text-xl font-black uppercase text-white">Fast Help, Same Page</h2>
+<div class="mx-auto max-w-5xl space-y-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Support</h1>
+        <p class="text-gray-300">Get help with memberships, bookings, billing, and gym access</p>
+    </div>
+
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5 flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5m8-2a9 9 0 11-4.2-7.6L21 4l-1.1 4.1A8.9 8.9 0 0121 12Z"/></svg>
             </div>
-            <p class="text-sm leading-6 text-zinc-400">
+            <div>
+                <h2 class="text-sm font-semibold text-white">Chat With Us</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Fast help, right here in your portal</p>
+            </div>
+        </div>
+        <div class="px-5 py-4">
+            <p class="text-sm text-gray-300 leading-6">
                 Use the <span class="font-semibold text-white">chat widget</span> in the bottom-right corner to start a conversation.
-                Our AI assistant answers instantly. If you need a human, type <span class="font-semibold text-amber-400">agent</span>
+                Our AI assistant answers instantly. If you need a human, type <code class="bg-white/5 border border-white/10 text-amber-400 px-1.5 py-0.5 rounded text-xs font-bold">agent</code>
                 and we will connect you with support staff.
             </p>
         </div>
-    </section>
+    </div>
 
-    <section class="overflow-hidden rounded-lg bg-[#0b0b0b] ring-1 ring-white/10">
-        <div class="border-b border-amber-400/10 px-5 py-4 sm:px-6">
-            <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">Frequently Asked Questions</p>
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Frequently Asked Questions</h2>
         </div>
 
         <div x-data="{ open: null }">
@@ -79,31 +74,33 @@
             @endforeach
 
         </div>
-    </section>
+    </div>
 
-    <section class="rounded-lg bg-[#0b0b0b] p-5 ring-1 ring-white/10 sm:p-6">
-        <div class="mb-5">
-            <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">Other Ways To Reach Us</p>
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Other Ways To Reach Us</h2>
         </div>
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                <p class="text-xs font-bold uppercase tracking-wide text-zinc-500">Email</p>
-                <p class="mt-1 mb-3 text-sm font-semibold text-white">support@amigosfitness.ph</p>
-                <a href="mailto:support@amigosfitness.ph"
-                   style="display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;background:#fbbf24;color:#000;font-size:13px;font-weight:700;letter-spacing:0.02em;padding:8px 18px;border-radius:6px;border:none;text-decoration:none;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;cursor:pointer;"
-                   onmouseover="this.style.background='#f59e0b';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(251,191,36,0.3)'"
-                   onmouseout="this.style.background='#fbbf24';this.style.transform='none';this.style.boxShadow='none'">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 p-5">
+            <div class="bg-white/5 border border-white/10 rounded-lg p-5">
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400 border border-amber-500/20">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Email</p>
+                <p class="mt-1 mb-4 text-sm font-semibold text-white">support@amigosfitness.ph</p>
+                <a href="mailto:support@amigosfitness.ph" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold text-sm px-5 py-2 rounded-xl transition-all transform hover:-translate-y-0.5">
                     Send Email
-                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                    </svg>
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                 </a>
             </div>
-            <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                <p class="text-xs font-bold uppercase tracking-wide text-zinc-500">Response Time</p>
+            <div class="bg-white/5 border border-white/10 rounded-lg p-5">
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-gray-400 border border-white/10">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Response Time</p>
                 <p class="mt-1 text-sm font-semibold text-white">Within 1 business day</p>
+                <p class="mt-2 text-xs text-gray-500 leading-5">Our team reviews all inquiries Monday through Friday. Urgent gym access issues can be resolved via chat support.</p>
             </div>
         </div>
-    </section>
+    </div>
 </div>
 @endsection

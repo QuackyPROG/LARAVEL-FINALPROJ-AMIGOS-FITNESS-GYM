@@ -37,25 +37,51 @@
             </div>
 
             {{-- Messages --}}
-            <div class="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4">
+            <div class="flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-4">
                 @forelse($messages as $msg)
-                    @php $isMember = $msg->sender_type === 'member'; @endphp
+                    @php
+                        $isMember = $msg->sender_type === 'member';
+                        $isBot    = $msg->sender_type === 'bot';
+                        $isAdmin  = !$isMember && !$isBot;
+                    @endphp
 
-                    <div class="flex w-full items-end gap-2 {{ $isMember ? 'justify-end' : 'justify-start' }}">
-
-                        @if(!$isMember)
-                            <span class="mb-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20">
-                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5m8-2a9 9 0 1 1-4.2-7.6L21 4l-1.1 4.1A8.9 8.9 0 0 1 21 12Z"/>
+                    @if($isBot)
+                        {{-- Bot: centered status pill --}}
+                        <div class="flex justify-center my-1">
+                            <div class="inline-flex items-center gap-1.5 bg-zinc-900/80 border border-zinc-800 rounded-full px-3 py-1.5">
+                                <svg class="w-3 h-3 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                            </span>
-                        @endif
-
-                        <div style="max-width: 72%; word-break: break-word; padding: 10px 14px; font-size: 14px; line-height: 1.4; border-radius: 18px; {{ $isMember ? 'background:#fbbf24; color:#000; font-weight:600;' : 'background:#27272a; color:#f4f4f5;' }}">
-                            {{ $msg->body }}
+                                <span class="text-[11px] text-zinc-500 italic">{{ $msg->body }}</span>
+                            </div>
                         </div>
 
-                    </div>
+                    @elseif($isMember)
+                        {{-- Member: right side, gold bubble --}}
+                        <div class="flex flex-col items-end gap-0.5">
+                            <span class="text-[10px] font-semibold text-amber-500/60 tracking-wide pr-1">You</span>
+                            <div style="max-width:72%;word-break:break-word;padding:9px 14px;font-size:14px;line-height:1.45;border-radius:18px 18px 4px 18px;background:#e8a020;color:#000;font-weight:600;">
+                                {{ $msg->body }}
+                            </div>
+                        </div>
+
+                    @else
+                        {{-- Staff: left side, dark bubble with icon --}}
+                        <div class="flex items-end gap-2" style="max-width:85%;">
+                            <span class="mb-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20">
+                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </span>
+                            <div class="flex flex-col gap-0.5" style="width:fit-content;max-width:100%;">
+                                <span class="text-[10px] font-semibold text-zinc-500 tracking-wide pl-1">Staff</span>
+                                <div style="word-break:break-word;padding:9px 14px;font-size:14px;line-height:1.45;border-radius:18px 18px 18px 4px;background:#27272a;color:#f4f4f5;display:inline-block;">
+                                    {{ $msg->body }}
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                 @empty
                     <div class="flex flex-1 items-center justify-center">
                         <div class="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 px-5 py-8 text-center">
@@ -98,50 +124,50 @@
             return;
         }
 
-        const componentId = @js($this->getId());
-        const conversationId = @js($conversationId);
-        const bucket = window.__chatRealtimeMember ?? new Map();
-        window.__chatRealtimeMember = bucket;
+        let currentChannelName = null;
 
-        const cleanup = () => {
-            const state = bucket.get(componentId);
-            if (!state) return;
-            window.Echo.leave(state.channelName);
-            bucket.delete(componentId);
+        const subscribe = (conversationId) => {
+            if (!conversationId) return;
+
+            const channelName = `support.conversation.${conversationId}`;
+
+            // Already subscribed to this channel
+            if (currentChannelName === channelName) return;
+
+            // Clean up old subscription
+            if (currentChannelName) {
+                window.Echo.leave(currentChannelName);
+            }
+
+            window.Echo.private(channelName)
+                .listen('.chat.message.created', () => {
+                    $wire.$refresh();
+                });
+
+            currentChannelName = channelName;
         };
 
-        const current = bucket.get(componentId);
-        const targetChannelName = conversationId ? `support.conversation.${conversationId}` : null;
+        // Listen for Livewire dispatch event (fires when conversationId becomes available)
+        $wire.on('chat-channel-subscribe', ({ conversationId }) => {
+            subscribe(conversationId);
+        });
 
-        if (!targetChannelName) {
-            if (current) cleanup();
-            return;
+        // If we already have a conversationId at render time, subscribe immediately
+        const initialId = @js($conversationId);
+        if (initialId) {
+            subscribe(initialId);
         }
 
-        if (current && current.channelName !== targetChannelName) cleanup();
-        if (bucket.has(componentId)) return;
+        // Cleanup on navigation / page unload
+        const cleanup = () => {
+            if (currentChannelName) {
+                window.Echo.leave(currentChannelName);
+                currentChannelName = null;
+            }
+        };
 
-        window.Echo.private(targetChannelName)
-            .listen('.chat.message.created', (event) => {
-                if (Number(event.conversation_id) !== Number(conversationId)) return;
-                $wire.$refresh();
-            });
-
-        bucket.set(componentId, { channelName: targetChannelName });
-
-        if (!window.__chatRealtimeMemberCleanupBound) {
-            window.__chatRealtimeMemberCleanupBound = true;
-
-            document.addEventListener('livewire:navigating', () => {
-                for (const entry of bucket.values()) window.Echo.leave(entry.channelName);
-                bucket.clear();
-            });
-
-            window.addEventListener('beforeunload', () => {
-                for (const entry of bucket.values()) window.Echo.leave(entry.channelName);
-                bucket.clear();
-            });
-        }
+        document.addEventListener('livewire:navigating', cleanup);
+        window.addEventListener('beforeunload', cleanup);
     })();
 </script>
 @endscript

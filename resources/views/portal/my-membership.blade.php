@@ -2,112 +2,77 @@
 
 @section('title', 'My Membership')
 
-@push('styles')
-<style>
-.pub-btn-primary {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    background: #fbbf24; color: #000;
-    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
-    padding: 8px 18px; border-radius: 6px; border: none;
-    text-decoration: none;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-}
-.pub-btn-primary:hover {
-    background: #f59e0b; color: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(251,191,36,0.3);
-}
-.pub-btn-primary:active { transform: translateY(0); }
-
-.pub-btn-outline {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    background: transparent; color: #fff;
-    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
-    padding: 8px 18px; border-radius: 6px; border: 2px solid #3f3f46;
-    text-decoration: none;
-    transition: border-color 0.2s, color 0.2s;
-    cursor: pointer;
-}
-.pub-btn-outline:hover { border-color: #fbbf24; color: #fbbf24; }
-</style>
-@endpush
-
 @section('content')
 
 <div class="mx-auto max-w-6xl space-y-6">
-    <section class="relative overflow-hidden rounded-lg bg-[#080808] px-5 py-6 ring-1 ring-amber-400/10 sm:px-7">
-        <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-[url('/images/gym-bg.png')] bg-cover bg-center opacity-15 mix-blend-luminosity md:block"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_34%)]"></div>
-        <div class="relative">
-            <span class="inline-flex rounded-full border border-amber-400/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
-                Member Portal
-            </span>
-            <h1 class="mt-4 text-4xl font-black uppercase leading-none text-white sm:text-5xl">My Membership</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-                Review your active plan and the exact documents you signed during registration.
-            </p>
-        </div>
-    </section>
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">My Membership</h1>
+        <p class="text-gray-300">Review your active plan and signed registration documents</p>
+    </div>
 
     @php
         $activeMembership = $user->memberships->where('status', 'active')->sortByDesc('starts_at')->first();
     @endphp
 
-    <section class="rounded-lg bg-[#0b0b0b] p-5 ring-1 ring-white/10 sm:p-6">
-        <h2 class="text-sm font-black uppercase tracking-[0.16em] text-amber-400">Current Membership</h2>
-
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Current Membership</h2>
+        </div>
         @if($activeMembership)
-            <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Plan</p>
+            <div class="p-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Plan</p>
                     <p class="mt-2 text-sm font-semibold text-white">{{ $activeMembership->plan?->name ?? '-' }}</p>
                 </div>
-                <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Status</p>
-                    <span class="mt-2 inline-flex rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">Active</span>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Status</p>
+                    <span class="mt-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/30">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_6px_rgba(34,197,94,0.8)]"></span>
+                        Active
+                    </span>
                 </div>
-                <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Started</p>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Started</p>
                     <p class="mt-2 text-sm font-semibold text-white">{{ $activeMembership->starts_at?->format('M j, Y') ?? '-' }}</p>
                 </div>
-                <div class="rounded-md bg-zinc-950/70 p-4 ring-1 ring-white/5">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Expires</p>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+                    <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Expires</p>
                     <p class="mt-2 text-sm font-semibold text-white">{{ $activeMembership->expires_at?->format('M j, Y') ?? '-' }}</p>
                 </div>
             </div>
         @else
-            <div class="mt-5 rounded-md border border-dashed border-zinc-800 bg-zinc-950/50 px-5 py-8 text-center">
-                <p class="text-sm font-semibold text-zinc-300">No active membership found.</p>
+            <div class="py-16 text-center">
+                <svg class="h-10 w-10 text-white/20 mb-3 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <p class="font-medium text-gray-300">No active membership found</p>
+                <p class="text-xs mt-1 text-gray-500">Visit the registration page to choose a plan.</p>
+                <a href="/register" class="mt-4 inline-flex bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold text-sm px-5 py-2 rounded-xl transition-all transform hover:-translate-y-0.5">Get Started</a>
             </div>
         @endif
-    </section>
+    </div>
 
-    <section class="overflow-hidden rounded-lg bg-[#0b0b0b] ring-1 ring-white/10">
-        <div class="border-b border-amber-400/10 px-5 py-4 sm:px-6">
-            <h2 class="text-sm font-black uppercase tracking-[0.16em] text-amber-400">Documents I Signed</h2>
-            <p class="mt-1 text-xs leading-5 text-zinc-500">These are the exact documents you agreed to during registration. Your signed copies are preserved and cannot be altered.</p>
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Documents I Signed</h2>
+            <p class="mt-1 text-xs text-gray-400">The exact documents you agreed to during registration — preserved and unalterable.</p>
         </div>
 
         @if($user->consents->isEmpty())
-            <div class="p-5 sm:p-6">
-                <div class="rounded-md border border-dashed border-zinc-800 bg-zinc-950/50 px-5 py-8 text-center">
-                    <p class="text-sm font-semibold text-zinc-300">Your registration predates our digital consent system.</p>
-                    <p class="mt-1 text-xs text-zinc-600">Please visit the gym to obtain a copy of your signed documents.</p>
-                </div>
+            <div class="py-12 text-center">
+                <p class="font-medium text-gray-300">Your registration predates our digital consent system.</p>
+                <p class="text-xs mt-1 text-gray-500">Please visit the gym to obtain a copy of your signed documents.</p>
             </div>
         @else
             <div class="overflow-x-auto">
                 <table class="w-full min-w-[680px] text-sm">
-                    <thead class="border-b border-amber-400/10 bg-zinc-950/80">
+                    <thead class="border-b border-white/10 bg-white/5">
                         <tr>
-                            <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-zinc-500">Document</th>
-                            <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-zinc-500">Version</th>
-                            <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-zinc-500">Accepted</th>
-                            <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-zinc-500">View</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Document</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Version</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Accepted</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">View</th>
                         </tr>
                     </thead>
-                    <tbody class="[&>tr+tr]:border-t [&>tr+tr]:border-zinc-900">
+                    <tbody class="divide-y divide-white/5">
                         @foreach($user->consents->sortBy('accepted_at') as $consent)
                             @php
                                 $docTitle = match($consent->document_key) {
@@ -118,13 +83,13 @@
                                     default                      => $consent->document_key,
                                 };
                             @endphp
-                            <tr class="transition hover:bg-amber-400/5">
-                                <td class="px-4 py-3 font-semibold text-white">{{ $docTitle }}</td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">v{{ $consent->version }}</span>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-3 px-5 font-medium text-white">{{ $docTitle }}</td>
+                                <td class="py-3 px-5">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/30">v{{ $consent->version }}</span>
                                 </td>
-                                <td class="px-4 py-3 text-zinc-400">{{ $consent->accepted_at->format('M j, Y') }}</td>
-                                <td class="px-4 py-3">
+                                <td class="py-3 px-5 text-gray-400">{{ $consent->accepted_at->format('M j, Y') }}</td>
+                                <td class="py-3 px-5">
                                     @if($consent->snapshot)
                                         <flux:modal.trigger :name="'my-doc-'.$consent->id">
                                             <button style="display:inline-flex;align-items:center;gap:6px;background:#fbbf24;color:#000;font-size:12px;font-weight:700;letter-spacing:0.02em;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;white-space:nowrap;"
@@ -179,7 +144,7 @@
                 @endif
             @endforeach
         @endif
-    </section>
+    </div>
 </div>
 
 @endsection

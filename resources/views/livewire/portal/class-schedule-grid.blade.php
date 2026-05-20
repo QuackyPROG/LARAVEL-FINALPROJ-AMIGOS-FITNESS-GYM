@@ -1,38 +1,51 @@
-<div class="mx-auto max-w-7xl space-y-6">
-    <section class="relative overflow-hidden rounded-lg bg-[#080808] px-5 py-6 ring-1 ring-amber-400/10 sm:px-7">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_34%)]"></div>
-        <div class="relative">
-            <span class="inline-flex rounded-full border border-amber-400/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
-                Weekly Training
-            </span>
-            <h1 class="mt-4 text-4xl font-black uppercase leading-none text-white sm:text-5xl">Class Schedule</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">Plan your week around recurring group classes, coach-led sessions, and capacity limits.</p>
-        </div>
-    </section>
+<div>
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Class Schedule</h1>
+        <p class="text-gray-300">Weekly recurring group classes and coach-led sessions</p>
+    </div>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach($days as $dayValue => $dayLabel)
-        <section class="overflow-hidden rounded-lg bg-[#0b0b0b] ring-1 ring-white/10">
-            <div class="border-b border-amber-400/10 bg-zinc-950/80 px-4 py-3">
-                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-amber-400">{{ $dayLabel }}</p>
+        @php $dayClasses = $schedules->get($dayValue, collect()); @endphp
+        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+            <div class="px-4 py-3 border-b border-white/10 bg-white/5 flex items-center justify-between">
+                <p class="text-xs font-bold text-amber-400 uppercase tracking-wider">{{ $dayLabel }}</p>
+                @if($dayClasses->count())
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-400/10 text-amber-400 border border-amber-500/20">{{ $dayClasses->count() }}</span>
+                @endif
             </div>
-            <div class="divide-y divide-zinc-900">
-                @forelse($schedules->get($dayValue, collect()) as $class)
-                <div class="px-4 py-4 transition hover:bg-amber-400/5">
-                    <p class="text-sm font-bold text-white">{{ $class->name }}</p>
+            <div class="divide-y divide-white/5">
+                @forelse($dayClasses as $class)
+                <div class="px-4 py-4 hover:bg-white/5 transition-colors">
+                    <p class="text-sm font-semibold text-white">{{ $class->name }}</p>
                     <div class="mt-2 flex flex-wrap gap-2">
-                        <span class="inline-flex rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300">{{ $class->time }}</span>
-                        <span class="inline-flex rounded-full border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs font-semibold text-zinc-400">Cap: {{ $class->capacity }}</span>
+                        @php
+                            $timeFormatted = $class->time ? date('g:i A', strtotime($class->time)) : '—';
+                        @endphp
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <svg class="h-3 w-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {{ $timeFormatted }}
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-white/5 text-gray-400 border border-white/10">
+                            <svg class="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+                            {{ $class->capacity }}
+                        </span>
                     </div>
-                    @if($class->coach)<p class="mt-2 text-xs font-medium text-zinc-500">{{ $class->coach->name }}</p>@endif
+                    @if($class->coach)
+                        <p class="mt-2 flex items-center gap-1 text-xs text-gray-400">
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            {{ $class->coach->name }}
+                        </p>
+                    @endif
                 </div>
                 @empty
-                <div class="px-4 py-8 text-center">
-                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-600">No classes</p>
+                <div class="px-4 py-10 text-center">
+                    <svg class="h-8 w-8 text-white/20 mb-2 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a2 2 0 01-2 2H6a2 2 0 01-2-2V6a1 1 0 011-1z"/></svg>
+                    <p class="text-xs font-medium text-gray-500">Rest day</p>
                 </div>
                 @endforelse
             </div>
-        </section>
+        </div>
         @endforeach
     </div>
 </div>

@@ -1,29 +1,10 @@
 <div>
-    <div class="mb-8 flex justify-between items-start">
-        <div>
-            <h1 class="text-3xl font-bold text-white mb-2">Live Chat</h1>
-            <p class="text-gray-300">Respond to member support conversations in real time</p>
-        </div>
-
-<div wire:ignore class="text-right" x-data="{
-    date: '',
-    time: '',
-    init() {
-        this.updateClock();
-        setInterval(() => this.updateClock(), 1000);
-    },
-    updateClock() {
-        const now = new Date();
-        this.date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        this.time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
-}">
-    <div class="text-amber-400 text-sm font-medium tracking-wide uppercase" x-text="date"></div>
-    <div class="text-white text-4xl font-extrabold tracking-tight mt-0.5" x-text="time"></div>
-</div>
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-white mb-1">Live Chat</h1>
+        <p class="text-sm text-gray-500">Respond to member support conversations in real time</p>
     </div>
 
-    <div class="flex gap-4" style="height: calc(100vh - 240px); min-height: 400px;">
+    <div class="flex gap-4" style="height: calc(100vh - 200px); min-height: 400px;">
         {{-- Conversation List --}}
         <div class="w-64 border border-white/10 rounded-xl shadow-xl overflow-y-auto bg-white/5 backdrop-blur-md flex-shrink-0 flex flex-col custom-scrollbar">
             <p class="px-3 py-3 text-xs font-medium text-gray-400 uppercase tracking-wide border-b border-white/10 bg-white/5">Open Conversations</p>
@@ -63,15 +44,42 @@
                 <button wire:click="closeConversation({{ $activeConversation->id }})" wire:confirm="Close this conversation?" class="border border-red-700 text-red-400 text-sm px-3 py-1 rounded hover:bg-red-900/20 transition-colors">Close</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3" id="adminChatMessages">
                 @foreach($activeMessages as $msg)
-                <div class="flex">
-                    <div class="bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-sm text-gray-300 max-w-xs backdrop-blur-sm">
-                        @if($msg->sender_type === 'admin')<p class="text-xs font-medium text-gray-400 mb-0.5">Staff</p>@endif
-                        @if($msg->sender_type === 'bot')<p class="text-xs font-medium text-gray-400 mb-0.5">Bot</p>@endif
-                        {{ $msg->body }}
+                @php
+                    $isAdmin  = $msg->sender_type === 'admin';
+                    $isBot    = $msg->sender_type === 'bot';
+                    $isMember = !$isAdmin && !$isBot;
+                @endphp
+
+                @if($isBot)
+                    {{-- Bot: centered pill --}}
+                    <div class="flex justify-center">
+                        <div class="inline-flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1.5 max-w-xs">
+                            <svg class="w-3 h-3 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span class="text-xs text-zinc-500 italic">{{ $msg->body }}</span>
+                        </div>
                     </div>
-                </div>
+
+                @elseif($isAdmin)
+                    {{-- Staff: right side, gold-tinted --}}
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-amber-500/70 pr-1">You (Staff)</span>
+                        <div class="bg-amber-400/10 border border-amber-400/20 text-amber-100 rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-sm max-w-[75%] break-words">
+                            {{ $msg->body }}
+                        </div>
+                    </div>
+
+                @else
+                    {{-- Member: left side, zinc --}}
+                    <div class="flex flex-col items-start gap-1">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 pl-1">{{ $activeConversation->member?->name ?? 'Member' }}</span>
+                        <div class="bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm max-w-[75%] break-words">
+                            {{ $msg->body }}
+                        </div>
+                    </div>
+                @endif
+
                 @endforeach
             </div>
 
@@ -104,81 +112,59 @@
             return;
         }
 
-        const componentId = @js($this->getId());
-        const activeConversationId = @js($activeConversationId);
-        const stateByComponent = window.__chatRealtimeAdmin ?? new Map();
-        window.__chatRealtimeAdmin = stateByComponent;
+        let activeChannelName = null;
 
-        const fullCleanup = (id) => {
-            const state = stateByComponent.get(id);
+        // Always subscribe to the global admin channel for sidebar updates
+        window.Echo.private('support.admin')
+            .listen('.chat.message.created', () => {
+                $wire.$refresh();
+            });
 
-            if (!state) {
-                return;
+        // Subscribe to a specific conversation channel when admin selects one
+        const subscribeToConversation = (conversationId) => {
+            const nextChannelName = conversationId
+                ? `support.conversation.${conversationId}`
+                : null;
+
+            // Clean up old conversation subscription
+            if (activeChannelName && activeChannelName !== nextChannelName) {
+                window.Echo.leave(activeChannelName);
+                activeChannelName = null;
             }
 
-            if (state.activeConversationChannelName) {
-                window.Echo.leave(state.activeConversationChannelName);
-            }
+            // Subscribe to the new conversation channel
+            if (nextChannelName && activeChannelName !== nextChannelName) {
+                window.Echo.private(nextChannelName)
+                    .listen('.chat.message.created', () => {
+                        $wire.$refresh();
+                    });
 
-            window.Echo.leave(state.adminChannelName);
-            stateByComponent.delete(id);
+                activeChannelName = nextChannelName;
+            }
         };
 
-        let state = stateByComponent.get(componentId);
+        // React to admin clicking on a conversation
+        $wire.on('admin-conversation-selected', ({ conversationId }) => {
+            subscribeToConversation(conversationId);
+        });
 
-        if (!state) {
-            const adminChannelName = 'support.admin';
-
-            window.Echo.private(adminChannelName)
-                .listen('.chat.message.created', () => {
-                    $wire.$refresh();
-                });
-
-            state = {
-                adminChannelName,
-                activeConversationChannelName: null,
-            };
-
-            stateByComponent.set(componentId, state);
+        // If a conversation is already active at render time, subscribe immediately
+        const initialId = @js($activeConversationId);
+        if (initialId) {
+            subscribeToConversation(initialId);
         }
 
-        const nextActiveChannelName = activeConversationId
-            ? `support.conversation.${activeConversationId}`
-            : null;
+        // Cleanup on navigation / page unload
+        const cleanup = () => {
+            if (activeChannelName) {
+                window.Echo.leave(activeChannelName);
+                activeChannelName = null;
+            }
+            window.Echo.leave('support.admin');
+        };
 
-        if (state.activeConversationChannelName && state.activeConversationChannelName !== nextActiveChannelName) {
-            window.Echo.leave(state.activeConversationChannelName);
-            state.activeConversationChannelName = null;
-        }
-
-        if (nextActiveChannelName && state.activeConversationChannelName !== nextActiveChannelName) {
-            window.Echo.private(nextActiveChannelName)
-                .listen('.chat.message.created', (event) => {
-                    if (Number(event.conversation_id) !== Number(activeConversationId)) {
-                        return;
-                    }
-
-                    $wire.$refresh();
-                });
-
-            state.activeConversationChannelName = nextActiveChannelName;
-        }
-
-        if (!window.__chatRealtimeAdminCleanupBound) {
-            window.__chatRealtimeAdminCleanupBound = true;
-
-            document.addEventListener('livewire:navigating', () => {
-                for (const id of stateByComponent.keys()) {
-                    fullCleanup(id);
-                }
-            });
-
-            window.addEventListener('beforeunload', () => {
-                for (const id of stateByComponent.keys()) {
-                    fullCleanup(id);
-                }
-            });
-        }
+        document.addEventListener('livewire:navigating', cleanup);
+        window.addEventListener('beforeunload', cleanup);
     })();
 </script>
 @endscript

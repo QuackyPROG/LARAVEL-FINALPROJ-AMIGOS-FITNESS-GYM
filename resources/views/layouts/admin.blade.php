@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="font-size: 125%;">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,76 +9,25 @@
     @stack('styles')
     @livewireStyles
     <style>
-        /* Premium Glassmorphism for Table Cards */
+        /* ── Admin table styling ── */
         div:has(> table) {
-            position: relative;
-            background: rgba(10, 10, 10, 0.4) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border-radius: 1rem !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(234, 179, 8, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            z-index: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: #080808;
         }
-
-        /* Subtle Animated Gradient Border via Pseudo-element */
-        div:has(> table)::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 1rem;
-            padding: 1px;
-            background: linear-gradient(45deg, rgba(234, 179, 8, 0.4), rgba(255, 255, 255, 0.05), rgba(234, 179, 8, 0.1));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            z-index: -1;
-            pointer-events: none;
-            background-size: 200% 200%;
-            animation: gradientShimmer 8s ease infinite;
-        }
-
-        @keyframes gradientShimmer {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        div:has(> table) table thead,
-        div:has(> table) table tbody {
-            background: transparent !important;
-        }
-        
-        div:has(> table) table thead {
-            background: rgba(0, 0, 0, 0.3) !important;
-        }
-
         div:has(> table) table thead tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
         }
-
         div:has(> table) table tbody tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-            transition: all 0.3s ease !important;
-            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.15s;
         }
-        
         div:has(> table) table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05) !important;
+            background: rgba(255,255,255,0.03);
         }
-
-        /* Row Selection / Active State */
-        div:has(> table) table tbody tr.selected,
-        div:has(> table) table tbody tr:active {
-            background: linear-gradient(90deg, rgba(20, 20, 20, 0.9), rgba(234, 179, 8, 0.15)) !important;
-            transform: scale(1.005) translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), inset 2px 0 0 rgba(234, 179, 8, 0.8) !important;
-            border-color: transparent !important;
-            z-index: 10;
-        }
-
         div:has(> table) table tbody tr:last-child {
-            border-bottom: none !important;
+            border-bottom: none;
         }
     </style>
 </head>
@@ -87,10 +36,10 @@
 <flux:sidebar sticky stashable class="border-r border-gray-700 bg-dark-card text-white overflow-hidden flex flex-col h-screen" style="border-right: 1px solid #374151 !important;">
     <!-- Removed sidebar toggle x button -->
 
-    <div class="px-4 py-4 bg-dark-card">
+    <div class="px-4 py-4 bg-dark-card border-b border-white/5">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-sm hover:opacity-80 transition-opacity">
-            <img src="{{ asset('images/amigos1.png') }}" alt="Amigo's Fitness Gym" class="h-8 w-auto filter drop-shadow-md">
-            <span class="block font-extrabold uppercase bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 bg-clip-text text-transparent">Amigos Admin</span>
+            <img src="{{ asset('images/amigos1.png') }}" alt="Amigo's Fitness Gym" class="h-8 w-auto">
+            <span class="block text-sm font-semibold text-white/80 tracking-wide">Admin Panel</span>
         </a>
     </div>
 
@@ -120,15 +69,16 @@
         </flux:navlist.group>
     </flux:navlist>
 
-    <div class="bg-dark-card p-4">
+    <div class="bg-dark-card border-t border-white/5 p-3 flex flex-col gap-1">
+        <a href="{{ url('/') }}" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-500 rounded-md hover:text-zinc-300 hover:bg-white/5 transition-colors">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            Visit Site
+        </a>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-sm text-white border border-gray-600 rounded-md hover:bg-gray-700 transition-colors" style="border-color: #4b5563 !important;">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                <span>Sign out</span>
+            <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-500 rounded-md hover:text-zinc-300 hover:bg-white/5 transition-colors">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Sign Out
             </button>
         </form>
     </div>

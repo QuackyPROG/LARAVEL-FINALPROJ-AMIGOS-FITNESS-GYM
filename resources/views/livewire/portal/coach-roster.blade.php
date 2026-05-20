@@ -211,24 +211,19 @@
 </style>
 
 <div class="mx-auto max-w-7xl space-y-6">
-    <section class="relative overflow-hidden rounded-lg bg-[#080808] px-5 py-6 ring-1 ring-amber-400/10 sm:px-7">
-        <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-[url('/images/hero-gym.jpg')] bg-cover bg-center opacity-15 mix-blend-luminosity lg:block"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_34%)]"></div>
-        <div class="relative">
-            <span class="inline-flex rounded-full border border-amber-400/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
-                Personal Training
-            </span>
-            <h1 class="mt-4 text-4xl font-black uppercase leading-none text-white sm:text-5xl">Coaches</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">Book a focused session with an Amigos Fitness Gym coach.</p>
-        </div>
-    </section>
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Coaches</h1>
+        <p class="text-gray-300">Book a focused personal training session with an Amigos Fitness Gym coach</p>
+    </div>
 
     @if(session('success'))<div class="rounded-md border border-emerald-400/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-300">{{ session('success') }}</div>@endif
     @if(session('error'))<div class="rounded-md border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-300">{{ session('error') }}</div>@endif
 
     @if($myBookings->count())
-    <section class="rounded-lg bg-[#0b0b0b] p-5 ring-1 ring-white/10 sm:p-6">
-        <h2 class="text-sm font-black uppercase tracking-[0.16em] text-amber-400">My Upcoming Bookings</h2>
+    <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">My Upcoming Bookings</h2>
+        </div>
         <div class="mt-4 space-y-3">
             @foreach($myBookings as $booking)
             <div class="flex flex-col gap-3 rounded-md bg-zinc-950/70 px-4 py-3 ring-1 ring-white/5 sm:flex-row sm:items-center sm:justify-between">
@@ -242,16 +237,16 @@
             </div>
             @endforeach
         </div>
-    </section>
+    </div>
     @endif
 
-    <section class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
         @forelse($coaches as $coach)
-        <article class="flex flex-col rounded-lg bg-[#0b0b0b] p-5 ring-1 ring-white/10 transition hover:ring-amber-400/25">
-            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20">
-                <span class="text-sm font-black">{{ strtoupper(substr($coach->name, 0, 1)) }}</span>
-            </div>
-            <div class="mb-4 flex-1">
+        <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden transition-all hover:border-amber-500/30 hover:-translate-y-0.5">
+            <div class="p-5">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400 border border-amber-500/20">
+                    <span class="text-sm font-black">{{ strtoupper(substr($coach->name, 0, 1)) }}</span>
+                </div>
                 <p class="text-lg font-black uppercase text-white">{{ $coach->name }}</p>
                 @if($coach->bio)<p class="mt-2 text-sm leading-6 text-zinc-400">{{ $coach->bio }}</p>@endif
                 @if($coach->specializations)
@@ -262,17 +257,19 @@
                     </div>
                 @endif
             </div>
-            <button wire:click="openBooking({{ $coach->id }})" class="pub-btn-primary mt-auto w-full justify-center">
+            <button wire:click="openBooking({{ $coach->id }})" class="mt-4 w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 transition-all text-black font-bold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a2 2 0 01-2 2H6a2 2 0 01-2-2V6a1 1 0 011-1z"/></svg>
                 Book Session
             </button>
-        </article>
+        </div>
         @empty
-        <div class="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/50 p-8 text-center md:col-span-2 lg:col-span-3">
-            <p class="text-sm font-semibold text-zinc-300">No coaches available yet</p>
-            <p class="mt-1 text-xs text-zinc-600">Check back soon for available coaching sessions.</p>
+        <div class="py-16 text-center md:col-span-2 lg:col-span-3">
+            <svg class="h-12 w-12 text-white/20 mb-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <p class="font-medium text-gray-300">No coaches available yet</p>
+            <p class="text-xs mt-1 text-gray-500">Check back soon for available coaching sessions.</p>
         </div>
         @endforelse
-    </section>
+    </div>
 
     @if($bookingCoach)
     <div class="fixed inset-0 z-50 flex items-center justify-center px-4" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);">

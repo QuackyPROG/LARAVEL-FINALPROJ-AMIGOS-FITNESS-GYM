@@ -1,89 +1,108 @@
-<style>
-.pub-btn-primary {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    background: #fbbf24; color: #000;
-    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
-    padding: 8px 18px; border-radius: 6px; border: none;
-    text-decoration: none;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-}
-.pub-btn-primary:hover {
-    background: #f59e0b; color: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(251,191,36,0.3);
-}
-.pub-btn-primary:active { transform: translateY(0); }
-</style>
+<div>
+    {{-- Page Header --}}
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">My Card</h1>
+        <p class="text-gray-300">Your digital membership pass — show this at the front desk or scan the QR code</p>
+    </div>
 
-<div class="mx-auto max-w-5xl space-y-6">
-    <section class="relative overflow-hidden rounded-lg bg-[#080808] px-5 py-6 ring-1 ring-amber-400/10 sm:px-7">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(251,191,36,0.14),transparent_34%)]"></div>
-        <div class="relative">
-            <span class="inline-flex rounded-full border border-amber-400/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
-                Digital Access
-            </span>
-            <h1 class="mt-4 text-4xl font-black uppercase leading-none text-white sm:text-5xl">My Membership Card</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">Your digital gym pass for quick membership verification.</p>
-        </div>
-    </section>
+    {{-- Membership Card --}}
+    <div class="flex justify-center">
+        <div class="w-full max-w-sm">
 
-    <section class="flex justify-center">
-        <div class="relative w-full max-w-md overflow-hidden rounded-lg bg-[#080808] p-6 shadow-2xl shadow-black/50 ring-1 ring-amber-400/20">
-            <div class="absolute inset-x-0 top-0 h-1 bg-amber-400"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_90%_0%,rgba(251,191,36,0.18),transparent_35%)]"></div>
+            {{-- Physical Card --}}
+            <div style="
+                width: 100%;
+                aspect-ratio: 85.6 / 54;
+                border-radius: 16px;
+                background: linear-gradient(135deg, #111 0%, #1a1a1a 40%, #0d0d0d 100%);
+                box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.08);
+                position: relative;
+                overflow: hidden;
+                padding: 22px 24px 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            ">
+                {{-- Gold top stripe --}}
+                <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#e8a020,#f5c842,#e8a020);"></div>
 
-            <div class="relative">
-                <div class="mb-5 flex items-start justify-between gap-4">
+                {{-- Subtle background texture --}}
+                <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(232,160,32,0.12),transparent 55%);pointer-events:none;"></div>
+                <div style="position:absolute;bottom:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(232,160,32,0.04);pointer-events:none;"></div>
+                <div style="position:absolute;bottom:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(232,160,32,0.03);pointer-events:none;"></div>
+
+                {{-- Top row: Logo + Badge --}}
+                <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;">
                     <div>
-                        <p class="text-[11px] font-black uppercase tracking-[0.18em] text-amber-400">Amigos Fitness Gym</p>
-                        <p class="mt-2 text-2xl font-black uppercase leading-tight text-white">{{ $user->name }}</p>
-                        <p class="mt-1 font-mono text-xs text-zinc-500">{{ $memberId }}</p>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <img src="{{ asset('images/amigos1.png') }}" alt="Amigos" style="height:20px;width:auto;opacity:0.9;">
+                        </div>
+                        <div style="font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(232,160,32,0.7);margin-top:4px;">Membership Card</div>
                     </div>
-                    <div class="shrink-0">
-                        @if($membership)
-                            @php
-                                $now = \Illuminate\Support\Carbon::today();
-                                $daysLeft = $membership->expires_at ? (int) $now->diffInDays($membership->expires_at, false) : null;
-                                $isExpiring = $daysLeft !== null && $daysLeft <= 7 && $daysLeft >= 0;
-                                $isExpired = $daysLeft !== null && $daysLeft < 0;
-                            @endphp
-                            @if($isExpired)
-                                <span class="inline-flex rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-xs font-bold text-red-300">Expired</span>
-                            @elseif($isExpiring)
-                                <span class="inline-flex rounded-full border border-amber-400/35 bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-300">Expiring Soon</span>
-                            @else
-                                <span class="inline-flex rounded-full border border-emerald-400/50 bg-emerald-400/20 px-3 py-1 text-xs font-bold text-emerald-300">Active</span>
-                            @endif
+                    @if($membership)
+                        @php
+                            $now = \Illuminate\Support\Carbon::today();
+                            $daysLeft = $membership->expires_at ? (int) $now->diffInDays($membership->expires_at, false) : null;
+                            $isExpiring = $daysLeft !== null && $daysLeft <= 7 && $daysLeft >= 0;
+                            $isExpired = $daysLeft !== null && $daysLeft < 0;
+                        @endphp
+                        @if($isExpired)
+                            <span style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:#fca5a5;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);padding:3px 10px;border-radius:999px;">EXPIRED</span>
+                        @elseif($isExpiring)
+                            <span style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:#fcd34d;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);padding:3px 10px;border-radius:999px;">EXPIRING</span>
                         @else
-                            <span class="inline-flex rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs font-bold text-zinc-300">No Membership</span>
+                            <span style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:#6ee7b7;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);padding:3px 10px;border-radius:999px;">ACTIVE</span>
                         @endif
-                    </div>
+                    @else
+                        <span style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:#a1a1aa;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:3px 10px;border-radius:999px;">NO PLAN</span>
+                    @endif
                 </div>
 
-                @if($membership)
-                    <div class="mb-5 grid grid-cols-2 gap-3 border-y border-white/10 py-4">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Plan</p>
-                            <p class="mt-2 text-sm font-semibold text-white">{{ $membership->plan?->name ?? '-' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">Expires</p>
-                            <p class="mt-2 text-sm font-semibold text-white">{{ $membership->expires_at?->format('M j, Y') ?? '-' }}</p>
-                        </div>
-                    </div>
-                @endif
+                {{-- Middle: Member Info --}}
+                <div style="position:relative;margin-top:auto;">
+                    <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:0.02em;text-transform:uppercase;line-height:1.1;">{{ $user->name }}</div>
+                    <div style="font-family:monospace;font-size:11px;color:rgba(255,255,255,0.3);margin-top:3px;">{{ $memberId }}</div>
+                </div>
 
-                <div class="mb-3 flex justify-center">
-                    <div class="inline-block rounded-md border border-amber-400/20 p-3" style="background: #fff;">
+                {{-- Bottom row: Plan + Expiry --}}
+                <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);">
+                    @if($membership)
+                        <div>
+                            <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Plan</div>
+                            <div style="font-size:13px;font-weight:700;color:#e8a020;margin-top:2px;">{{ $membership->plan?->name ?? '—' }}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Expires</div>
+                            <div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;">{{ $membership->expires_at?->format('M j, Y') ?? '—' }}</div>
+                        </div>
+                    @else
+                        <div style="font-size:11px;color:rgba(255,255,255,0.3);">No active membership</div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- QR Code Panel --}}
+            <div class="mt-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl overflow-hidden">
+                <div class="px-5 py-4 border-b border-white/10 bg-white/5">
+                    <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Verification QR Code</h2>
+                </div>
+                <div class="p-6 flex flex-col items-center gap-4">
+                    <div class="rounded-lg bg-white p-3">
                         {!! $qrSvg !!}
                     </div>
+                    <p class="text-xs text-gray-400 text-center">Show this QR code at the front desk to verify your membership status.</p>
+                    <a href="{{ route('portal.card.pdf') }}"
+                       download="amigos-membership-card.pdf"
+                       wire:navigate.void
+                       class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 transition-all text-black font-bold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] transform hover:-translate-y-0.5">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Download PDF Card
+                    </a>
                 </div>
-
-                <p class="text-center text-xs font-medium text-zinc-500">Scan to verify membership</p>
-
-                <a href="{{ route('portal.card.pdf') }}" class="pub-btn-primary mt-5 w-full justify-center">Download PDF</a>
             </div>
+
         </div>
-    </section>
+    </div>
 </div>

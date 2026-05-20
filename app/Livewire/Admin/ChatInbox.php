@@ -23,6 +23,8 @@ class ChatInbox extends Component
             ->whereNull('read_at')
             ->where('sender_type', 'member')
             ->update(['read_at' => now()]);
+
+        $this->dispatch('admin-conversation-selected', conversationId: $id);
     }
 
     public function sendReply(): void
@@ -56,6 +58,7 @@ class ChatInbox extends Component
 
         if ($this->activeConversationId === $id) {
             $this->activeConversationId = null;
+            $this->dispatch('admin-conversation-selected', conversationId: null);
         }
     }
 
