@@ -54,6 +54,25 @@ it('admin saving hero_title updates the site_contents table', function (): void 
     expect(SiteContent::get('hero_title'))->toBe('New Gym Title');
 });
 
+it('hero image upload field is not present in the site content editor', function (): void {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->get('/admin/site-content');
+
+    $response->assertStatus(200);
+    $response->assertDontSee('hero_image_upload');
+    $response->assertDontSee('Hero Image');
+});
+
+it('SiteContentEditor component has no hero_image_upload property', function (): void {
+    $admin = User::factory()->admin()->create();
+
+    $component = Livewire::actingAs($admin)->test(SiteContentEditor::class);
+
+    expect(property_exists($component->instance(), 'hero_image_upload'))->toBeFalse();
+    expect(property_exists($component->instance(), 'hero_image_path'))->toBeFalse();
+});
+
 it('updated CMS content is reflected on the public homepage', function (): void {
     SiteContent::updateOrCreate(
         ['key' => 'hero_title'],

@@ -60,42 +60,6 @@
                         @enderror
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-semibold text-gray-400 uppercase">Hero Image</label>
-
-                        @if($hero_image_path)
-                            <div class="relative group w-full h-40 mb-2 overflow-hidden rounded-xl border border-white/10">
-                                <img
-                                    src="{{ asset('storage/' . $hero_image_path) }}"
-                                    alt="Current hero image"
-                                    class="w-full h-full object-cover"
-                                >
-                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span class="text-white text-xs font-medium">Current Image</span>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="relative">
-                            <input
-                                type="file"
-                                wire:model="hero_image_upload"
-                                accept="image/*"
-                                class="border border-dashed border-white/20 rounded-xl px-3 py-4 text-sm w-full bg-white/5 text-gray-400 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30 cursor-pointer"
-                            >
-                        </div>
-                        @error('hero_image_upload')
-                            <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
-                        @enderror
-
-                        <div wire:loading wire:target="hero_image_upload" class="flex items-center gap-2 text-xs text-amber-400 mt-2">
-                            <svg class="animate-spin h-3 w-3" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Uploading image...
-                        </div>
-                    </div>
                 </div>
             </div>
 

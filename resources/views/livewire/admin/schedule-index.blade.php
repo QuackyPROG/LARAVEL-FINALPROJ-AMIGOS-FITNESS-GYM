@@ -144,83 +144,131 @@
 
     @if($showForm)
     <style>
-        .gold-gradient-bg {
-            background-size: 200% 200%;
-            animation: pan-gradient 4s ease infinite;
-        }
+        .gold-gradient-bg { background-size: 200% 200%; animation: pan-gradient 4s ease infinite; }
         @keyframes pan-gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
     </style>
-    
+
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="relative w-full max-w-md mx-auto group">
-            <div class="absolute -inset-[1.5px] bg-gradient-to-r from-orange-300 via-orange-600 to-orange-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
-            
-            <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full">
-                
-                <div class="flex flex-col items-center justify-center mb-8 text-center">
-                    <div class="bg-gradient-to-br from-orange-400/20 to-orange-600/20 border border-orange-500/30 text-orange-400 p-3.5 rounded-full mb-4 shadow-[0_0_20px_rgba(234,88,12,0.15)]">
+        <div class="relative w-full max-w-2xl mx-auto group">
+            <div class="absolute -inset-[1.5px] bg-gradient-to-r from-amber-300 via-yellow-600 to-amber-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
+
+            <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full max-h-[90vh] overflow-y-auto">
+
+                <div class="flex items-center mb-8">
+                    <div class="flex-shrink-0 mr-4 bg-gradient-to-br from-amber-400/20 to-yellow-600/20 border border-amber-500/30 text-amber-400 p-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.15)]">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C6.596 6.253 2 10.849 2 16.5S6.596 26.747 12 26.747s10-4.596 10-10.247S17.404 6.253 12 6.253z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h2 class="text-2xl font-extrabold text-white tracking-wide">{{ $editingId ? 'Edit Class' : 'Add Class' }}</h2>
-                    <p class="text-sm text-gray-400 mt-1.5">{{ $editingId ? 'Update class schedule' : 'Create a new recurring class' }}</p>
-                </div>
-                
-                <form wire:submit="save" class="space-y-5">
-                    
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Class Name</label>
-                        <input type="text" wire:model="name" placeholder="e.g. Morning Yoga"
-                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
-                        @error('name') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
+                        <h2 class="text-2xl font-extrabold text-white tracking-wide">{{ $editingId ? 'Edit Class' : 'Add Class' }}</h2>
+                        <p class="text-sm text-gray-400 mt-1">{{ $editingId ? 'Update class schedule' : 'Create a new recurring class' }}</p>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Day</label>
-                            <select wire:model="dayOfWeek" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner">
-                                @foreach($this->dayOptions() as $dayValue => $dayLabel)
-                                    <option value="{{ $dayValue }}" class="bg-dark-page text-white">{{ $dayLabel }}</option>
-                                @endforeach
-                            </select>
+                <form wire:submit="save">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        {{-- Left column --}}
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Event Name</label>
+                                <input type="text" wire:model="name" placeholder="e.g. Morning Yoga"
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
+                                @error('name') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Day of Week</label>
+                                <div class="flex flex-wrap gap-1.5">
+                                    @foreach([1 => 'Mon', 2 => 'Tue', 3 => 'Wed', 4 => 'Thu', 5 => 'Fri', 6 => 'Sat', 0 => 'Sun'] as $dayVal => $dayShort)
+                                        <button type="button"
+                                            wire:click="$set('dayOfWeek', {{ $dayVal }})"
+                                            class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all
+                                                {{ $dayOfWeek == $dayVal
+                                                    ? 'bg-amber-500 text-black'
+                                                    : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10' }}">
+                                            {{ $dayShort }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                                @error('dayOfWeek') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Start Time</label>
+                                <input type="time" wire:model="time" style="color-scheme: dark;"
+                                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all shadow-inner cursor-pointer" required>
+                                @error('time') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                                <input type="checkbox" wire:model="isRecurring" id="recur" class="rounded border-white/20">
+                                <label for="recur" class="text-sm text-gray-300 cursor-pointer flex-1">Recurring weekly</label>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Time</label>
-                            <input type="time" wire:model="time" style="color-scheme: dark;"
-                                class="w-full bg-[#0a0a0a] hover:bg-[#111111] border border-white/10 hover:border-amber-500/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all shadow-inner cursor-pointer" required>
+                        {{-- Right column --}}
+                        <div class="space-y-5">
+                            <div x-data="{
+                                    open: false,
+                                    selectedName: '{{ $coaches->firstWhere('id', $coachId)?->name ?? 'No coach' }}',
+                                    selectCoach(id, name) {
+                                        $wire.set('coachId', id);
+                                        this.selectedName = name;
+                                        this.open = false;
+                                    }
+                                 }"
+                                 @click.outside="open = false"
+                                 class="relative" wire:ignore.self>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Coach (Optional)</label>
+                                <button @click="open = !open" type="button"
+                                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-amber-500/50 backdrop-blur-md transition-all shadow-inner"
+                                    :class="{'ring-2 ring-amber-500/50 border-amber-500/50': open}">
+                                    <span x-text="selectedName" class="text-sm font-medium text-gray-300"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" :class="{'rotate-180 text-amber-400': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 -translate-y-2"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 -translate-y-2"
+                                     style="display:none;"
+                                     class="absolute z-50 w-full mt-2 bg-[#000009]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_15px_50px_rgba(0,0,0,0.7)] overflow-hidden">
+                                    <div class="p-1 max-h-48 overflow-y-auto">
+                                        <button type="button" @click="selectCoach(null, 'No coach')" class="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors">No coach</button>
+                                        @foreach($coaches as $coach)
+                                            <button type="button" @click="selectCoach({{ $coach->id }}, '{{ addslashes($coach->name) }}')" class="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors">{{ $coach->name }}</button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Capacity</label>
+                                <div class="flex items-center gap-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+                                    <button type="button"
+                                        wire:click="$set('capacity', {{ max(1, $capacity - 1) }})"
+                                        class="px-4 py-3 text-lg font-bold text-gray-300 bg-white/5 border-r border-white/10 hover:bg-white/10 hover:text-amber-400 transition-colors">−</button>
+                                    <span class="flex-1 text-center text-white font-bold text-lg py-3">{{ $capacity }}</span>
+                                    <button type="button"
+                                        wire:click="$set('capacity', {{ $capacity + 1 }})"
+                                        class="px-4 py-3 text-lg font-bold text-gray-300 bg-white/5 border-l border-white/10 hover:bg-white/10 hover:text-amber-400 transition-colors">+</button>
+                                </div>
+                                @error('capacity') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Coach (Optional)</label>
-                            <select wire:model="coachId" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner">
-                                <option value="" class="bg-dark-page text-white">No coach</option>
-                                @foreach($coaches as $coach)<option value="{{ $coach->id }}" class="bg-dark-page text-white">{{ $coach->name }}</option>@endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Capacity</label>
-                            <input type="number" wire:model="capacity" min="1" placeholder="20"
-                                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-                        <input type="checkbox" wire:model="isRecurring" id="recur" class="rounded border-white/20">
-                        <label for="recur" class="text-sm text-gray-300 cursor-pointer flex-1">Recurring weekly</label>
-                    </div>
-                    
                     <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
                         <button type="button" wire:click="$set('showForm', false)" class="flex-1 px-4 py-3 text-sm font-semibold text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">Cancel</button>
-                        <button type="submit" class="flex-[2] bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(234,88,12,0.3)] hover:shadow-[0_0_25px_rgba(234,88,12,0.5)] transition-all transform hover:-translate-y-0.5">{{ $editingId ? 'Update Class' : 'Add Class' }}</button>
+                        <button type="submit" class="flex-[2] bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-all transform hover:-translate-y-0.5">{{ $editingId ? 'Update Class →' : 'Add Class →' }}</button>
                     </div>
                 </form>
             </div>
@@ -400,21 +448,26 @@
 @endif
 
 @if($showDeleteModal && $selectedSchedule)
-    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-        <div class="w-full max-w-sm p-6 mx-4 shadow-2xl bg-[#1a1a1a] border border-red-500/50 rounded-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
-            <div class="flex items-center gap-4 mb-4">
-                <div class="p-3 rounded-full bg-red-900/30 text-red-400 border border-red-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+    <style>
+        .spin-bg-red { background: conic-gradient(from 0deg, #ef4444, #7f1d1d, #fecaca, #7f1d1d, #ef4444); }
+    </style>
+    <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a1a1a]">
+            <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-red"></div>
+            <div class="relative z-10 bg-[#0a0a0a] rounded-xl shadow-2xl p-6 w-full h-full isolate">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 rounded-full bg-red-900/30 text-red-400 border border-red-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Delete Class</h2>
                 </div>
-                <h2 class="text-xl font-bold text-white">Delete Class</h2>
-            </div>
-            <p class="mb-8 text-sm text-[#a0a0a0]">Are you sure you want to permanently delete <strong class="text-white">{{ $selectedSchedule->name }}</strong>? This action cannot be undone.</p>
-            <div class="flex justify-end gap-3">
-                <button wire:click="$set('showDeleteModal', false)" class="px-5 py-2.5 text-sm font-semibold text-[#a0a0a0] transition-colors border border-[#404040] rounded-lg hover:bg-[#252525] hover:text-white">Cancel</button>
-                <button wire:click="executeDelete" class="px-5 py-2.5 text-sm font-bold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 shadow-lg shadow-red-600/20">Delete Class</button>
+                <p class="mb-8 text-sm text-[#a0a0a0]">Are you sure you want to permanently delete <strong class="text-white">{{ $selectedSchedule->name }}</strong>? This action cannot be undone.</p>
+                <div class="flex justify-end gap-3">
+                    <button wire:click="$set('showDeleteModal', false)" class="px-5 py-2.5 text-sm font-semibold text-[#a0a0a0] transition-colors border border-[#404040] rounded-lg hover:bg-[#252525] hover:text-white">Cancel</button>
+                    <button wire:click="executeDelete" class="px-5 py-2.5 text-sm font-bold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 shadow-lg shadow-red-600/20">Delete Class</button>
+                </div>
             </div>
         </div>
     </div>

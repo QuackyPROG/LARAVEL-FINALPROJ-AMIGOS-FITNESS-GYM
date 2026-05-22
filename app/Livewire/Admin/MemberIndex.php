@@ -8,6 +8,7 @@ use App\Models\Membership;
 use App\Models\MemberConsent;
 use App\Models\SiteContent;
 use App\Services\AuditLogger;
+use App\Services\PlanAdvisorService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -39,6 +40,10 @@ class MemberIndex extends Component
     public string $addEmail = '';
     public ?int $addPlanId = null;
     public ?string $tempPasswordResult = null;
+
+    public ?string $advisorRationale = null;
+    public ?int $advisorPlanId = null;
+    public bool $advisorLoading = false;
 
     public ?int $extendPlanId = null;
 
@@ -109,9 +114,33 @@ class MemberIndex extends Component
         $this->showExtendModal = false;
     }
 
+    public function updatedAddEmail(): void
+    {
+        $this->advisorRationale = null;
+        $this->advisorPlanId = null;
+
+        if (! filter_var($this->addEmail, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        $this->advisorLoading = true;
+
+        $result = app(PlanAdvisorService::class)->recommend($this->addEmail);
+
+        $this->advisorLoading = false;
+
+        if ($result) {
+            $this->advisorRationale = $result['rationale'];
+            $this->advisorPlanId = $result['plan_id'];
+            if (! $this->addPlanId) {
+                $this->addPlanId = $result['plan_id'];
+            }
+        }
+    }
+
     public function openAddModal(): void
     {
-        $this->reset(['addName', 'addEmail', 'addPlanId', 'tempPasswordResult']);
+        $this->reset(['addName', 'addEmail', 'addPlanId', 'tempPasswordResult', 'advisorRationale', 'advisorPlanId', 'advisorLoading']);
         $this->showAddModal = true;
     }
 
@@ -349,7 +378,7 @@ class MemberIndex extends Component
 
         return view('livewire.admin.member-index', [
             'members' => $query->paginate(15),
-            'plans' => MembershipPlan::active()->orderBy('price')->get(),
+            'plans' => MembershipPlan::active()->orderByDesc('is_daily')->orderBy('price')->get(),
         ]);
     }
 }

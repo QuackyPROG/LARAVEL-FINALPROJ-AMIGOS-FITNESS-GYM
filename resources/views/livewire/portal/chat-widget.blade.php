@@ -37,7 +37,8 @@
             </div>
 
             {{-- Messages --}}
-            <div class="flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-4">
+            <div class="flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-4" id="userChatMessages"
+                 x-on:scroll-chat-bottom.window="$el.scrollTo({top: $el.scrollHeight, behavior: 'smooth'})">
                 @forelse($messages as $msg)
                     @php
                         $isMember = $msg->sender_type === 'member';
