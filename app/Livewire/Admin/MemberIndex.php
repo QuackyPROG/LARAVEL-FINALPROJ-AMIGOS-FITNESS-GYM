@@ -349,7 +349,7 @@ class MemberIndex extends Component
 
         return view('livewire.admin.member-index', [
             'members' => $query->paginate(15),
-            'plans' => MembershipPlan::active()->orderBy('price')->get(),
+            'plans' => MembershipPlan::active()->orderByDesc('is_daily')->orderBy('price')->get(),
         ]);
     }
 }

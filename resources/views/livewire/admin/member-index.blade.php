@@ -216,7 +216,7 @@
         </style>
         
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div class="relative w-full max-w-md mx-auto group">
+            <div class="relative w-full max-w-lg mx-auto group">
                 <div class="absolute -inset-[1.5px] bg-gradient-to-r from-amber-300 via-yellow-600 to-amber-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
                 
                 <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full">
@@ -262,51 +262,29 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Membership Plan</label>
-                                
-                                <div x-data="{ 
-                                        open: false, 
-                                        selectedName: 'Select a plan...', 
-                                        selectPlan(id, name) { 
-                                            $wire.set('addPlanId', id); 
-                                            this.selectedName = name; 
-                                            this.open = false; 
-                                        } 
-                                     }" 
-                                     class="relative" wire:ignore.self>
-                                     
-                                    <button @click="open = !open" type="button" 
-                                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner"
-                                        :class="{ 'ring-2 ring-amber-500/50 bg-white/10 border-amber-500/50': open }">
-                                        <span x-text="selectedName" class="text-sm font-medium" :class="{'text-gray-400': selectedName === 'Select a plan...'}"></span>
-                                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="{'rotate-180 text-amber-400': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-
-                                    <div x-show="open" @click.away="open = false" 
-                                         x-transition:enter="transition ease-out duration-200"
-                                         x-transition:enter-start="transform opacity-0 -translate-y-2"
-                                         x-transition:enter-end="transform opacity-100 translate-y-0"
-                                         x-transition:leave="transition ease-in duration-150"
-                                         x-transition:leave-start="transform opacity-100 translate-y-0"
-                                         x-transition:leave-end="transform opacity-0 -translate-y-2"
-                                         class="absolute z-50 w-full mt-2 bg-[#1a2c23]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_15px_50px_rgba(0,0,0,0.7)] overflow-hidden"
-                                         style="display: none;">
-                                        
-                                        <div class="py-2 max-h-56 overflow-y-auto glass-scrollbar">
-                                            @foreach($plans as $plan)
-                                                <button type="button" 
-                                                        @click="selectPlan({{ $plan->id }}, '{{ addslashes($plan->name) }}')"
-                                                        class="w-full text-left px-5 py-3 hover:bg-white/10 transition-colors group flex justify-between items-center border-b border-white/5 last:border-0">
-                                                    <div>
-                                                        <div class="text-sm font-semibold text-gray-200 group-hover:text-white">{{ $plan->name }}</div>
-                                                        <div class="text-xs text-gray-500 group-hover:text-amber-400/80 mt-0.5 transition-colors">{{ $plan->duration_days }} Days</div>
-                                                    </div>
-                                                    <div class="text-sm font-bold text-amber-400">
-                                                        {{ config('paymongo.currency', 'PHP') }} {{ number_format($plan->price, 0) }}
-                                                    </div>
-                                                </button>
-                                            @endforeach
-                                        </div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Membership Type</label>
+                                <div class="max-h-48 overflow-y-auto glass-scrollbar pr-1">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        @foreach($plans as $plan)
+                                            <button type="button"
+                                                wire:click="$set('addPlanId', {{ $plan->id }})"
+                                                class="relative flex flex-col p-3 rounded-xl border transition-all text-left
+                                                    {{ $addPlanId == $plan->id
+                                                        ? 'border-amber-500 ring-2 ring-amber-500 bg-amber-500/10'
+                                                        : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20' }}">
+                                                @if($plan->is_daily)
+                                                    <span class="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wide">Day Pass</span>
+                                                @endif
+                                                @if($addPlanId == $plan->id)
+                                                    <span class="absolute top-2 {{ $plan->is_daily ? 'right-14' : 'right-2' }} text-amber-400">
+                                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                                    </span>
+                                                @endif
+                                                <span class="text-xs font-bold text-white mt-0.5 pr-8">{{ $plan->name }}</span>
+                                                <span class="text-sm font-extrabold text-amber-400 mt-1">₱{{ number_format($plan->price, 0) }}</span>
+                                                <span class="text-[10px] text-gray-500 mt-0.5">{{ $plan->duration_days === 1 ? '1 Day' : $plan->duration_days . ' Days' }}</span>
+                                            </button>
+                                        @endforeach
                                     </div>
                                 </div>
                                 @error('addPlanId') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
@@ -314,7 +292,7 @@
                             
                             <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
                                 <button type="button" wire:click="closeAddModal" class="flex-1 px-4 py-3 text-sm font-semibold text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">Cancel</button>
-                                <button type="submit" class="flex-[2] bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-all transform hover:-translate-y-0.5">Create Member</button>
+                                <button type="submit" class="flex-[2] bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-all transform hover:-translate-y-0.5">Create Member →</button>
                             </div>
                         </form>
                     @endif
