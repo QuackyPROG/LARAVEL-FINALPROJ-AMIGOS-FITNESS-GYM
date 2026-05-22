@@ -16,6 +16,7 @@ class MembershipPlan extends Model
         'price',
         'benefits',
         'is_active',
+        'is_daily',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class MembershipPlan extends Model
         return [
             'benefits' => 'array',
             'is_active' => 'boolean',
+            'is_daily' => 'boolean',
             'price' => 'decimal:2',
         ];
     }
