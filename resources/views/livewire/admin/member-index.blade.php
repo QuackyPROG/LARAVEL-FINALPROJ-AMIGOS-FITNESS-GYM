@@ -256,13 +256,23 @@
 
                             <div>
                                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Email Address</label>
-                                <input type="email" wire:model="addEmail" placeholder="john@example.com"
+                                <input type="email" wire:model.live.debounce.500ms="addEmail" placeholder="john@example.com"
                                     class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
                                 @error('addEmail') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Membership Type</label>
+
+                                @if($advisorLoading)
+                                    <div class="animate-pulse bg-amber-500/10 rounded h-6 w-3/4 mb-2"></div>
+                                @elseif($advisorRationale)
+                                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl px-4 py-2 text-xs mb-2 flex items-center gap-2">
+                                        <svg class="w-3.5 h-3.5 shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        {{ $advisorRationale }}
+                                    </div>
+                                @endif
+
                                 <div class="max-h-48 overflow-y-auto glass-scrollbar pr-1">
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach($plans as $plan)
@@ -271,7 +281,9 @@
                                                 class="relative flex flex-col p-3 rounded-xl border transition-all text-left
                                                     {{ $addPlanId == $plan->id
                                                         ? 'border-amber-500 ring-2 ring-amber-500 bg-amber-500/10'
-                                                        : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20' }}">
+                                                        : ($advisorPlanId == $plan->id
+                                                            ? 'border-amber-400/50 ring-2 ring-amber-400 bg-amber-500/5'
+                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20') }}">
                                                 @if($plan->is_daily)
                                                     <span class="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wide">Day Pass</span>
                                                 @endif
