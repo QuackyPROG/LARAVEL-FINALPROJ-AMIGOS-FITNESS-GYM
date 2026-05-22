@@ -26,6 +26,7 @@ class ChatInbox extends Component
             ->update(['read_at' => now()]);
 
         $this->dispatch('admin-conversation-selected', conversationId: $id);
+        $this->dispatch('scroll-chat-bottom');
     }
 
     public function sendReply(): void
@@ -46,6 +47,7 @@ class ChatInbox extends Component
         }
 
         $this->reply = '';
+        $this->dispatch('scroll-chat-bottom');
     }
 
     public function closeConversation(int $id): void

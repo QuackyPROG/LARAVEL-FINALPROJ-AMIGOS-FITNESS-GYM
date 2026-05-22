@@ -35,6 +35,8 @@ class ChatWidget extends Component
                 $this->dispatch('chat-channel-subscribe', conversationId: $existing->id);
             }
         }
+
+        $this->dispatch('scroll-chat-bottom');
     }
 
     public function closeChat(): void
@@ -69,6 +71,7 @@ class ChatWidget extends Component
 
         $userMessage = $this->message;
         $this->message = '';
+        $this->dispatch('scroll-chat-bottom');
 
         if (! $conversation->isEscalated()) {
             try {

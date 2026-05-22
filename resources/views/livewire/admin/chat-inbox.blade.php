@@ -44,7 +44,8 @@
                 <button wire:click="closeConversation({{ $activeConversation->id }})" wire:confirm="Close this conversation?" class="border border-red-700 text-red-400 text-sm px-3 py-1 rounded hover:bg-red-900/20 transition-colors">Close</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3" id="adminChatMessages">
+            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3" id="adminChatMessages"
+                 x-on:scroll-chat-bottom.window="$el.scrollTo({top: $el.scrollHeight, behavior: 'smooth'})">
                 @foreach($activeMessages as $msg)
                 @php
                     $isAdmin  = $msg->sender_type === 'admin';
