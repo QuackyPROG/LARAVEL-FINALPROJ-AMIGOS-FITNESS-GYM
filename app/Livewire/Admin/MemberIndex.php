@@ -11,6 +11,7 @@ use App\Services\AuditLogger;
 use App\Services\PlanAdvisorService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -76,6 +77,11 @@ class MemberIndex extends Component
 
     public function saveExtension(): void
     {
+        if ($this->selectedMemberId === null) {
+            Session::flash('error', 'No member selected.');
+            return;
+        }
+
         $data = $this->validate([
             'extendPlanId' => 'required|exists:membership_plans,id',
         ]);
@@ -86,8 +92,9 @@ class MemberIndex extends Component
         // Check if there is an active membership and extend from its expiration,
         // otherwise start from today
         $activeMembership = $user->activeMembership;
-        $startDate = $activeMembership && $activeMembership->expires_at->isFuture() 
-            ? $activeMembership->expires_at 
+        $activeExpiresAt = $activeMembership?->expires_at;
+        $startDate = $activeExpiresAt && $activeExpiresAt->isFuture()
+            ? $activeExpiresAt
             : now();
 
         Membership::create([
@@ -110,7 +117,7 @@ class MemberIndex extends Component
             'added_days' => $plan->duration_days
         ]);
 
-        session()->flash('success', "Subscription extended for {$user->name}.");
+        Session::flash('success', "Subscription extended for {$user->name}.");
         $this->showExtendModal = false;
     }
 
@@ -185,7 +192,7 @@ class MemberIndex extends Component
         ]);
 
         $this->tempPasswordResult = $tempPassword;
-        session()->flash('success', "Walk-in member {$user->name} created. Temp password: {$tempPassword}");
+        Session::flash('success', "Walk-in member {$user->name} created. Temp password: {$tempPassword}");
         $this->showAddModal = false;
     }
 
@@ -212,14 +219,17 @@ class MemberIndex extends Component
 
     public function executeDeactivate(): void
     {
-        if ($this->selectedMemberId) {
-            $user = User::findOrFail($this->selectedMemberId);
-            $user->status = 'inactive';
-            $user->save();
-
-            app(AuditLogger::class)->log('member.deactivated', $user, ['status' => 'inactive']);
-            session()->flash('success', "Member {$user->name} deactivated.");
+        if ($this->selectedMemberId === null) {
+            $this->showDeactivateModal = false;
+            return;
         }
+
+        $user = User::findOrFail($this->selectedMemberId);
+        $user->status = 'inactive';
+        $user->save();
+
+        app(AuditLogger::class)->log('member.deactivated', $user, ['status' => 'inactive']);
+        Session::flash('success', "Member {$user->name} deactivated.");
         $this->showDeactivateModal = false;
         $this->selectedMemberId = null;
         $this->selectedMember = null;
@@ -235,12 +245,15 @@ class MemberIndex extends Component
 
     public function executeDelete(): void
     {
-        if ($this->selectedMemberId) {
-            $user = User::findOrFail($this->selectedMemberId);
-            app(AuditLogger::class)->log('member.deleted', $user, ['name' => $user->name]);
-            $user->delete();
-            session()->flash('success', 'Member deleted.');
+        if ($this->selectedMemberId === null) {
+            $this->showDeleteModal = false;
+            return;
         }
+
+        $user = User::findOrFail($this->selectedMemberId);
+        app(AuditLogger::class)->log('member.deleted', $user, ['name' => $user->name]);
+        $user->delete();
+        Session::flash('success', 'Member deleted.');
         $this->showDeleteModal = false;
         $this->selectedMemberId = null;
         $this->selectedMember = null;
@@ -256,11 +269,14 @@ class MemberIndex extends Component
 
     public function executeNotify(): void
     {
-        if ($this->selectedMemberId) {
-            $user = User::findOrFail($this->selectedMemberId);
-            app(AuditLogger::class)->log('member.expiry_notified', $user, ['email' => $user->email]);
-            session()->flash('success', "Expiry notification sent to {$user->name}.");
+        if ($this->selectedMemberId === null) {
+            $this->showNotifyModal = false;
+            return;
         }
+
+        $user = User::findOrFail($this->selectedMemberId);
+        app(AuditLogger::class)->log('member.expiry_notified', $user, ['email' => $user->email]);
+        Session::flash('success', "Expiry notification sent to {$user->name}.");
         $this->showNotifyModal = false;
         $this->selectedMemberId = null;
         $this->selectedMember = null;
@@ -281,16 +297,16 @@ class MemberIndex extends Component
             ->get();
 
         if ($expiringMembers->isEmpty()) {
-            session()->flash('success', 'No members are expiring within 7 days.');
+            Session::flash('success', 'No members are expiring within 7 days.');
             $this->showNotifyExpiringModal = false;
             return;
         }
 
-        foreach ($expiringMembers as $user) {
+        $expiringMembers->each(function (User $user): void {
             app(AuditLogger::class)->log('member.expiry_notified', $user, ['email' => $user->email, 'bulk' => true]);
-        }
+        });
 
-        session()->flash('success', "Expiry notifications queued for {$expiringMembers->count()} members.");
+        Session::flash('success', "Expiry notifications queued for {$expiringMembers->count()} members.");
         $this->showNotifyExpiringModal = false;
     }
 
@@ -301,7 +317,7 @@ class MemberIndex extends Component
         $user->save();
 
         app(AuditLogger::class)->log('member.password_reset', $user, []);
-        session()->flash('success', "Password reset flag set for {$user->name}.");
+        Session::flash('success', "Password reset flag set for {$user->name}.");
     }
 
     public function recordCashPayment(): void
@@ -311,8 +327,8 @@ class MemberIndex extends Component
             'witnessedConsent' => 'required|accepted',
         ]);
 
-        if (!$this->selectedMemberId) {
-            session()->flash('error', 'No member selected.');
+        if ($this->selectedMemberId === null) {
+            Session::flash('error', 'No member selected.');
             return;
         }
 
@@ -336,7 +352,7 @@ class MemberIndex extends Component
 
         app(AuditLogger::class)->log('membership.cash_payment', $membership, [
             'plan' => $plan->name,
-            'expires_at' => $membership->expires_at->toDateString(),
+            'expires_at' => $membership->expires_at?->format('Y-m-d'),
             'witnessed_by' => auth()->id(),
         ]);
 
@@ -359,7 +375,7 @@ class MemberIndex extends Component
             ]);
         }
 
-        session()->flash('success', "Cash payment recorded for {$plan->name}.");
+        Session::flash('success', "Cash payment recorded for {$plan->name}.");
         $this->showPaymentModal = false;
         $this->reset(['walkInPlanId', 'witnessedConsent']);
     }
