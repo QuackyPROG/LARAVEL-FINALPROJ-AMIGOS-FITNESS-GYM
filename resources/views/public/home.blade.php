@@ -286,83 +286,136 @@
     .lp-program-card:hover .lp-program-card__link { gap: 9px; }
 
     /* ══════════════════════════════════════════════════════════════
-       5. PLANS
+       5. PLANS — Apple-inspired premium treatment
     ══════════════════════════════════════════════════════════════ */
     .lp-plans-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
         justify-content: center;
-        gap: 14px; margin-top: 48px;
+        gap: 20px; margin-top: 56px;
     }
+    /* Count-aware column layouts — prevents orphaned cards */
+    .lp-plans-grid[data-count="1"] { grid-template-columns: minmax(0, 400px); }
+    .lp-plans-grid[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 340px)); }
+    .lp-plans-grid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 340px)); }
+    .lp-plans-grid[data-count="4"] { grid-template-columns: repeat(4, 1fr); width: 100%; }
+    .lp-plans-grid[data-count="4"] .lp-plan__price { font-size: clamp(38px, 3.8vw, 72px); }
+    .lp-plans-grid[data-count="4"] .lp-plan-card  { padding: 28px 22px; }
+    .lp-plans-grid[data-count="4"] .lp-plan__benefits li { font-size: 12px; }
+
     .lp-plan-card {
-        background: #090909; border: 1px solid #181818;
-        border-radius: 16px; padding: 32px 26px;
+        background: rgba(255,255,255,0.024);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 20px; padding: 36px 28px;
         position: relative; display: flex; flex-direction: column;
-        transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
-        overflow: hidden;
+        transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
     }
-    .lp-plan-card:hover { border-color: #2a2a2a; transform: translateY(-3px); }
+    .lp-plan-card:hover {
+        border-color: rgba(255,255,255,0.13);
+        transform: translateY(-4px);
+        box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    }
     .lp-plan-card--featured {
-        border-color: rgba(232,160,32,0.4);
-        background: #0c0c0c;
-        box-shadow: 0 0 40px rgba(232,160,32,0.08);
+        border-color: rgba(232,160,32,0.22);
+        background: rgba(232,160,32,0.028);
+        box-shadow:
+            inset 0 2px 0 0 var(--brand-gold),
+            0 24px 48px rgba(0,0,0,0.5),
+            0 0 0 1px rgba(232,160,32,0.09);
     }
     .lp-plan-card--featured:hover {
-        box-shadow: 0 0 60px rgba(232,160,32,0.14);
+        border-color: rgba(232,160,32,0.35);
+        transform: translateY(-4px);
+        box-shadow:
+            inset 0 2px 0 0 var(--brand-gold),
+            0 32px 64px rgba(0,0,0,0.6),
+            0 0 40px rgba(232,160,32,0.1);
     }
-    /* Diagonal ribbon */
-    .lp-plan-card--featured::before {
-        content: 'Most Popular';
-        position: absolute; top: 18px; right: -28px;
-        background: var(--brand-gold); color: #000;
-        font-size: 9px; font-weight: 800; text-transform: uppercase;
-        letter-spacing: 0.08em; padding: 4px 36px;
-        transform: rotate(38deg);
+
+    /* Clean pill badge — replaces diagonal ribbon */
+    .lp-plan__badge {
+        display: inline-flex; align-self: flex-start;
+        align-items: center; gap: 5px;
+        background: rgba(232,160,32,0.1);
+        border: 1px solid rgba(232,160,32,0.28);
+        color: var(--brand-gold);
+        font-size: 9px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.13em; padding: 4px 12px;
+        border-radius: 100px; margin-bottom: 20px;
     }
+
     .lp-plan__name {
-        font-size: 10px; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 12px;
+        font-size: 11px; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.14em; color: rgba(255,255,255,0.36);
+        margin-bottom: 14px;
     }
+    .lp-plan-card--featured .lp-plan__name { color: rgba(232,160,32,0.72); }
+
     .lp-plan__price {
         font-family: 'Barlow Condensed', system-ui, sans-serif;
-        font-size: 72px; font-weight: 900; line-height: 1;
-        color: #f0f0f0; margin-bottom: 2px; letter-spacing: -0.02em;
+        font-size: 76px; font-weight: 900; line-height: 0.95;
+        color: #f5f5f7; margin-bottom: 4px; letter-spacing: -0.02em;
     }
     .lp-plan__currency {
-        font-size: 24px; font-weight: 400; color: var(--text-muted);
+        font-size: 24px; font-weight: 400;
+        color: rgba(245,245,247,0.52);
         vertical-align: super; font-family: inherit;
     }
-    .lp-plan__period { font-size: 12px; color: #3a3a3a; margin-bottom: 24px; }
+    .lp-plan__period {
+        font-size: 13px;
+        color: rgba(255,255,255,0.3);
+        margin-bottom: 24px;
+    }
+    .lp-plan__divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin: 0 0 22px;
+    }
+    .lp-plans-grid[data-count="4"] .lp-plan__divider { margin-bottom: 16px; }
+
     .lp-plan__benefits {
         list-style: none; display: flex; flex-direction: column;
-        gap: 10px; margin-bottom: 28px; flex: 1;
+        gap: 12px; margin-bottom: 32px; flex: 1;
     }
     .lp-plan__benefits li {
-        display: flex; align-items: flex-start; gap: 9px;
-        font-size: 13px; color: #686868;
+        display: flex; align-items: flex-start; gap: 10px;
+        font-size: 13px; color: rgba(255,255,255,0.5);
+        line-height: 1.5;
     }
     .lp-plan__check {
-        color: var(--brand-gold); font-weight: 700;
-        font-size: 12px; flex-shrink: 0; margin-top: 1px;
+        flex-shrink: 0; margin-top: 2px;
+        color: var(--brand-gold);
+        width: 15px; height: 15px;
     }
+
     .lp-plan-btn {
         display: block; width: 100%; text-align: center;
-        font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
-        padding: 12px 0; border-radius: 8px;
-        border: 1px solid #222; color: #aaa;
-        text-decoration: none; background: transparent;
-        transition: border-color 0.2s, color 0.2s;
+        font-size: 13px; font-weight: 600; letter-spacing: 0.025em;
+        padding: 14px 0; border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.62);
+        text-decoration: none;
+        background: rgba(255,255,255,0.06);
+        transition: background 0.22s, border-color 0.22s, color 0.22s, box-shadow 0.22s;
     }
-    .lp-plan-btn:hover { border-color: var(--brand-gold-border); color: var(--brand-gold); }
+    .lp-plan-btn:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.18);
+        color: #fff;
+    }
     .lp-plan-card--featured .lp-plan-btn {
-        background: var(--brand-gold); color: #000; border-color: transparent;
-        font-size: 13px;
+        background: var(--brand-gold); color: #000;
+        border-color: transparent; font-weight: 700;
     }
-    .lp-plan-card--featured .lp-plan-btn:hover { background: var(--brand-gold-hover); }
+    .lp-plan-card--featured .lp-plan-btn:hover {
+        background: #f0b420;
+        box-shadow: 0 8px 24px rgba(232,160,32,0.35);
+    }
+
     .lp-empty-card {
         grid-column: 1/-1; max-width: 460px; width: 100%; margin: 0 auto;
-        background: rgba(232,160,32,0.04); border: 1px dashed rgba(232,160,32,0.22);
-        border-radius: 14px; padding: 32px 24px; text-align: center;
+        background: rgba(232,160,32,0.04); border: 1px dashed rgba(232,160,32,0.2);
+        border-radius: 16px; padding: 40px 28px; text-align: center;
     }
     .lp-empty-card h3 { color: #c0c0c0; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
     .lp-empty-card p  { color: var(--text-muted); font-size: 13px; line-height: 1.6; }
@@ -529,6 +582,7 @@
         .lp-features__img-wrap { aspect-ratio: 16/7; order: -1; }
         .lp-programs__grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
         .lp-plans-grid { grid-template-columns: 1fr; max-width: 380px; margin-left: auto; margin-right: auto; }
+        .lp-plans-grid[data-count="4"] { grid-template-columns: repeat(2, 1fr); max-width: 680px; }
         .lp-coaches-grid { grid-template-columns: 1fr 1fr; }
         .lp-testimonials-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
         .lp-info-grid { grid-template-columns: 1fr; }
@@ -541,7 +595,8 @@
         .lp-section { padding: 64px 18px; }
         .lp-hero__heading { font-size: 52px; }
         .lp-coaches-grid { grid-template-columns: 1fr; }
-        .lp-plans-grid { grid-template-columns: 1fr; max-width: 100%; }
+        .lp-plans-grid,
+        .lp-plans-grid[data-count="4"] { grid-template-columns: 1fr; max-width: 100%; }
         .lp-features__grid { grid-template-columns: 1fr; }
         .lp-stats__grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -777,22 +832,41 @@
         <h2 class="lp-heading lp-reveal">Choose Your Plan</h2>
         <p class="lp-sub lp-reveal">Flexible options designed for every training goal and schedule.</p>
 
-        <div class="lp-plans-grid lp-stagger lp-vis">
+        <div class="lp-plans-grid lp-stagger lp-vis" data-count="{{ $plans->count() }}">
             @forelse($plans as $plan)
-                <div class="lp-plan-card {{ $loop->iteration === 2 ? 'lp-plan-card--featured' : '' }}">
+                @php $isFeatured = $loop->iteration === 2; @endphp
+                <div class="lp-plan-card {{ $isFeatured ? 'lp-plan-card--featured' : '' }}">
+
+                    {{-- Pill badge replaces the diagonal ribbon --}}
+                    @if($isFeatured)
+                        <div class="lp-plan__badge">
+                            <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true">
+                                <path d="M5 0L6.18 3.52H9.9L6.93 5.71L8.09 9.24L5 7.06L1.91 9.24L3.07 5.71L.1 3.52H3.82L5 0Z"/>
+                            </svg>
+                            Most Popular
+                        </div>
+                    @endif
+
                     <p class="lp-plan__name">{{ $plan->name }}</p>
+
                     <div class="lp-plan__price">
                         <span class="lp-plan__currency">₱</span>{{ number_format($plan->price, 0) }}
                     </div>
                     <p class="lp-plan__period">/ {{ $plan->duration_days }}-day access</p>
+
+                    <hr class="lp-plan__divider">
+
                     <ul class="lp-plan__benefits">
                         @foreach(($plan->benefits ?? []) as $benefit)
                             <li>
-                                <span class="lp-plan__check">✓</span>
+                                <svg class="lp-plan__check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="2.5,8 6,11.5 13.5,4.5"/>
+                                </svg>
                                 <span>{{ $benefit }}</span>
                             </li>
                         @endforeach
                     </ul>
+
                     @guest
                         <a href="{{ route('register', ['plan' => $plan->id]) }}" class="lp-plan-btn">Get Started</a>
                     @else

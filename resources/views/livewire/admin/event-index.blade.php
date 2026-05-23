@@ -14,38 +14,17 @@
     </div>
 
     @if($showForm)
-    <style>
-        .gold-gradient-bg {
-            background-size: 200% 200%;
-            animation: pan-gradient 4s ease infinite;
-        }
-        @keyframes pan-gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
-    
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="relative w-full max-w-3xl mx-auto group">
-            <div class="absolute -inset-[1.5px] bg-gradient-to-r from-amber-300 via-yellow-600 to-amber-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
-            
-            <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full">
-                
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div class="w-full max-w-3xl bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.8)]">
+            <div class="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+            <div class="p-8">
                 <div class="flex items-start justify-between mb-8">
-                    <div class="flex items-center gap-4">
-                        <div class="flex-shrink-0 bg-gradient-to-br from-amber-400/20 to-yellow-600/20 border border-amber-500/30 text-amber-400 p-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.15)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <div class="text-left">
-                            <h2 class="text-2xl font-extrabold text-white tracking-wide uppercase">{{ $editingId ? 'Edit Event' : 'New Event' }}</h2>
-                            <p class="text-xs text-gray-400 mt-0.5">{{ $editingId ? 'Update existing event details' : 'Broadcast a new event to your gym' }}</p>
-                        </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white tracking-tight">{{ $editingId ? 'Edit Event' : 'New Event' }}</h2>
+                        <p class="text-xs text-gray-500 mt-1">{{ $editingId ? 'Update existing event details' : 'Broadcast a new event to your gym' }}</p>
                     </div>
-                    <button wire:click="$set('showForm', false)" class="text-gray-500 hover:text-white transition-colors p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button wire:click="$set('showForm', false)" class="text-gray-600 hover:text-gray-300 transition-colors p-1.5 rounded-lg hover:bg-white/5 ml-4 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -99,9 +78,9 @@
                         </div>
                     </div>
                     
-                    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-white/10">
-                        <button type="button" wire:click="$set('showForm', false)" class="px-6 py-2.5 text-sm font-semibold text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">Cancel</button>
-                        <button type="submit" class="px-6 py-2.5 text-sm font-bold text-gray-900 transition-all transform rounded-lg bg-gradient-to-r from-amber-400 to-yellow-600 hover:from-amber-500 hover:to-yellow-700 shadow-[0_0_20px_rgba(251,191,36,0.2)] hover:shadow-[0_0_25px_rgba(251,191,36,0.4)] hover:-translate-y-0.5">
+                    <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
+                        <button type="button" wire:click="$set('showForm', false)" class="flex-1 px-6 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button type="submit" class="flex-[2] px-6 py-2.5 text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition-colors">
                             {{ $editingId ? 'Update Event' : 'Create Event' }}
                         </button>
                     </div>

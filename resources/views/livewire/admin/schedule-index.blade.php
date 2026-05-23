@@ -143,31 +143,20 @@
     </div>
 
     @if($showForm)
-    <style>
-        .gold-gradient-bg { background-size: 200% 200%; animation: pan-gradient 4s ease infinite; }
-        @keyframes pan-gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
-
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="relative w-full max-w-2xl mx-auto group">
-            <div class="absolute -inset-[1.5px] bg-gradient-to-r from-amber-300 via-yellow-600 to-amber-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
-
-            <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full max-h-[90vh] overflow-y-auto">
-
-                <div class="flex items-center mb-8">
-                    <div class="flex-shrink-0 mr-4 bg-gradient-to-br from-amber-400/20 to-yellow-600/20 border border-amber-500/30 text-amber-400 p-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.15)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div class="w-full max-w-2xl bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.8)]">
+            <div class="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+            <div class="p-8 max-h-[90vh] overflow-y-auto">
+                <div class="flex items-start justify-between mb-8">
                     <div>
-                        <h2 class="text-2xl font-extrabold text-white tracking-wide">{{ $editingId ? 'Edit Class' : 'Add Class' }}</h2>
-                        <p class="text-sm text-gray-400 mt-1">{{ $editingId ? 'Update class schedule' : 'Create a new recurring class' }}</p>
+                        <h2 class="text-lg font-semibold text-white tracking-tight">{{ $editingId ? 'Edit Class' : 'Add Class' }}</h2>
+                        <p class="text-xs text-gray-500 mt-1">{{ $editingId ? 'Update class schedule' : 'Create a new recurring class' }}</p>
                     </div>
+                    <button wire:click="$set('showForm', false)" class="text-gray-600 hover:text-gray-300 transition-colors p-1.5 rounded-lg hover:bg-white/5 ml-4 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
                 <form wire:submit="save">
@@ -267,8 +256,8 @@
                     </div>
 
                     <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
-                        <button type="button" wire:click="$set('showForm', false)" class="flex-1 px-4 py-3 text-sm font-semibold text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">Cancel</button>
-                        <button type="submit" class="flex-[2] bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-all transform hover:-translate-y-0.5">{{ $editingId ? 'Update Class →' : 'Add Class →' }}</button>
+                        <button type="button" wire:click="$set('showForm', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button type="submit" class="flex-[2] px-4 py-2.5 text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition-colors">{{ $editingId ? 'Update Class' : 'Add Class' }}</button>
                     </div>
                 </form>
             </div>
@@ -448,25 +437,22 @@
 @endif
 
 @if($showDeleteModal && $selectedSchedule)
-    <style>
-        .spin-bg-red { background: conic-gradient(from 0deg, #ef4444, #7f1d1d, #fecaca, #7f1d1d, #ef4444); }
-    </style>
-    <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-        <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a1a1a]">
-            <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-red"></div>
-            <div class="relative z-10 bg-[#0a0a0a] rounded-xl shadow-2xl p-6 w-full h-full isolate">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="p-3 rounded-full bg-red-900/30 text-red-400 border border-red-500/20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+        <div class="w-full max-w-sm bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.7)]">
+            <div class="h-[2px] bg-red-500/80"></div>
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <h2 class="text-xl font-bold text-white">Delete Class</h2>
+                    <h2 class="text-base font-semibold text-white">Delete Class</h2>
                 </div>
-                <p class="mb-8 text-sm text-[#a0a0a0]">Are you sure you want to permanently delete <strong class="text-white">{{ $selectedSchedule->name }}</strong>? This action cannot be undone.</p>
-                <div class="flex justify-end gap-3">
-                    <button wire:click="$set('showDeleteModal', false)" class="px-5 py-2.5 text-sm font-semibold text-[#a0a0a0] transition-colors border border-[#404040] rounded-lg hover:bg-[#252525] hover:text-white">Cancel</button>
-                    <button wire:click="executeDelete" class="px-5 py-2.5 text-sm font-bold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 shadow-lg shadow-red-600/20">Delete Class</button>
+                <p class="text-sm text-gray-400 mb-6 leading-relaxed">Permanently delete <strong class="text-gray-200">{{ $selectedSchedule->name }}</strong>? This action cannot be undone.</p>
+                <div class="flex gap-3">
+                    <button wire:click="$set('showDeleteModal', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                    <button wire:click="executeDelete" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors">Delete</button>
                 </div>
             </div>
         </div>

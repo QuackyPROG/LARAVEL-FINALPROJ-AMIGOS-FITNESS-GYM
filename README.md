@@ -110,32 +110,15 @@ When a new Claude model supersedes `claude-sonnet-4-6`:
 
 The harness complexity scales inversely with model capability — a more capable model needs less orchestration scaffolding.
 
-## Project Structure
+## Credentials
 
 ```
-.
-├── CLAUDE.md                    # Harness rules (read by all agents)
-├── agents/
-│   ├── planner.md               # Planner system prompt
-│   ├── generator.md             # Generator system prompt
-│   ├── evaluator.md             # Evaluator system prompt
-│   ├── criteria/                # Grading rubrics
-│   └── few_shot/                # Example passing/failing QA reports
-├── artifacts/                   # Agent communication files
-├── skills/
-│   ├── frontend-design/         # UI design principles for planner
-│   └── playwright-qa/           # QA flow guide for evaluator
-├── harness/                     # Python orchestration
-│   ├── orchestrator.py          # Entry point
-│   ├── loop.py                  # Generator ↔ evaluator feedback loop
-│   ├── sprint_manager.py        # Contract negotiation
-│   └── context_reset.py        # State serialisation
-├── app/
-│   ├── Services/PayMongoService.php
-│   ├── Events/Payment{Succeeded,Failed}.php
-│   ├── Listeners/HandlePaymentSucceeded.php
-│   └── Http/Controllers/PayMongoWebhookController.php
-└── .claude/
-    ├── settings.json            # Hooks: Pint on save, test on save
-    └── commands/                # /plan /build /qa /run-harness
+user:
+officialkeean@gmail.com
+123qweASD!
+
+admin:
+admin@amigosgym.com
+password
+
 ```

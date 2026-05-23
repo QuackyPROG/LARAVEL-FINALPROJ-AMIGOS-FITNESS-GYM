@@ -43,7 +43,7 @@
         </a>
     </div>
 
-    <flux:navlist class="bg-dark-card flex-1 overflow-hidden admin-navlist">
+    <flux:navlist class="bg-dark-card flex-1 overflow-y-auto admin-navlist">
         <flux:navlist.item class="admin-nav-item" icon="squares-2x2" href="{{ route('admin.dashboard') }}" :current="request()->routeIs('admin.dashboard')">Dashboard</flux:navlist.item>
 
         <flux:navlist.group class="admin-nav-group" heading="Members">
@@ -69,22 +69,41 @@
         </flux:navlist.group>
     </flux:navlist>
 
-    <div class="bg-dark-card border-t border-white/5 p-3 flex flex-col gap-1">
-        <a href="{{ url('/') }}" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-500 rounded-md hover:text-zinc-300 hover:bg-white/5 transition-colors">
-            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+    <div class="bg-dark-card border-t border-white/[0.06] p-3">
+        {{-- User identity card --}}
+        <div class="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors">
+            <div class="w-8 h-8 rounded-full bg-[#111] border border-amber-500/35 flex items-center justify-center flex-shrink-0">
+                <span class="text-[13px] font-bold text-amber-400 leading-none select-none">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-semibold text-white/80 truncate leading-snug">{{ auth()->user()->name }}</p>
+                <p class="text-[11px] text-zinc-500 truncate leading-snug capitalize">{{ auth()->user()->role }}</p>
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" title="Sign out" class="flex items-center justify-center w-7 h-7 rounded-md text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                    <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+        <a href="{{ url('/') }}" class="flex items-center gap-2 px-2 py-1.5 mt-0.5 rounded-lg text-[11px] text-zinc-600 hover:text-zinc-400 hover:bg-white/[0.04] transition-colors">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
             Visit Site
         </a>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-500 rounded-md hover:text-zinc-300 hover:bg-white/5 transition-colors">
-                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Sign Out
-            </button>
-        </form>
     </div>
 </flux:sidebar>
 
 <flux:main>
+    <flux:header class="!border-white/5 !bg-dark-card !text-white">
+        <flux:sidebar.toggle icon="bars-3" />
+    </flux:header>
+
     <div class="p-6">
         @yield('content')
     </div>

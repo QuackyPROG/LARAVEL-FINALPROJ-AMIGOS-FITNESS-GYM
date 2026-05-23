@@ -198,113 +198,133 @@
     @endif
 
 @if($showAddModal)
-        <style>
-            .gold-gradient-bg {
-                background-size: 200% 200%;
-                animation: pan-gradient 4s ease infinite;
-            }
-            @keyframes pan-gradient {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
-            /* Custom scrollbar for the new dropdown */
-            .glass-scrollbar::-webkit-scrollbar { width: 6px; }
-            .glass-scrollbar::-webkit-scrollbar-track { background: transparent; }
-            .glass-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-            .glass-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
-        </style>
-        
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div class="relative w-full max-w-lg mx-auto group">
-                <div class="absolute -inset-[1.5px] bg-gradient-to-r from-amber-300 via-yellow-600 to-amber-400 rounded-2xl gold-gradient-bg opacity-80 blur-[2px] transition-opacity duration-500"></div>
-                
-                <div class="relative bg-[#000000] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] p-8 w-full">
-                    
-                    <div class="flex flex-col items-center justify-center mb-8 text-center">
-                        <div class="bg-gradient-to-br from-amber-400/20 to-amber-600/20 border border-amber-500/30 text-amber-400 p-3.5 rounded-full mb-4 shadow-[0_0_20px_rgba(251,191,36,0.15)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                            </svg>
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-lg bg-[#111111] rounded-2xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden">
+                <div class="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+                <div class="p-7" x-data="{ mode: 'regular' }">
+
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-white tracking-tight">Walk-in Registration</h2>
+                            <p class="text-xs text-gray-500 mt-1">Register a new member or day visitor</p>
                         </div>
-                        <h2 class="text-2xl font-extrabold text-white tracking-wide">Add Member</h2>
-                        <p class="text-sm text-gray-400 mt-1.5">Register a new walk-in client</p>
+                        <button wire:click="closeAddModal" class="text-gray-600 hover:text-gray-300 transition-colors p-1.5 rounded-lg hover:bg-white/5 ml-4 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    
+
                     @if($tempPasswordResult)
-                        <div class="bg-green-500/10 border border-green-500/30 text-green-300 p-5 rounded-xl mb-4 text-sm backdrop-blur-md text-center">
-                            <div class="flex justify-center mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div class="bg-[#0d1a10] border border-green-500/20 rounded-xl p-6 text-center">
+                            <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                            <p class="font-bold text-base mb-2 text-green-400">Success!</p>
-                            <p class="mb-3">Temporary Password:</p>
-                            <code class="bg-black/50 border border-white/10 px-4 py-2 rounded-lg text-lg text-amber-400 font-mono tracking-wider block mb-3">{{ $tempPasswordResult }}</code>
-                            <p class="text-xs mt-2 text-green-400/80">Please copy this password. It won't be shown again.</p>
-                            <div class="mt-5">
-                                <button wire:click="closeAddModal" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium px-4 py-2.5 rounded-xl transition-all">Done</button>
-                            </div>
+                            <p class="text-sm font-semibold text-white mb-0.5">Member Created</p>
+                            <p class="text-xs text-gray-500 mb-4">Temporary password — share with member now</p>
+                            <code class="block bg-black/60 border border-white/10 px-4 py-3 rounded-xl text-xl text-amber-400 font-mono tracking-widest mb-3">{{ $tempPasswordResult }}</code>
+                            <p class="text-xs text-gray-600 mb-5">This will not be shown again</p>
+                            <button wire:click="closeAddModal" class="w-full py-2.5 text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white rounded-xl transition-colors">Done</button>
                         </div>
                     @else
-                        <form wire:submit="saveMember" class="space-y-5">
-                            
+                        {{-- Mode toggle --}}
+                        <div class="flex gap-1 p-1 bg-white/5 rounded-xl mb-5 border border-white/10">
+                            <button type="button"
+                                @click="mode = 'regular'; $wire.set('addPlanId', null)"
+                                class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all"
+                                :class="mode === 'regular' ? 'bg-amber-500 text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'">
+                                Regular Member
+                            </button>
+                            <button type="button"
+                                @click="mode = 'daypass'; $wire.set('addPlanId', null)"
+                                class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all"
+                                :class="mode === 'daypass' ? 'bg-amber-500 text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'">
+                                Day Pass
+                            </button>
+                        </div>
+
+                        <form wire:submit="saveMember" class="space-y-4">
+
                             <div>
-                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Full Name</label>
-                                <input type="text" wire:model="addName" placeholder="e.g. John Doe"
-                                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
-                                @error('addName') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
+                                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Full Name</label>
+                                <input type="text" wire:model="addName" placeholder="e.g. Juan dela Cruz"
+                                    class="w-full bg-white/5 border border-white/10 hover:border-white/20 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors" required>
+                                @error('addName') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Email Address</label>
-                                <input type="email" wire:model.live.debounce.500ms="addEmail" placeholder="john@example.com"
-                                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 focus:bg-white/10 backdrop-blur-md transition-all shadow-inner" required>
-                                @error('addEmail') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
+                                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Email Address</label>
+                                <input type="email" wire:model.live.debounce.500ms="addEmail" placeholder="juan@example.com"
+                                    class="w-full bg-white/5 border border-white/10 hover:border-white/20 focus:border-amber-500/50 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors" required>
+                                @error('addEmail') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Membership Type</label>
+                                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Select Plan</label>
 
                                 @if($advisorLoading)
-                                    <div class="animate-pulse bg-amber-500/10 rounded h-6 w-3/4 mb-2"></div>
+                                    <div class="animate-pulse bg-amber-500/10 rounded-lg h-5 w-2/3 mb-2"></div>
                                 @elseif($advisorRationale)
-                                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl px-4 py-2 text-xs mb-2 flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 text-xs text-amber-400 mb-2" x-show="mode === 'regular'">
+                                        <svg class="w-3 h-3 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         {{ $advisorRationale }}
                                     </div>
                                 @endif
 
-                                <div class="max-h-48 overflow-y-auto glass-scrollbar pr-1">
-                                    <div class="grid grid-cols-2 gap-2">
-                                        @foreach($plans as $plan)
-                                            <button type="button"
-                                                wire:click="$set('addPlanId', {{ $plan->id }})"
-                                                class="relative flex flex-col p-3 rounded-xl border transition-all text-left
-                                                    {{ $addPlanId == $plan->id
-                                                        ? 'border-amber-500 ring-2 ring-amber-500 bg-amber-500/10'
-                                                        : ($advisorPlanId == $plan->id
-                                                            ? 'border-amber-400/50 ring-2 ring-amber-400 bg-amber-500/5'
-                                                            : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20') }}">
-                                                @if($plan->is_daily)
-                                                    <span class="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wide">Day Pass</span>
-                                                @endif
+                                <div class="max-h-44 overflow-y-auto space-y-1.5 pr-0.5">
+                                    @foreach($plans as $plan)
+                                        @if(!$plan->is_daily)
+                                        <button type="button" x-show="mode === 'regular'"
+                                            wire:click="$set('addPlanId', {{ $plan->id }})"
+                                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left
+                                                {{ $addPlanId == $plan->id
+                                                    ? 'border-amber-500/50 bg-amber-500/10'
+                                                    : ($advisorPlanId == $plan->id
+                                                        ? 'border-amber-400/30 bg-amber-500/5'
+                                                        : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20') }}">
+                                            <div>
+                                                <div class="text-sm font-medium text-white">{{ $plan->name }}</div>
+                                                <div class="text-xs text-gray-600 mt-0.5">{{ $plan->duration_days }} days</div>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0 ml-3">
+                                                <span class="text-sm font-semibold text-amber-400">₱{{ number_format($plan->price, 0) }}</span>
                                                 @if($addPlanId == $plan->id)
-                                                    <span class="absolute top-2 {{ $plan->is_daily ? 'right-14' : 'right-2' }} text-amber-400">
-                                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                                    </span>
+                                                    <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                                 @endif
-                                                <span class="text-xs font-bold text-white mt-0.5 pr-8">{{ $plan->name }}</span>
-                                                <span class="text-sm font-extrabold text-amber-400 mt-1">₱{{ number_format($plan->price, 0) }}</span>
-                                                <span class="text-[10px] text-gray-500 mt-0.5">{{ $plan->duration_days === 1 ? '1 Day' : $plan->duration_days . ' Days' }}</span>
-                                            </button>
-                                        @endforeach
-                                    </div>
+                                            </div>
+                                        </button>
+                                        @else
+                                        <button type="button" x-show="mode === 'daypass'"
+                                            wire:click="$set('addPlanId', {{ $plan->id }})"
+                                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left
+                                                {{ $addPlanId == $plan->id
+                                                    ? 'border-amber-500/50 bg-amber-500/10'
+                                                    : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20' }}">
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-medium text-white">{{ $plan->name }}</span>
+                                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wide">Day Pass</span>
+                                                </div>
+                                                <div class="text-xs text-gray-600 mt-0.5">Valid for 1 day</div>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0 ml-3">
+                                                <span class="text-sm font-semibold text-amber-400">₱{{ number_format($plan->price, 0) }}</span>
+                                                @if($addPlanId == $plan->id)
+                                                    <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                                @endif
+                                            </div>
+                                        </button>
+                                        @endif
+                                    @endforeach
                                 </div>
-                                @error('addPlanId') <span class="text-xs text-red-400 mt-1 ml-1 block">{{ $message }}</span> @enderror
+                                @error('addPlanId') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
                             </div>
-                            
-                            <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
-                                <button type="button" wire:click="closeAddModal" class="flex-1 px-4 py-3 text-sm font-semibold text-gray-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">Cancel</button>
-                                <button type="submit" class="flex-[2] bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-black font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-all transform hover:-translate-y-0.5">Create Member →</button>
+
+                            <div class="flex gap-3 pt-5 border-t border-white/10">
+                                <button type="button" wire:click="closeAddModal" class="flex-1 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-200 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                                <button type="submit" class="flex-[2] py-2.5 text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition-colors">Create Member</button>
                             </div>
                         </form>
                     @endif
@@ -313,44 +333,18 @@
         </div>
     @endif
 <style>
-    /* Complete, solid continuous rotating gradients (No empty spots) */
-    .spin-bg-gold { background: conic-gradient(from 0deg, #fbbf24, #b45309, #fde68a, #b45309, #fbbf24); }
-    .spin-bg-blue { background: conic-gradient(from 0deg, #3b82f6, #1e3a8a, #bfdbfe, #1e3a8a, #3b82f6); }
-    .spin-bg-orange { background: conic-gradient(from 0deg, #f97316, #9a3412, #fed7aa, #9a3412, #f97316); }
-    .spin-bg-red { background: conic-gradient(from 0deg, #ef4444, #7f1d1d, #fecaca, #7f1d1d, #ef4444); }
-    
-    /* Optional: View Modal Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
 </style>
     @if($showViewModal && $selectedMember)
-        <style>
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 6px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: transparent; 
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #4b5563; 
-                border-radius: 10px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: #6b7280;
-            }
-        </style>
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4">
 
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-            
-            <div class="relative w-full max-w-6xl h-[90vh] mx-auto group overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
-                
-                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-gold"></div>
-                
-                <div class="relative z-10 bg-dark-card rounded-xl w-full h-full flex flex-col overflow-hidden isolate shadow-2xl">
-                    
-                    <div class="flex justify-between items-start p-6 border-b border-gray-700 shrink-0 bg-dark-card">
+            <div class="w-full max-w-6xl h-[90vh] mx-auto bg-[#111111] rounded-2xl border border-white/10 overflow-hidden flex flex-col shadow-[0_32px_64px_rgba(0,0,0,0.8)]">
+                <div class="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent shrink-0"></div>
+
+                    <div class="flex justify-between items-start p-6 border-b border-white/10 shrink-0">
                         <div>
                             <h2 class="text-3xl font-bold text-white">{{ $selectedMember->name }}</h2>
                             <p class="text-sm text-gray-400 mt-1">Member #{{ $selectedMember->id }}</p>
@@ -541,25 +535,22 @@
     @endif
 
 @if($showDeactivateModal && $selectedMember)
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-            
-            <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
-                
-                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-orange"></div>
-                
-                <div class="relative z-10 bg-dark-card rounded-xl shadow-2xl p-6 w-full h-full isolate">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-amber-900/30 border border-amber-500/30 text-amber-500 p-3 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-sm bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.7)]">
+                <div class="h-[2px] bg-amber-500/80"></div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-white">Deactivate Member</h2>
+                        <h2 class="text-base font-semibold text-white">Deactivate Member</h2>
                     </div>
-                    <p class="text-gray-300 text-sm mb-6 leading-relaxed">Are you sure you want to deactivate <strong class="text-white">{{ $selectedMember->name }}</strong>? They will lose access to the portal immediately.</p>
-                    <div class="flex justify-end gap-3">
-                        <button wire:click="$set('showDeactivateModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
-                        <button wire:click="executeDeactivate" class="bg-orange-600 hover:bg-orange-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-orange-900/50 transition-all focus:outline-none">Deactivate</button>
+                    <p class="text-sm text-gray-400 mb-6 leading-relaxed">Deactivate <strong class="text-gray-200">{{ $selectedMember->name }}</strong>? They will lose portal access immediately.</p>
+                    <div class="flex gap-3">
+                        <button wire:click="$set('showDeactivateModal', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button wire:click="executeDeactivate" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition-colors">Deactivate</button>
                     </div>
                 </div>
             </div>
@@ -567,25 +558,22 @@
     @endif
 
 @if($showDeleteModal && $selectedMember)
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-            
-            <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
-                
-                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-red"></div>
-                
-                <div class="relative z-10 bg-dark-card rounded-xl shadow-2xl p-6 w-full h-full isolate">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-red-900/30 border border-red-500/30 text-red-500 p-3 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-sm bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.7)]">
+                <div class="h-[2px] bg-red-500/80"></div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-white">Delete Member</h2>
+                        <h2 class="text-base font-semibold text-white">Delete Member</h2>
                     </div>
-                    <p class="text-gray-300 text-sm mb-6 leading-relaxed">Are you sure you want to permanently delete <strong class="text-white">{{ $selectedMember->name }}</strong>? This action cannot be undone.</p>
-                    <div class="flex justify-end gap-3">
-                        <button wire:click="$set('showDeleteModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
-                        <button wire:click="executeDelete" class="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-red-900/50 transition-all focus:outline-none">Delete</button>
+                    <p class="text-sm text-gray-400 mb-6 leading-relaxed">Permanently delete <strong class="text-gray-200">{{ $selectedMember->name }}</strong>? This action cannot be undone.</p>
+                    <div class="flex gap-3">
+                        <button wire:click="$set('showDeleteModal', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button wire:click="executeDelete" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors">Delete</button>
                     </div>
                 </div>
             </div>
@@ -593,25 +581,22 @@
     @endif
 
 @if($showNotifyModal && $selectedMember)
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-            
-            <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
-                
-                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-blue"></div>
-                
-                <div class="relative z-10 bg-dark-card rounded-xl shadow-2xl p-6 w-full h-full isolate">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 p-3 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-sm bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.7)]">
+                <div class="h-[2px] bg-blue-500/70"></div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-white">Notify Expiry</h2>
+                        <h2 class="text-base font-semibold text-white">Notify Expiry</h2>
                     </div>
-                    <p class="text-gray-300 text-sm mb-6 leading-relaxed">Send an expiry notification to <strong class="text-white">{{ $selectedMember->name }}</strong>? They will receive a reminder about their membership expiration.</p>
-                    <div class="flex justify-end gap-3">
-                        <button wire:click="$set('showNotifyModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
-                        <button wire:click="executeNotify" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-blue-900/50 transition-all focus:outline-none">Send Notification</button>
+                    <p class="text-sm text-gray-400 mb-6 leading-relaxed">Send an expiry reminder to <strong class="text-gray-200">{{ $selectedMember->name }}</strong>?</p>
+                    <div class="flex gap-3">
+                        <button wire:click="$set('showNotifyModal', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button wire:click="executeNotify" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors">Send</button>
                     </div>
                 </div>
             </div>
@@ -619,25 +604,22 @@
     @endif
 
     @if($showNotifyExpiringModal)
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-            
-            <div class="relative w-full max-w-sm mx-auto overflow-hidden rounded-2xl p-[2px] bg-[#1a2c23]">
-                
-                <div class="absolute top-1/2 left-1/2 w-[250%] h-[250%] origin-center -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite] opacity-100 spin-bg-blue"></div>
-                
-                <div class="relative z-10 bg-dark-card rounded-xl shadow-2xl p-6 w-full h-full isolate">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 p-3 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-sm bg-[#111111] rounded-2xl border border-white/10 overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.7)]">
+                <div class="h-[2px] bg-blue-500/70"></div>
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-white">Notify Expiring</h2>
+                        <h2 class="text-base font-semibold text-white">Notify Expiring Members</h2>
                     </div>
-                    <p class="text-gray-300 text-sm mb-6 leading-relaxed">Send an expiry notification to all members whose subscriptions expire within 7 days.</p>
-                    <div class="flex justify-end gap-3">
-                        <button wire:click="$set('showNotifyExpiringModal', false)" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none">Cancel</button>
-                        <button wire:click="executeNotifyExpiring" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-blue-900/50 transition-all focus:outline-none">Send Notifications</button>
+                    <p class="text-sm text-gray-400 mb-6 leading-relaxed">Send expiry reminders to all members whose subscriptions expire within 7 days.</p>
+                    <div class="flex gap-3">
+                        <button wire:click="$set('showNotifyExpiringModal', false)" class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors">Cancel</button>
+                        <button wire:click="executeNotifyExpiring" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors">Send All</button>
                     </div>
                 </div>
             </div>
