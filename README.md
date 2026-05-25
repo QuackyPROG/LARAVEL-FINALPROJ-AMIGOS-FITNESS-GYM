@@ -1,124 +1,113 @@
-# AmigosFitnessGym — Three-Agent Laravel Harness
+# Amigos Fitness Gym — Contributors
 
-Built on the architecture from [Anthropic Engineering: Harness Design for Long-Running Apps](https://www.anthropic.com/engineering/harness-design-long-running-apps).
+## Cabug, John Aim Vrezymier T. — [@QuackyPROG](https://github.com/QuackyPROG)
 
-## What This Is
+Set up the entire project from scratch — Laravel 12, Livewire 3, Flux UI, Supabase PostgreSQL, Vite, and Pest for testing.
 
-A Laravel 12 SaaS starter wired to a three-agent Claude harness. You give it a 1–4 sentence product idea; the harness builds it sprint by sprint, tests it with Playwright, and iterates until it passes quality thresholds.
+**Backend & Database**
+- Designed and built the full database schema: users, memberships, payments, coaches, class schedules, bookings, chat, legal documents, consents, and audit logs
+- Built authentication with role-based access control (admin vs member) and a force-password-change middleware
 
-## The Three Agents
+**Member Management**
+- Full member CRUD — profiles, membership status, admin panel, and member portal dashboard
+- Government ID type and number validation
+- Digital member card with QR code token, downloadable as PDF via dompdf
 
-| Agent | Role | Reads | Writes |
-|---|---|---|---|
-| **Planner** | Expands a prompt into a full product spec | User prompt, `skills/frontend-design/SKILL.md` | `artifacts/product_spec.md` |
-| **Generator** | Builds the app sprint by sprint | `artifacts/product_spec.md`, `artifacts/sprint_contract.md` | Code, `artifacts/handoff_state.json`, `artifacts/qa_report.md` |
-| **Evaluator** | Tests the live app via Playwright, grades it | `artifacts/sprint_contract.md`, `agents/criteria/*.md` | `artifacts/qa_report.md`, `artifacts/scores.json` |
+**Coach & Schedule Management**
+- Coach profiles with photo upload and cropping
+- Class schedule grid with enrolled count and available slots
+- Session booking system
 
-Agents run in **separate Claude sessions**. They communicate only via files in `artifacts/`.
+**Payments**
+- PayMongo integration — GCash, Maya, card, and QR Ph checkout
+- Webhook handler that updates payment status in the database on confirmation
+- Revenue management module with breakdowns by payment method and date range
 
-## Stack
+**Communication & Notifications**
+- Transactional emails — welcome, booking confirmation, and membership expiry warnings
+- Events and announcements system with email broadcast to members
+- Real-time support chat between members and admin using Livewire and WebSockets (Laravel Reverb)
+- Claude AI chatbot integrated into the member chat widget
 
-- **Framework:** Laravel 12 (PHP 8.2+)
-- **Frontend:** Livewire 3 + Blade + Tailwind CSS + Flux UI
-- **Database:** Supabase PostgreSQL (standard `pgsql` driver)
-- **Auth:** Laravel Sanctum
-- **Payments:** PayMongo via `kirame/laravel-paymongo`
-  - Supported: GCash, Maya, GrabPay, Card, QR Ph
-- **Storage:** Supabase Storage REST API
-- **Queue:** Laravel database driver
-- **Testing:** Pest PHP 3
-- **Code Style:** Pint (PSR-12)
+**Admin Tools**
+- Site content editor so admin can update homepage text and images without touching code
+- Legal document editor with member consent capture and immutable audit snapshots
+- Audit log that records every admin action with a tamper-evident trail
+- Sales summary dashboard with aggregate stats
+- CSV export for the All Members page
+- Coach dashboard page for admin
 
-## How to Run
+**Performance & Infrastructure**
+- Bundled Chart.js via npm, made Google Fonts non-blocking, removed CDN tags
+- Paginated announcements, events, and coach queries; added query caching
+- QR code caching, debounced AI advisor calls
+- Lazy loading on all non-critical images
+- SPA-style navigation using `wire:navigate` across admin and portal
+- AdminDataUpdated broadcast event wired to live-refresh admin UI via Reverb
 
-### Option 1 — Full autonomous loop (Python harness)
-```bash
-# Install Python dependencies
-pip install -r harness/requirements.txt
+**Testing**
+- Wrote Pest test suite across all 19 sprints covering member flows, payment mocking, schedule logic, consent capture, ID validation, and more
 
-# Set your Anthropic API key
-export ANTHROPIC_API_KEY=sk-ant-...
+---
 
-# Run the harness with your product idea
-python harness/orchestrator.py "A fitness gym membership app for a Philippine gym. Members can book classes, track workouts, and pay with GCash or card via PayMongo."
-```
+## Karl Ishmael Gungon — [@KarlGungon](https://github.com/KarlGungon)
 
-### Option 2 — Manual slash commands (interactive)
-```bash
-# In a Claude Code session:
-/plan   "your product idea"    # Planner generates product spec
-/build                          # Generator proposes Sprint 1 contract
-/qa                             # Evaluator tests and grades
+Handled the full visual redesign of the admin panel across all pages.
 
-# Or run the full loop:
-/run-harness "your product idea"
-```
+**Layout & Components**
+- Overhauled the admin layout shell — navigation, structure, and overall look
+- Built a reusable stat card component used across the dashboard
+- Built a custom pagination component used across all admin list pages
+- Added an admin splash/loading screen component
 
-## Setup
+**Page Redesigns**
+Restyled every admin page from the skeleton UI that was handed off:
+- Dashboard — new stat layout and data display
+- Members list and member detail view
+- Coaches list
+- Class schedules list
+- Events list — including event cover image upload (with Pest test)
+- Announcements list
+- Plans list
+- Legal document editor
+- Site content editor
+- Chat inbox
+- Audit log
 
-```bash
-# 1. Copy .env
-cp .env.example .env
+**Search & Filter**
+- Added live search to the Members, Coaches, and Schedules pages — wired to Livewire components so results filter as you type
 
-# 2. Fill in your credentials:
-#    - SUPABASE_DB_URL (from Supabase project settings)
-#    - PAYMONGO_PUBLIC_KEY + PAYMONGO_SECRET_KEY (from PayMongo dashboard)
-#    - ANTHROPIC_API_KEY
+**Styling**
+- Added custom CSS for admin-specific styles
+- Integrated additional frontend packages via npm
 
-# 3. Generate app key
-php artisan key:generate
+---
 
-# 4. Run migrations
-php artisan migrate
+## Ma. Gabrielle Villamor — [@magabriellevillamor](https://github.com/magabriellevillamor)
 
-# 5. Install frontend dependencies
-npm install
+Handled the full visual redesign of the member-facing and public-facing pages.
 
-# 6. Start dev server
-php artisan serve
-npm run dev
-```
+**Landing Page**
+- Redesigned the public layout and home page from the skeleton UI
+- Added real gym photos (hero image and supporting visuals)
 
-## PayMongo Test Credentials (for QA)
+**Member Registration**
+- Rebuilt the registration form UI — multi-step layout, date picker for birthdate, plan selection cards
+- Finalized the full registration page design across two passes
 
-| Method | Test value |
-|---|---|
-| Card | `4343434343434345`, any future expiry, any 3-digit CVV |
-| GCash | Sandbox mode — auto-approves, no real number needed |
-| Maya | Sandbox mode — use PayMongo test dashboard |
+**Member Portal**
+- Redesigned the member dashboard — layout, stats, and data display
+- Redesigned the coach roster page
+- Restyled the member card view and its PDF download layout
+- Restyled the class schedule grid, events grid, my membership page, support page, and chat widget
+- Updated the portal layout shell
 
-Get test keys from: [PayMongo Dashboard → Developers](https://dashboard.paymongo.com/developers)
+**Forgot Password & Password Reset**
+- Built the full forgot password flow from scratch — forgot password page, reset password page, controllers, routes, and email token handling
+- Updated the change password page design
 
-## Quality Thresholds
+**Email Templates**
+- Redesigned all five transactional email layouts: welcome, booking confirmation, membership expiry warning, announcement broadcast, and change password
 
-The evaluator grades each sprint on four criteria. **Any score below 7/10 fails the sprint.**
-
-| Criterion | What it measures |
-|---|---|
-| `design_quality` | Coherent visual identity, custom colors, smooth Livewire UX |
-| `originality` | Deliberate creative decisions, not a generic template |
-| `functionality` | All features work end-to-end, PayMongo flows complete, webhooks update DB |
-| `code_quality` | No raw SQL, thin controllers, passing Pest tests, passing Pint |
-
-## Upgrading to a Newer Claude Model
-
-When a new Claude model supersedes `claude-sonnet-4-6`:
-1. Update the model string in `harness/orchestrator.py` and `harness/loop.py`
-2. Update `config/services.php` → `anthropic.model`
-3. Remove the context-management scaffolding in `harness/context_reset.py` if the new model's context window makes it unnecessary
-4. Re-tune the evaluation rubrics in `agents/criteria/` if the new model scores differently
-
-The harness complexity scales inversely with model capability — a more capable model needs less orchestration scaffolding.
-
-## Credentials
-
-```
-user:
-officialkeean@gmail.com
-123qweASD!
-
-admin:
-admin@amigosgym.com
-password
-
-```
+**Post-Payment Flow**
+- Fixed the PayMongo payment confirmation screen and welcome email after a successful registration payment — created `MembershipPaymentService`, `PaymentResultController`, and a Pest test covering the confirmation flow (the checkout and webhook pipeline was already built; this corrected what broke in the post-payment step)
