@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ClassSchedule extends Model
 {
@@ -26,5 +27,10 @@ class ClassSchedule extends Model
     public function coach(): BelongsTo
     {
         return $this->belongsTo(Coach::class);
+    }
+
+    public function enrolledBookings(): HasMany
+    {
+        return $this->hasMany(Booking::class)->whereNotIn('status', ['cancelled']);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\ClassSchedule;
 use App\Models\Coach;
+use App\Models\User;
 use App\Services\AuditLogger;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Rule;
@@ -25,6 +26,8 @@ class ScheduleIndex extends Component
         5 => 'Friday',
         6 => 'Saturday',
     ];
+
+    public bool $showAllMembers = false;
 
     public bool $showForm = false;
 
@@ -164,7 +167,8 @@ class ScheduleIndex extends Component
 
     public function render(): View
     {
-        $query = ClassSchedule::with('coach');
+        $query = ClassSchedule::with('coach')
+            ->withCount(['enrolledBookings as enrolled_count']);
 
         if ($this->search !== '') {
             $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($this->search).'%']);
@@ -188,9 +192,18 @@ class ScheduleIndex extends Component
             $query->orderBy('capacity', 'desc');
         }
 
+        $activeMembers = $this->showAllMembers
+            ? User::where('role', 'member')
+                ->where('status', 'active')
+                ->with('activeMembership.plan')
+                ->orderBy('name')
+                ->get()
+            : null;
+
         return view('livewire.admin.schedule-index', [
             'schedules' => $query->paginate(6),
             'coaches' => Coach::orderBy('name')->get(),
+            'activeMembers' => $activeMembers,
         ]);
     }
 }

@@ -136,6 +136,11 @@
                 </div>
             </div>
 
+            <button wire:click="$toggle('showAllMembers')"
+                class="px-4 py-2 text-sm font-semibold rounded-xl border transition-all duration-200 {{ $showAllMembers ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 hover:bg-amber-500/30' : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                {{ $showAllMembers ? 'Hide Members' : 'All Members' }}
+            </button>
+
             <button wire:click="openCreate" title="Add Class" class="bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 transition-all duration-300 text-black font-bold p-2 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_20px_rgba(251,191,36,0.4)] flex items-center justify-center transform hover:-translate-y-0.5 aspect-square">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
             </button>
@@ -293,6 +298,18 @@
                     Capacity
                 </th>
 
+                <th class="text-center text-xs font-bold text-gray-200 uppercase tracking-[0.15em] py-5 px-4">
+                    Enrolled
+                </th>
+
+                <th class="text-center text-xs font-bold text-gray-200 uppercase tracking-[0.15em] py-5 px-4">
+                    Available
+                </th>
+
+                <th class="text-center text-xs font-bold text-gray-200 uppercase tracking-[0.15em] py-5 px-4">
+                    Revenue
+                </th>
+
                 <th class="text-center text-xs font-bold text-gray-200 uppercase tracking-[0.15em] py-5 px-6">
                     Actions
                 </th>
@@ -340,6 +357,26 @@
                     <span class="font-bold text-gray-200">
                         {{ $s->capacity }}
                     </span>
+                </td>
+
+                {{-- ENROLLED --}}
+                <td class="py-5 px-4 text-center">
+                    <span class="font-bold text-amber-300">
+                        {{ $s->enrolled_count }}
+                    </span>
+                </td>
+
+                {{-- AVAILABLE --}}
+                <td class="py-5 px-4 text-center">
+                    @php $available = max(0, $s->capacity - $s->enrolled_count); @endphp
+                    <span class="font-bold {{ $available === 0 ? 'text-red-400' : 'text-green-400' }}">
+                        {{ $available }}
+                    </span>
+                </td>
+
+                {{-- REVENUE --}}
+                <td class="py-5 px-4 text-center">
+                    <span class="text-xs text-gray-500 font-medium">Included</span>
                 </td>
 
                 {{-- ACTIONS --}}
@@ -409,7 +446,7 @@
             @empty
 
             <tr>
-                <td colspan="6" class="py-12 text-center text-gray-400">
+                <td colspan="9" class="py-12 text-center text-gray-400">
 
                     <p class="font-bold text-gray-300">
                         No classes yet
@@ -429,6 +466,46 @@
     </table>
 
 </div>
+
+@if($showAllMembers && $activeMembers)
+<div class="mt-6 bg-white/5 border border-white/10 rounded-xl p-4">
+    <h2 class="text-gray-300 font-semibold mb-3 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        All Active Members
+        <span class="ml-1 text-xs font-normal text-gray-500">({{ $activeMembers->count() }})</span>
+    </h2>
+    <table class="w-full text-sm text-gray-300">
+        <thead>
+            <tr class="border-b border-white/10 text-xs text-gray-500 uppercase tracking-wider">
+                <th class="text-left py-2 px-3">Name</th>
+                <th class="text-left py-2 px-3">Plan</th>
+                <th class="text-left py-2 px-3">Expires</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+            @forelse($activeMembers as $member)
+            <tr class="hover:bg-white/5 transition-colors">
+                <td class="py-2.5 px-3 font-medium text-gray-200">{{ $member->name }}</td>
+                <td class="py-2.5 px-3 text-gray-400">{{ $member->activeMembership?->plan?->name ?? '—' }}</td>
+                <td class="py-2.5 px-3 text-gray-400">
+                    @if($member->activeMembership?->expires_at)
+                        {{ $member->activeMembership->expires_at->format('M d, Y') }}
+                    @else
+                        —
+                    @endif
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="3" class="py-6 text-center text-gray-500">No active members found.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endif
 
 @if($schedules instanceof \Illuminate\Contracts\Pagination\Paginator && $schedules->hasPages())
 <div class="fixed bottom-0 right-0 z-50 w-full md:w-[calc(100%-16rem)] py-3 px-4 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] flex justify-center items-center">

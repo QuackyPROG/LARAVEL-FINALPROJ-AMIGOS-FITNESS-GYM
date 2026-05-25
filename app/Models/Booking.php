@@ -10,6 +10,7 @@ class Booking extends Model
     protected $fillable = [
         'member_id',
         'coach_id',
+        'class_schedule_id',
         'scheduled_at',
         'status',
     ];
@@ -29,6 +30,11 @@ class Booking extends Model
     public function coach(): BelongsTo
     {
         return $this->belongsTo(Coach::class);
+    }
+
+    public function classSchedule(): BelongsTo
+    {
+        return $this->belongsTo(ClassSchedule::class);
     }
 
     public function isCancellable(): bool
