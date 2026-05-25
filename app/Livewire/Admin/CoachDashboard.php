@@ -23,6 +23,7 @@ class CoachDashboard extends Component
         $schedules = $this->coach->classSchedules()
             ->orderBy('day_of_week')
             ->orderBy('time')
+            ->limit(200)
             ->get();
 
         $bookings = $this->coach->bookings()
@@ -30,11 +31,12 @@ class CoachDashboard extends Component
             ->latest('scheduled_at')
             ->paginate(15);
 
+        $allBookings = $this->coach->bookings()->get(['status', 'member_id']);
         $stats = [
-            'total_bookings' => $this->coach->bookings()->count(),
-            'confirmed_bookings' => $this->coach->bookings()->where('status', 'confirmed')->count(),
-            'cancelled_bookings' => $this->coach->bookings()->where('status', 'cancelled')->count(),
-            'unique_members' => $this->coach->bookings()->distinct('member_id')->count('member_id'),
+            'total_bookings' => $allBookings->count(),
+            'confirmed_bookings' => $allBookings->where('status', 'confirmed')->count(),
+            'cancelled_bookings' => $allBookings->where('status', 'cancelled')->count(),
+            'unique_members' => $allBookings->pluck('member_id')->unique()->count(),
         ];
 
         return view('livewire.admin.coach-dashboard', compact('schedules', 'bookings', 'stats'));

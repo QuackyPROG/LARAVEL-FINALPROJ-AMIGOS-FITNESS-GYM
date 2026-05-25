@@ -223,7 +223,7 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-zinc-300">
-                                    {{ $booking->scheduled_at->format('M d, Y g:i A') }}
+                                    {{ $booking->scheduled_at?->format('M d, Y g:i A') ?? '—' }}
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($booking->status === 'confirmed')
