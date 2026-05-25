@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
-use App\Models\MembershipPlan;
-use App\Models\Membership;
 use App\Models\MemberConsent;
+use App\Models\Membership;
+use App\Models\MembershipPlan;
 use App\Models\SiteContent;
+use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\PlanAdvisorService;
 use Illuminate\Contracts\View\View;
@@ -23,32 +23,47 @@ class MemberIndex extends Component
     public int $onEachSide = 1;
 
     public string $search = '';
+
     public string $statusFilter = '';
 
     public bool $showAddModal = false;
+
     public bool $showViewModal = false;
+
     public bool $showDeactivateModal = false;
+
     public bool $showDeleteModal = false;
+
     public bool $showNotifyModal = false;
+
     public bool $showNotifyExpiringModal = false;
+
     public bool $showExtendModal = false;
+
     public bool $showPaymentModal = false;
 
     public ?int $selectedMemberId = null;
+
     public ?User $selectedMember = null;
 
     public string $addName = '';
+
     public string $addEmail = '';
+
     public ?int $addPlanId = null;
+
     public ?string $tempPasswordResult = null;
 
     public ?string $advisorRationale = null;
+
     public ?int $advisorPlanId = null;
+
     public bool $advisorLoading = false;
 
     public ?int $extendPlanId = null;
 
     public ?int $walkInPlanId = null;
+
     public bool $witnessedConsent = false;
 
     public function updatingSearch(): void
@@ -79,6 +94,7 @@ class MemberIndex extends Component
     {
         if ($this->selectedMemberId === null) {
             Session::flash('error', 'No member selected.');
+
             return;
         }
 
@@ -105,7 +121,7 @@ class MemberIndex extends Component
             'status' => 'active',
             'payment_ref' => 'manual-ext-'.now()->format('YmdHis'),
         ]);
-        
+
         // Ensure user is marked as active if they were inactive
         if ($user->status !== 'active') {
             $user->status = 'active';
@@ -114,7 +130,7 @@ class MemberIndex extends Component
 
         app(AuditLogger::class)->log('member.subscription_extended', $user, [
             'plan' => $plan->name,
-            'added_days' => $plan->duration_days
+            'added_days' => $plan->duration_days,
         ]);
 
         Session::flash('success', "Subscription extended for {$user->name}.");
@@ -221,6 +237,7 @@ class MemberIndex extends Component
     {
         if ($this->selectedMemberId === null) {
             $this->showDeactivateModal = false;
+
             return;
         }
 
@@ -247,6 +264,7 @@ class MemberIndex extends Component
     {
         if ($this->selectedMemberId === null) {
             $this->showDeleteModal = false;
+
             return;
         }
 
@@ -271,6 +289,7 @@ class MemberIndex extends Component
     {
         if ($this->selectedMemberId === null) {
             $this->showNotifyModal = false;
+
             return;
         }
 
@@ -299,6 +318,7 @@ class MemberIndex extends Component
         if ($expiringMembers->isEmpty()) {
             Session::flash('success', 'No members are expiring within 7 days.');
             $this->showNotifyExpiringModal = false;
+
             return;
         }
 
@@ -329,6 +349,7 @@ class MemberIndex extends Component
 
         if ($this->selectedMemberId === null) {
             Session::flash('error', 'No member selected.');
+
             return;
         }
 
@@ -385,9 +406,9 @@ class MemberIndex extends Component
         $query = User::where('role', 'member')
             ->with(['activeMembership.plan'])
             ->when($this->search, fn ($q) => $q->where(function ($q2): void {
-                $term = '%' . strtolower($this->search) . '%';
+                $term = '%'.strtolower($this->search).'%';
                 $q2->whereRaw('LOWER(name) LIKE ?', [$term])
-                   ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
+                    ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
             }))
             ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
             ->latest();

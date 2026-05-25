@@ -16,10 +16,13 @@ class CoachIndex extends Component
     use WithFileUploads;
 
     public bool $showForm = false;
+
     public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+
     public ?int $selectedCoachId = null;
+
     public ?Coach $selectedCoach = null;
 
     #[Rule('required|string|max:100')]
@@ -33,6 +36,7 @@ class CoachIndex extends Component
 
     #[Rule('nullable|image|max:2048')]
     public $photo = null;
+
     // base64 cropped image from client-side Cropper.js (data URL)
     public ?string $photoCropped = null;
 
@@ -75,7 +79,7 @@ class CoachIndex extends Component
             } else {
                 $ext = 'jpg';
             }
-            $filename = 'coaches/' . Str::random(40) . '.' . $ext;
+            $filename = 'coaches/'.Str::random(40).'.'.$ext;
             $dataBody = substr($this->photoCropped, strpos($this->photoCropped, ',') + 1);
             $decoded = base64_decode($dataBody);
             Storage::disk('public')->put($filename, $decoded);

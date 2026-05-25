@@ -145,12 +145,10 @@ class MemberDetail extends Component
             'editIdNumber' => $idNumberRules,
         ]);
 
-        $profile = $this->member->profile ?? MemberProfile::create(['user_id' => $this->member->id]);
-
-        $profile->update([
-            'id_type' => $this->editIdType,
-            'id_number' => $this->editIdNumber,
-        ]);
+        $this->member->profile()->updateOrCreate(
+            ['user_id' => $this->member->id],
+            ['id_type' => $this->editIdType, 'id_number' => $this->editIdNumber]
+        );
 
         app(AuditLogger::class)->log('member.id_updated', $this->member, [
             'id_type' => $this->editIdType,

@@ -167,7 +167,7 @@
             </div>
             {{-- ID Verification --}}
             <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl p-5 transition-all">
-                <h2 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-4">ID Verification</h2>
+                <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-4">ID Verification</h2>
                 @php
                     $idTypeLabels = [
                         'national'        => 'PhilSys National ID',

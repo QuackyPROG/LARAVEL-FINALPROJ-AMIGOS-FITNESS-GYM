@@ -27,15 +27,21 @@ class ScheduleIndex extends Component
     ];
 
     public bool $showForm = false;
+
     public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+
     public ?int $selectedScheduleId = null;
+
     public ?ClassSchedule $selectedSchedule = null;
 
     public string $search = '';
+
     public string $sort = 'name_asc';
+
     public string $coachFilter = '';
+
     public string $dayFilter = '';
 
     #[Rule('required|string|max:100')]
@@ -161,7 +167,7 @@ class ScheduleIndex extends Component
         $query = ClassSchedule::with('coach');
 
         if ($this->search !== '') {
-            $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%']);
+            $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($this->search).'%']);
         }
 
         if ($this->coachFilter !== '') {

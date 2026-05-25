@@ -34,7 +34,6 @@ class MemberProfile extends Model
             'sss' => 'regex:/^\d{2}-\d{7}-\d{1}$/',
             'philhealth' => 'regex:/^\d{12}$/',
             'pagibig' => 'regex:/^\d{12}$/',
-            default => 'string',
         };
     }
 

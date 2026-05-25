@@ -16,10 +16,13 @@ class EventIndex extends Component
     use WithFileUploads;
 
     public bool $showForm = false;
+
     public bool $showDeleteModal = false;
 
     public ?int $editingId = null;
+
     public ?int $selectedEventId = null;
+
     public ?Event $selectedEvent = null;
 
     #[Rule('required|string|max:200')]
@@ -35,6 +38,7 @@ class EventIndex extends Component
 
     #[Rule('nullable|image|max:4096')]
     public $coverImage = null;
+
     // cropped base64 data URL from client-side cropper
     public ?string $coverImageCropped = null;
 
@@ -77,7 +81,7 @@ class EventIndex extends Component
             } else {
                 $ext = 'jpg';
             }
-            $filename = 'events/' . Str::random(40) . '.' . $ext;
+            $filename = 'events/'.Str::random(40).'.'.$ext;
             $dataBody = substr($this->coverImageCropped, strpos($this->coverImageCropped, ',') + 1);
             $decoded = base64_decode($dataBody);
             Storage::disk('public')->put($filename, $decoded);

@@ -93,7 +93,7 @@ class AnnouncementIndex extends Component
     {
         $query = Announcement::with('admin')
             ->when($this->search, function ($q) {
-                $q->whereRaw('LOWER(subject) LIKE ?', ['%' . strtolower($this->search) . '%']);
+                $q->whereRaw('LOWER(subject) LIKE ?', ['%'.strtolower($this->search).'%']);
             })
             ->when($this->filterStatus === 'sent', fn ($q) => $q->whereNotNull('sent_at'))
             ->when($this->filterStatus === 'draft', fn ($q) => $q->whereNull('sent_at'));
