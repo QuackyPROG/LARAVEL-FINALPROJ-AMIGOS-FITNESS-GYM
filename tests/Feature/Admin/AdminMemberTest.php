@@ -183,3 +183,86 @@ it('members index redirects unauthenticated to login', function (): void {
 
     $response->assertRedirect('/login');
 });
+
+it('export CSV route is accessible to admin', function (): void {
+    $admin = adminUser();
+    [$plan, $member] = planAndMember();
+
+    $response = $this->actingAs($admin)->get('/admin/members/export');
+
+    $response->assertStatus(200);
+});
+
+it('export CSV responds with correct content type', function (): void {
+    $admin = adminUser();
+    [$plan, $member] = planAndMember();
+
+    $response = $this->actingAs($admin)->get('/admin/members/export');
+
+    $response->assertStatus(200);
+    expect($response->headers->get('Content-Type'))->toContain('text/csv');
+});
+
+it('export CSV has download header', function (): void {
+    $admin = adminUser();
+    [$plan, $member] = planAndMember();
+
+    $response = $this->actingAs($admin)->get('/admin/members/export');
+
+    $response->assertStatus(200);
+    expect($response->headers->has('Content-Disposition'))->toBeTrue();
+    expect($response->headers->get('Content-Disposition'))->toContain('members-');
+});
+
+it('export CSV respects search filter - accessible', function (): void {
+    $admin = adminUser();
+    [$plan, $member1] = planAndMember();
+
+    $member2 = User::factory()->create([
+        'role' => 'member',
+        'status' => 'active',
+        'must_change_password' => false,
+        'name' => 'John Different',
+    ]);
+
+    Membership::create([
+        'user_id' => $member2->id,
+        'plan_id' => $plan->id,
+        'starts_at' => now()->toDateString(),
+        'expires_at' => now()->addDays(30)->toDateString(),
+        'status' => 'active',
+    ]);
+
+    $response = $this->actingAs($admin)->get("/admin/members/export?search={$member1->name}");
+
+    $response->assertStatus(200);
+});
+
+it('export CSV respects status filter - accessible', function (): void {
+    $admin = adminUser();
+    [$plan, $activeMember] = planAndMember();
+
+    $inactiveMember = User::factory()->create([
+        'role' => 'member',
+        'status' => 'inactive',
+        'must_change_password' => false,
+    ]);
+
+    Membership::create([
+        'user_id' => $inactiveMember->id,
+        'plan_id' => $plan->id,
+        'starts_at' => now()->toDateString(),
+        'expires_at' => now()->addDays(30)->toDateString(),
+        'status' => 'active',
+    ]);
+
+    $response = $this->actingAs($admin)->get('/admin/members/export?statusFilter=active');
+
+    $response->assertStatus(200);
+});
+
+it('export requires admin authentication', function (): void {
+    $response = $this->get('/admin/members/export');
+
+    $response->assertRedirect('/login');
+});

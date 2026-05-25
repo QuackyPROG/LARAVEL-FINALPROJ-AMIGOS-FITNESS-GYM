@@ -2,8 +2,9 @@
 
 use App\Livewire\Admin\EventIndex;
 use App\Models\Event;
-use Livewire\Livewire;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -17,12 +18,12 @@ it('updates event cover image when editing with base64 cropped image', function 
     ]);
 
     // a tiny 1x1 jpg base64 (valid small jpeg)
-    $img = imagecreatetruecolor(1,1);
+    $img = imagecreatetruecolor(1, 1);
     ob_start();
     imagejpeg($img);
     $data = ob_get_clean();
     imagedestroy($img);
-    $base64 = 'data:image/jpeg;base64,' . base64_encode($data);
+    $base64 = 'data:image/jpeg;base64,'.base64_encode($data);
 
     Livewire::test(EventIndex::class)
         ->call('openEdit', $event->id)
@@ -32,5 +33,5 @@ it('updates event cover image when editing with base64 cropped image', function 
     $event->refresh();
     expect($event->cover_image)->not->toBeNull();
     // file exists in storage
-    $this->assertTrue(\Illuminate\Support\Facades\Storage::disk('public')->exists($event->cover_image));
+    $this->assertTrue(Storage::disk('public')->exists($event->cover_image));
 });

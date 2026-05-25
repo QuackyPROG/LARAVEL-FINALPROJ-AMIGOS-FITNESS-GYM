@@ -37,13 +37,13 @@ class PlanAdvisorService
         $planList = $plans->map(fn ($p) => "ID:{$p->id} Name:{$p->name} Price:{$p->price} Days:{$p->duration_days} IsDaily:".($p->is_daily ? 'true' : 'false'))->join(', ');
 
         $prompt = "You are a fitness gym plan advisor. Based on the context, recommend the best membership plan for a new walk-in client.\n\n"
-            . "Current time: {$now->format('l H:i')}\n"
-            . "This week: {$weeklyDailyCount} daily passes, {$weeklyMonthlyCount} monthly memberships activated\n"
-            . "Email: {$email}\n"
-            . ($priorPlans ? 'Prior plans: '.implode(', ', $priorPlans)."\n" : "New client — no prior membership history\n")
-            . "Available plans: {$planList}\n\n"
-            . "Respond with ONLY valid JSON: {\"plan_id\": <integer>, \"rationale\": \"<max 120 chars>\"}\n"
-            . "No markdown, no explanation, only the JSON object.";
+            ."Current time: {$now->format('l H:i')}\n"
+            ."This week: {$weeklyDailyCount} daily passes, {$weeklyMonthlyCount} monthly memberships activated\n"
+            ."Email: {$email}\n"
+            .($priorPlans ? 'Prior plans: '.implode(', ', $priorPlans)."\n" : "New client — no prior membership history\n")
+            ."Available plans: {$planList}\n\n"
+            ."Respond with ONLY valid JSON: {\"plan_id\": <integer>, \"rationale\": \"<max 120 chars>\"}\n"
+            .'No markdown, no explanation, only the JSON object.';
 
         try {
             $response = Http::withHeaders([

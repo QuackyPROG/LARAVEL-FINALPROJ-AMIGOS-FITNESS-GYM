@@ -22,7 +22,7 @@ class DevCommand extends Command
         $php = PHP_BINARY;
 
         $this->processes = [
-            'serve'  => new Process([$php, 'artisan', 'serve', '--host='.$this->option('host'), '--port='.$this->option('port')]),
+            'serve' => new Process([$php, 'artisan', 'serve', '--host='.$this->option('host'), '--port='.$this->option('port')]),
             'reverb' => new Process([$php, 'artisan', 'reverb:start']),
         ];
 
@@ -42,10 +42,10 @@ class DevCommand extends Command
                         continue;
                     }
                     $tag = match ($name) {
-                        'serve'  => 'fg=blue',
+                        'serve' => 'fg=blue',
                         'reverb' => 'fg=yellow',
-                        'vite'   => 'fg=green',
-                        default  => 'fg=white',
+                        'vite' => 'fg=green',
+                        default => 'fg=white',
                     };
                     $this->line("  <{$tag}>[{$name}]</> {$line}");
                 }

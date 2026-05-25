@@ -39,7 +39,7 @@ it('coach can be created with name only', function (): void {
 it('coach save with photoCropped stores base64 image', function (): void {
     $admin = User::factory()->admin()->create(['must_change_password' => false]);
 
-    $base64 = 'data:image/jpeg;base64,' . base64_encode('fake-image-data');
+    $base64 = 'data:image/jpeg;base64,'.base64_encode('fake-image-data');
 
     Livewire::actingAs($admin)
         ->test(CoachIndex::class)

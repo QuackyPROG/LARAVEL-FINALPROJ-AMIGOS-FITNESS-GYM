@@ -83,6 +83,7 @@ Route::middleware(['auth', 'role:admin', 'force.password.change'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/site-content', [SiteContentController::class, 'index'])->name('site-content');
         Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
+        Route::get('/members/export', [AdminMemberController::class, 'export'])->name('members.export');
         Route::get('/members/create', [AdminMemberController::class, 'create'])->name('members.create');
         Route::post('/members', [AdminMemberController::class, 'store'])->name('members.store');
         Route::get('/members/{member}', [AdminMemberController::class, 'show'])->name('members.show');

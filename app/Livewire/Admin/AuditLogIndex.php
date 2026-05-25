@@ -45,11 +45,11 @@ class AuditLogIndex extends Component
     {
         $query = AuditLog::with('actor')
             ->when($this->search, function ($q) {
-                $term = '%' . strtolower($this->search) . '%';
+                $term = '%'.strtolower($this->search).'%';
                 $q->where(function ($q2) use ($term) {
                     $q2->whereRaw('LOWER(action) LIKE ?', [$term])
-                       ->orWhereRaw('LOWER(model_type) LIKE ?', [$term])
-                       ->orWhereHas('actor', fn($q3) => $q3->whereRaw('LOWER(name) LIKE ?', [$term]));
+                        ->orWhereRaw('LOWER(model_type) LIKE ?', [$term])
+                        ->orWhereHas('actor', fn ($q3) => $q3->whereRaw('LOWER(name) LIKE ?', [$term]));
                 });
             })
             ->when($this->modelFilter, fn ($q) => $q->where('action', 'like', $this->modelFilter.'%'))

@@ -83,4 +83,45 @@ class MemberController extends Controller
 
         return Storage::disk('local')->download($path);
     }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $search = $request->query('search', '');
+        $statusFilter = $request->query('statusFilter', '');
+
+        $query = User::where('role', 'member')
+            ->with(['activeMembership.plan'])
+            ->when($search, function ($q) use ($search) {
+                $term = '%'.strtolower($search).'%';
+
+                return $q->where(function ($q2) use ($term): void {
+                    $q2->whereRaw('LOWER(name) LIKE ?', [$term])
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$term]);
+                });
+            })
+            ->when($statusFilter, fn ($q) => $q->where('status', $statusFilter))
+            ->latest()
+            ->get();
+
+        $filename = 'members-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(function () use ($query): void {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Name', 'Email', 'Phone', 'Date of Birth', 'Status', 'Plan', 'Starts At', 'Expires At']);
+            foreach ($query as $member) {
+                $membership = $member->activeMembership;
+                fputcsv($handle, [
+                    $member->name,
+                    $member->email,
+                    $member->phone ?? '',
+                    $member->dob?->format('Y-m-d') ?? '',
+                    $member->status,
+                    $membership?->plan?->name ?? '',
+                    $membership?->starts_at?->format('Y-m-d') ?? '',
+                    $membership?->expires_at?->format('Y-m-d') ?? '',
+                ]);
+            }
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=utf-8']);
+    }
 }

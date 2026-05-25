@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
-
     public function showForm()
     {
         return view('auth.forgot-password');

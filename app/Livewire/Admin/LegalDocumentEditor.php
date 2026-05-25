@@ -14,6 +14,7 @@ use Livewire\Component;
 class LegalDocumentEditor extends Component
 {
     public $documents = [];
+
     public bool $showForm = false;
 
     public string $slug = '';
