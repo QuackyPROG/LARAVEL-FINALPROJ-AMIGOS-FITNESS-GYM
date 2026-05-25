@@ -10,8 +10,8 @@ use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 use App\Http\Controllers\Admin\SiteContentController;
 use App\Http\Controllers\Auth\ChangePasswordController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Portal\CoachesController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
@@ -89,6 +89,7 @@ Route::middleware(['auth', 'role:admin', 'force.password.change'])
         Route::get('/plans', [AdminPlanController::class, 'index'])->name('plans.index');
         Route::get('/audit-log', [AuditLogController::class, 'index'])->name('audit-log');
         Route::get('/coaches', [AdminCoachController::class, 'index'])->name('coaches.index');
+        Route::get('/coaches/{coach}', [AdminCoachController::class, 'show'])->name('coaches.show');
         Route::get('/schedules', [AdminScheduleController::class, 'index'])->name('schedules.index');
         Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
         Route::get('/announcements', [AdminCoachController::class, 'announcements'])->name('announcements.index');
