@@ -66,6 +66,7 @@
 
         <flux:navlist.group class="admin-nav-group" heading="Revenue">
             <flux:navlist.item class="admin-nav-item" icon="banknotes" href="{{ route('admin.revenue.index') }}" :current="request()->routeIs('admin.revenue.*')">Revenue Report</flux:navlist.item>
+            <flux:navlist.item class="admin-nav-item" icon="chart-bar" href="{{ route('admin.sales-summary.index') }}" :current="request()->routeIs('admin.sales-summary.*')">Sales Summary</flux:navlist.item>
         </flux:navlist.group>
 
         <flux:navlist.group class="admin-nav-group" heading="System">
