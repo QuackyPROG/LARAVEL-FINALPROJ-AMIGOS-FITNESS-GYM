@@ -58,6 +58,12 @@ class RegistrationForm extends Component
     #[Rule('required|file|mimes:jpg,jpeg,png,pdf|max:5120')]
     public $governmentId = null;
 
+    #[Rule('required|in:national,passport,drivers_license,sss,philhealth,pagibig')]
+    public string $idType = '';
+
+    #[Rule('required|string|max:50')]
+    public string $idNumber = '';
+
     public bool $processing = false;
 
     public function mount(mixed $selectedPlanId = null): void
@@ -85,6 +91,10 @@ class RegistrationForm extends Component
             ]),
             4 => $this->validate([
                 'governmentId' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                'idType' => 'required|in:national,passport,drivers_license,sss,philhealth,pagibig',
+                'idNumber' => ['required', 'string', 'max:50', ...(
+                    $this->idType ? [MemberProfile::validationRuleForType($this->idType)] : []
+                )],
             ]),
             default => null,
         };
@@ -118,6 +128,10 @@ class RegistrationForm extends Component
             'consentWaiver' => 'accepted',
             'consentPrivacy' => 'accepted',
             'governmentId' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'idType' => 'required|in:national,passport,drivers_license,sss,philhealth,pagibig',
+            'idNumber' => ['required', 'string', 'max:50', ...(
+                $this->idType ? [MemberProfile::validationRuleForType($this->idType)] : []
+            )],
         ]);
 
         $this->processing = true;
@@ -146,6 +160,8 @@ class RegistrationForm extends Component
                 MemberProfile::create([
                     'user_id' => $user->id,
                     'government_id_path' => $govIdPath,
+                    'id_type' => $this->idType,
+                    'id_number' => $this->idNumber,
                 ]);
 
                 $membership = Membership::create([

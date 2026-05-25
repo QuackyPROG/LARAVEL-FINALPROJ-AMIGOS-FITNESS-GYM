@@ -165,6 +165,34 @@
                     @endforeach
                 @endif
             </div>
+            {{-- ID Verification --}}
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-xl p-5 transition-all">
+                <h2 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-4">ID Verification</h2>
+                @php
+                    $idTypeLabels = [
+                        'national'        => 'PhilSys National ID',
+                        'passport'        => 'Passport',
+                        'drivers_license' => "Driver's License",
+                        'sss'             => 'SSS ID',
+                        'philhealth'      => 'PhilHealth ID',
+                        'pagibig'         => 'Pag-IBIG ID',
+                    ];
+                    $currentIdType   = $member->profile?->id_type;
+                    $currentIdNumber = $member->profile?->id_number;
+                @endphp
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">ID Type</span>
+                        <p class="text-sm font-medium text-white">
+                            {{ $currentIdType ? ($idTypeLabels[$currentIdType] ?? ucfirst(str_replace('_', ' ', $currentIdType))) : '—' }}
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-xs text-gray-400 uppercase tracking-wide">ID Number</span>
+                        <p class="text-sm font-medium text-white">{{ $currentIdNumber ?? '—' }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Right Section: Quick Actions & Dynamic Forms --}}
@@ -177,7 +205,8 @@
                     <button wire:click="toggleAction('extend')" class="w-full text-left border {{ $activeAction === 'extend' ? 'border-amber-500/50 text-amber-400 bg-amber-500/10' : 'border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' }} transition-colors text-sm px-3 py-2 rounded-lg">Extend Expiry</button>
                     <button wire:click="deactivate" wire:confirm="Deactivate this member?" class="w-full text-left border border-amber-600/50 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500 transition-colors text-sm px-3 py-2 rounded-lg">
                         Deactivate Member
-                    </button>                    
+                    </button>
+                    <button wire:click="toggleAction('id')" class="w-full text-left border {{ $activeAction === 'id' ? 'border-amber-500/50 text-amber-400 bg-amber-500/10' : 'border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' }} transition-colors text-sm px-3 py-2 rounded-lg">Edit ID Info</button>
                     @if($govIdUrl)
                     <a href="{{ $govIdUrl }}" target="_blank" class="text-sm text-gray-300 hover:text-white transition-colors underline mt-2 block">
                         View Government ID <span class="text-xs text-gray-400">(link valid 30 min)</span>
@@ -241,6 +270,45 @@
                             <span wire:loading wire:target="recordCashPayment">Recording...</span>
                         </button>
                             <button wire:click="$set('activeAction', null)" class="border border-white/10 text-gray-300 hover:bg-white/10 transition-colors text-sm px-4 py-2 rounded-md flex-1">Cancel</button>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Edit ID Info Form --}}
+            @if($activeAction === 'id')
+                <div class="bg-black/40 backdrop-blur-md border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.15)] rounded-xl p-5">
+                    <h3 class="text-sm font-semibold text-white mb-3">Edit ID Information</h3>
+                    <div class="flex flex-col gap-3">
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-wide mb-1 block">ID Type</label>
+                            <select wire:model.live="editIdType" class="border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                <option value="">Select ID type…</option>
+                                <option value="national">PhilSys National ID</option>
+                                <option value="passport">Passport</option>
+                                <option value="drivers_license">Driver's License</option>
+                                <option value="sss">SSS ID</option>
+                                <option value="philhealth">PhilHealth ID</option>
+                                <option value="pagibig">Pag-IBIG ID</option>
+                            </select>
+                            @error('editIdType')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 uppercase tracking-wide mb-1 block">ID Number</label>
+                            <input type="text" wire:model="editIdNumber"
+                                placeholder="Enter ID number"
+                                class="border border-white/10 bg-white/5 backdrop-blur-md text-white rounded-xl px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                            @error('editIdNumber')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="flex gap-2">
+                            <button wire:click="saveIdFields"
+                                wire:loading.attr="disabled"
+                                wire:loading.class="opacity-75 cursor-wait"
+                                class="bg-black hover:bg-gray-800 transition-colors text-white text-sm px-4 py-2 rounded-md flex-1">
+                                <span wire:loading.remove wire:target="saveIdFields">Save</span>
+                                <span wire:loading wire:target="saveIdFields">Saving...</span>
+                            </button>
+                            <button wire:click="$set('activeAction', null)" class="border border-white/10 text-gray-300 hover:bg-white/10 transition-colors text-sm px-4 py-2 rounded-md flex-1">Cancel</button>
+                        </div>
                     </div>
                 </div>
             @endif

@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\MemberConsent;
+use App\Models\MemberProfile;
 use App\Models\Membership;
 use App\Models\MembershipPlan;
 use App\Models\SiteContent;
@@ -27,9 +28,15 @@ class MemberDetail extends Component
     #[Rule('required|integer|min:1|max:365')]
     public int $extendDays = 30;
 
+    public string $editIdType = '';
+
+    public string $editIdNumber = '';
+
     public function mount(User $member): void
     {
         $this->member = $member;
+        $this->editIdType = $member->profile?->id_type ?? '';
+        $this->editIdNumber = $member->profile?->id_number ?? '';
     }
 
     public function toggleAction(string $action): void
@@ -123,6 +130,34 @@ class MemberDetail extends Component
         app(AuditLogger::class)->log('member.deactivated', $this->member, ['status' => 'inactive']);
         $this->activeAction = null;
         session()->flash('success', 'Member deactivated.');
+        $this->member->refresh();
+    }
+
+    public function saveIdFields(): void
+    {
+        $idNumberRules = ['required', 'string', 'max:50'];
+        if ($this->editIdType) {
+            $idNumberRules[] = MemberProfile::validationRuleForType($this->editIdType);
+        }
+
+        $this->validate([
+            'editIdType' => 'required|in:'.implode(',', MemberProfile::ID_TYPES),
+            'editIdNumber' => $idNumberRules,
+        ]);
+
+        $profile = $this->member->profile ?? MemberProfile::create(['user_id' => $this->member->id]);
+
+        $profile->update([
+            'id_type' => $this->editIdType,
+            'id_number' => $this->editIdNumber,
+        ]);
+
+        app(AuditLogger::class)->log('member.id_updated', $this->member, [
+            'id_type' => $this->editIdType,
+        ]);
+
+        $this->activeAction = null;
+        session()->flash('success', 'ID information updated.');
         $this->member->refresh();
     }
 

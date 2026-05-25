@@ -278,7 +278,29 @@
             <div>
                 <span class="rg-step-eyebrow">Step 4 of 5</span>
                 <h2 class="rg-heading">Identity Verification</h2>
-                <p class="rg-muted">Upload a valid government-issued ID for membership verification. JPG, PNG, and PDF files are accepted up to 5 MB.</p>
+                <p class="rg-muted">Select your ID type, enter the ID number, and upload a photo or scan of the ID for membership verification.</p>
+
+                {{-- ID Type & Number --}}
+                <div class="rg-field-grid" style="margin-top: 16px;">
+                    <div class="rg-field rg-field--full">
+                        <label for="idType">ID Type</label>
+                        <select id="idType" wire:model.live="idType" class="rg-input">
+                            <option value="">Select your ID type…</option>
+                            <option value="national">PhilSys National ID (1234-5678-9012)</option>
+                            <option value="passport">Passport (P1234567A)</option>
+                            <option value="drivers_license">Driver's License (A01-23-456789)</option>
+                            <option value="sss">SSS ID (12-3456789-0)</option>
+                            <option value="philhealth">PhilHealth ID (12 digits)</option>
+                            <option value="pagibig">Pag-IBIG ID (12 digits)</option>
+                        </select>
+                        @error('idType') <p class="rg-error">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="rg-field rg-field--full">
+                        <label for="idNumber">ID Number</label>
+                        <input type="text" id="idNumber" wire:model="idNumber" placeholder="Enter your ID number" class="rg-input">
+                        @error('idNumber') <p class="rg-error">{{ $message }}</p> @enderror
+                    </div>
+                </div>
 
                 <div x-data="{ fileName: '', fileSize: '' }" class="rg-upload" style="margin-top: 16px;">
                     <div class="rg-upload-head">
