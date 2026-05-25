@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\LegalDocumentController;
 use App\Http\Controllers\Admin\MemberController as AdminMemberController;
 use App\Http\Controllers\Admin\PlanController as AdminPlanController;
+use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 use App\Http\Controllers\Admin\SiteContentController;
 use App\Http\Controllers\Auth\ChangePasswordController;
@@ -96,4 +97,5 @@ Route::middleware(['auth', 'role:admin', 'force.password.change'])
         Route::get('/chat', fn () => view('admin.chat'))->name('chat');
         Route::get('/legal', [LegalDocumentController::class, 'index'])->name('legal.index');
         Route::get('/legal/{key}/edit', [LegalDocumentController::class, 'edit'])->name('legal.edit');
+        Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue.index');
     });

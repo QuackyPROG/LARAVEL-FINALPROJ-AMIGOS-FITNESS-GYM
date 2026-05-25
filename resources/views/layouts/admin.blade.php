@@ -64,6 +64,10 @@
             <flux:navlist.item class="admin-nav-item" icon="chat-bubble-left-right" href="{{ route('admin.chat') }}" :current="request()->routeIs('admin.chat')">Live Chat</flux:navlist.item>
         </flux:navlist.group>
 
+        <flux:navlist.group class="admin-nav-group" heading="Revenue">
+            <flux:navlist.item class="admin-nav-item" icon="banknotes" href="{{ route('admin.revenue.index') }}" :current="request()->routeIs('admin.revenue.*')">Revenue Report</flux:navlist.item>
+        </flux:navlist.group>
+
         <flux:navlist.group class="admin-nav-group" heading="System">
             <flux:navlist.item class="admin-nav-item" icon="shield-check" href="{{ route('admin.audit-log') }}" :current="request()->routeIs('admin.audit-log')">Audit Log</flux:navlist.item>
         </flux:navlist.group>
