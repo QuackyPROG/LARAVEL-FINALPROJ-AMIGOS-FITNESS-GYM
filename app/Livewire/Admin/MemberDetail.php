@@ -135,8 +135,8 @@ class MemberDetail extends Component
 
     public function saveIdFields(): void
     {
-        $idNumberRules = ['required', 'string', 'max:50'];
-        if ($this->editIdType) {
+        $idNumberRules = ['required', 'string'];
+        if ($this->editIdType && in_array($this->editIdType, MemberProfile::ID_TYPES)) {
             $idNumberRules[] = MemberProfile::validationRuleForType($this->editIdType);
         }
 

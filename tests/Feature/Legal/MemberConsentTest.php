@@ -63,6 +63,8 @@ it('records 4 consent rows on registration submit', function (): void {
         ->set('dob', '1990-01-01')
         ->set('planId', $plan->id)
         ->set('governmentId', $file)
+        ->set('idType', 'national')
+        ->set('idNumber', '1234-5678-9012')
         ->set('consentTerms', true)
         ->set('consentContract', true)
         ->set('consentWaiver', true)
@@ -103,6 +105,8 @@ it('snapshot body contains rendered member name not placeholder', function (): v
         ->set('dob', '1990-01-01')
         ->set('planId', $plan->id)
         ->set('governmentId', $file)
+        ->set('idType', 'national')
+        ->set('idNumber', '1234-5678-9012')
         ->set('consentTerms', true)
         ->set('consentContract', true)
         ->set('consentWaiver', true)
@@ -150,7 +154,6 @@ it('records staff_witnessed consents on walk-in cash payment', function (): void
 
     Livewire::actingAs($admin)
         ->test(MemberDetail::class, ['member' => $member])
-        ->set('showWalkInForm', true)
         ->set('walkInPlanId', $plan->id)
         ->set('witnessedConsent', true)
         ->call('recordCashPayment');
