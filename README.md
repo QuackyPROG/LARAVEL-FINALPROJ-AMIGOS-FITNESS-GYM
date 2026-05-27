@@ -45,9 +45,6 @@ Set up the entire project from scratch — Laravel 12, Livewire 3, Flux UI, Supa
 - SPA-style navigation using `wire:navigate` across admin and portal
 - AdminDataUpdated broadcast event wired to live-refresh admin UI via Reverb
 
-**Testing**
-- Wrote Pest test suite across all 19 sprints covering member flows, payment mocking, schedule logic, consent capture, ID validation, and more
-
 ---
 
 ## Karl Ishmael Gungon — [@KarlGungon](https://github.com/KarlGungon)
